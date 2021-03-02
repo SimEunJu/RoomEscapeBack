@@ -1,9 +1,7 @@
 package com.sej.escape.dto;
 
 import com.sej.escape.entity.constants.SocialLogin;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,9 +11,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-@Builder
-public class MemberDto extends User implements OAuth2User
-{
+public class MemberDto extends User implements OAuth2User {
 
     private String email;
     private SocialLogin socialLogin;
