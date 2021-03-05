@@ -1,0 +1,4 @@
+https://www.slipp.net/questions/572
+https://www.oreilly.com/content/handling-checked-exceptions-in-java-streams/
+https://howtodoinjava.com/java9/java9-private-interface-methods/
+https://www.baeldung.com/java-lambda-exceptions

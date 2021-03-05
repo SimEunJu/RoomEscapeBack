@@ -1,14 +1,11 @@
 package com.sej.escape.entity;
 
+import com.sej.escape.entity.base.Base;
 import com.sej.escape.entity.constants.MemberRole;
 import com.sej.escape.entity.constants.SocialLogin;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,8 +15,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class Member {
+public class Member extends Base {
 
     @Id
     String email;
@@ -45,11 +41,6 @@ public class Member {
     private boolean unable;
     private String unableReason;
     private LocalDateTime unableDate;
-
-    @CreatedDate
-    private LocalDateTime joinDate;
-    @LastModifiedDate
-    private LocalDateTime updateDate;
 
     private LocalDateTime leaveDate;
 
