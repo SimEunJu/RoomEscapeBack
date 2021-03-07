@@ -2,3 +2,9 @@ https://www.slipp.net/questions/572
 https://www.oreilly.com/content/handling-checked-exceptions-in-java-streams/
 https://howtodoinjava.com/java9/java9-private-interface-methods/
 https://www.baeldung.com/java-lambda-exceptions
+https://stackoverflow.com/questions/13932750/tinytext-text-mediumtext-and-longtext-maximum-storage-sizes
+https://stackoverflow.com/questions/1997540/mysql-varchar-lengths-and-utf-8
+https://okky.kr/article/256528
+https://dev.mysql.com/doc/refman/8.0/en/integer-types.html
+https://dev.mysql.com/doc/refman/8.0/en/string-type-syntax.html
+https://yaboong.github.io/database/2018/03/09/database-normalization-1/

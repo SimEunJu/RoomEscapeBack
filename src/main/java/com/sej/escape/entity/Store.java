@@ -1,7 +1,8 @@
 package com.sej.escape.entity;
 
-import com.sej.escape.entity.Geolocation.Address;
-import com.sej.escape.entity.Geolocation.Location;
+import com.sej.escape.entity.comment.StoreComment;
+import com.sej.escape.entity.geolocation.Address;
+import com.sej.escape.entity.geolocation.Location;
 import com.sej.escape.entity.base.BaseWithDelete;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -19,18 +22,32 @@ public class Store extends BaseWithDelete {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "store_id")
     private Long Id;
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private List<StoreComment> comments = new ArrayList<>();
 
     @Embedded
     private Location location;
+
     @Embedded
     private Address address;
 
+    @Column(length = 2000)
     private String name;
+
+    @Column(length = 3000)
     private String link;
+
+    @Column(length = 100)
     private String phoneNumber;
 
+    @Column(columnDefinition = "int default 0", nullable = false)
     private Integer star;
-    private Integer like;
 
+    @Column(columnDefinition = "int default 0", nullable = false)
+    private Integer like;
 }

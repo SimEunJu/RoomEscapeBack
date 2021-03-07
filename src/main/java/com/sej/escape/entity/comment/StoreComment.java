@@ -1,9 +1,9 @@
-package com.sej.escape.entity;
+package com.sej.escape.entity.comment;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("S")
-public class StoreReview extends Review{
+public class StoreComment extends Comment {
 }

@@ -6,10 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Builder
@@ -20,7 +17,15 @@ public class File extends BaseWithDelete {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="file_id")
     private Long Id;
 
+    private String originalName;
+
+    private String name;
+
+    private String rootPath;
+
+    private String subPath;
 
 }

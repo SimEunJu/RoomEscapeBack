@@ -26,20 +26,24 @@ public class Member extends Base {
     @Enumerated(EnumType.STRING)
     private SocialLogin socialLogin;
 
-    @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
+    @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     private Set<MemberRole> roles = new HashSet<>();
 
     @Column(length = 100)
     private String name;
+
     @Column(length = 200)
     private String nickname;
 
     // 정지회원 관리
     @Column(columnDefinition = "tinyint(1) default 0")
     private boolean unable;
+
+    @Column(columnDefinition = "text")
     private String unableReason;
+
     private LocalDateTime unableDate;
 
     private LocalDateTime leaveDate;
