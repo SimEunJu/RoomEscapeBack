@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
+
 @MappedSuperclass
 public abstract class BaseWithDelete extends Base {
 
