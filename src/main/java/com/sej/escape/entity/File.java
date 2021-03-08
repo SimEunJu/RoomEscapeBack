@@ -18,11 +18,15 @@ public class File extends BaseWithDelete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="file_id")
-    private Long Id;
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    private Board board;
 
     private String originalName;
 
-    private String name;
+    private String fileName;
 
     private String rootPath;
 

@@ -66,9 +66,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+
                 .cors(Customizer.withDefaults())
+
                 .formLogin()
                 .and()
+
                 .oauth2Login()
                     .authorizationEndpoint()
                         .baseUri("/auth/oauth2")
@@ -80,6 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .defaultSuccessUrl(FRONT_BASE_URL)
                     .failureUrl(FRONT_BASE_URL)
                 .and()
+
                 .logout();
     }
 

@@ -23,7 +23,7 @@ public class Store extends BaseWithDelete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id")
-    private Long Id;
+    private Long id;
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY)
@@ -37,7 +37,7 @@ public class Store extends BaseWithDelete {
     private Address address;
 
     @Column(length = 2000)
-    private String name;
+    private String storeName;
 
     @Column(length = 3000)
     private String link;
@@ -49,5 +49,5 @@ public class Store extends BaseWithDelete {
     private Integer star;
 
     @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer like;
+    private Integer good;
 }

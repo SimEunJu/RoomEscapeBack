@@ -20,17 +20,21 @@ public class Comment extends BaseWithDelete {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    @Column(name = "comment_id")
+    private Long id;
 
     @ManyToOne
-    @Column(nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    // TODO: 더 나은 방법이 없을까
+    private Integer referId;
 
     @Column(columnDefinition = "text")
     private String content;
 
     @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer like;
+    private Integer good;
 
     @Column(columnDefinition = "int default 0", nullable = false)
     private Integer report;

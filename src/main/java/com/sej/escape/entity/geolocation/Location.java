@@ -12,10 +12,10 @@ import javax.persistence.Embeddable;
 public class Location {
 
     // 위도
-    @Column(columnDefinition = "float(4,6)")
+    @Column(columnDefinition = "float(6,6)")
     private Double latitude;
 
     // 경도
-    @Column(columnDefinition = "float(4,6)")
+    @Column(columnDefinition = "float(6,6)")
     private Double longitude;
 }

@@ -42,7 +42,7 @@ public class MemberService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Optional<Member> memberOpt = memberRepository.findById(username);
+        Optional<Member> memberOpt = memberRepository.findMemberByEmail(username);
 
         if(memberOpt.isEmpty()) {
             throw new UsernameNotFoundException(username+": 가입되지 않았습니다.");
@@ -55,8 +55,9 @@ public class MemberService implements UserDetailsService {
                 .collect(Collectors.toSet());
 
         MemberDto memberDto = new MemberDto(member.getEmail(), member.getPassword(), authorities);
+        memberDto.setId(member.getId());
         memberDto.setSocialLogin(member.getSocialLogin());
-        memberDto.setName(member.getName());
+        memberDto.setName(member.getMemberName());
         memberDto.setNickname(member.getNickname());
         // TODO: 정지 회원인 경우 알려야
         return memberDto;

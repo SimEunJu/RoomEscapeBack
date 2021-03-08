@@ -37,7 +37,7 @@ public class OauthService extends DefaultOAuth2UserService {
                 email = oAuth2User.getAttribute("email");
         }
 
-        Optional<Member> memberOpt = memberRepository.findById(email);
+        Optional<Member> memberOpt = memberRepository.findMemberByEmail(email);
 
         if(memberOpt.isEmpty()) {
             throw new UsernameNotFoundException(email+": 가입되지 않았습니다.");
@@ -50,8 +50,9 @@ public class OauthService extends DefaultOAuth2UserService {
                 .collect(Collectors.toSet());
 
         MemberDto memberDto = new MemberDto(member.getEmail(), member.getPassword(), authorities);
+        memberDto.setId(member.getId());
         memberDto.setSocialLogin(member.getSocialLogin());
-        memberDto.setName(member.getName());
+        memberDto.setName(member.getMemberName());
         memberDto.setNickname(member.getNickname());
 
         memberDto.setOauthAttrs(oAuth2User.getAttributes());

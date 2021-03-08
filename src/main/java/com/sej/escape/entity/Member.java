@@ -18,8 +18,14 @@ import java.util.Set;
 public class Member extends Base {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
+    private Long id;
+
+    @Column(unique = true, columnDefinition = "varchar(1000)", nullable = false, updatable = false)
     String email;
 
+    @Column(columnDefinition = "varchar(1000)")
     private String password;
 
     @Column(nullable = false, length = 100)
@@ -32,7 +38,7 @@ public class Member extends Base {
     private Set<MemberRole> roles = new HashSet<>();
 
     @Column(length = 100)
-    private String name;
+    private String memberName;
 
     @Column(length = 200)
     private String nickname;

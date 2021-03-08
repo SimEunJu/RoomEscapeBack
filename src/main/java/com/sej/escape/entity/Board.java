@@ -22,9 +22,10 @@ public class Board extends BaseWithDelete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id")
-    private Long Id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Builder.Default
@@ -44,7 +45,7 @@ public class Board extends BaseWithDelete {
     private String content;
 
     @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer like;
+    private Integer good;
 
     @Column(columnDefinition = "int default 0", nullable = false)
     private Integer report;

@@ -23,19 +23,19 @@ public class Theme extends BaseWithDelete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="theme_id")
-
-    private Long Id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(nullable = false)
+    @JoinColumn(nullable = false, name="store_id")
     private Store store;
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
     private List<ThemeComment> comments = new ArrayList<>();
 
     @Column(length = 2000)
-    private String name;
+    private String themeName;
 
     @Column(length = 3000)
     private String link;
@@ -53,9 +53,9 @@ public class Theme extends BaseWithDelete {
     private Integer star;
 
     @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer like;
+    private Integer good;
 
-    // TODO: 아래 정의된 getter setter 쓰도록
+    @Access(value=AccessType.PROPERTY)
     private Integer genre;
 
     public void setGenre(List<Genre> genres) {
@@ -66,7 +66,7 @@ public class Theme extends BaseWithDelete {
         return Genre.getEnumList(this.genre);
     }
 
-    // TODO: 아래 정의된 getter setter 쓰도록
+    @Access(value=AccessType.PROPERTY)
     private Integer quizType;
 
     public void setQuizType(List<QuizType> quizTypes) {

@@ -1,13 +1,10 @@
-package com.sej.escape.controller.comment;
+package com.sej.escape.controller;
 
 import com.sej.escape.dto.CommentDto;
+import com.sej.escape.dto.ThemeDto;
 import com.sej.escape.dto.page.PageReqDto;
-import com.sej.escape.entity.comment.ThemeComment;
-import com.sej.escape.service.CommentService;
 import com.sej.escape.service.ThemeService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,21 +14,22 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/comment/theme")
-public class ThemeCommentController {
+@RequestMapping("/api/theme")
+public class ThemeController {
 
-    private CommentService commentService;
-
+    private ThemeService themeService;
+    /*
     @GetMapping("/top")
     public ResponseEntity<List<CommentDto>> getTopReviews(PageReqDto pageReqDto){
-        List<CommentDto> comments = commentService.readTopComments(pageReqDto);
+        List<ThemeDto> comments = themeService.readTopThemes(pageReqDto);
         return ResponseEntity.ok(comments);
     }
 
     @GetMapping("/latest")
     public ResponseEntity<List<CommentDto>> getLatestReviews(PageReqDto pageReqDto){
-        List<CommentDto> comments = commentService.readLatestComments(pageReqDto);
+        List<ThemeDto> comments = themeService.readLatestThemes(pageReqDto);
         return ResponseEntity.ok(comments);
     }
 
+    */
 }

@@ -15,8 +15,8 @@ public interface ThemeCommentRepository
         extends JpaRepository<ThemeComment, String>, QuerydslPredicateExecutor<ThemeComment> {
 
     @Query("select tc from ThemeComment tc where tc.isDeleted = false")
-    Page<ThemeComment> findLatestComment(Pageable pageable);
+    Page<ThemeComment> findLatestComments(Pageable pageable);
 
-    @Query("select tc from ThemeComment tc where tc.isDeleted = false and tc.regDate > :daysAgo")
-    Page<ThemeComment> findTopComment(LocalDateTime daysAgo, Pageable pageable);
+    @Query("select tc from ThemeComment tc where tc.isDeleted = false and tc.regDate > :aWeekAgo")
+    Page<ThemeComment> findTopComments(LocalDateTime aWeekAgo, Pageable pageable);
 }

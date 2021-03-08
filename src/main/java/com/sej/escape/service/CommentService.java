@@ -26,14 +26,14 @@ public class CommentService {
     public List<CommentDto> readTopComments(PageReqDto pageReqDto){
         /*
         메인페이지 최대 10개
-        좋아요(90) + 최신순(10)
+        좋아요 + 최신순
         */
-        Sort sort = Sort.by("like").descending().and(Sort.by("regDate").descending());
+        Sort sort = Sort.by(Sort.Direction.DESC, "like", "regDate");
         Pageable pageable = pageReqDto.getPageable(sort);
 
         LocalDateTime aWeekAgo = LocalDateTime.now().minusWeeks(1);
 
-        Page<ThemeComment> comments = themeCommentRepository.findTopComment(aWeekAgo, pageable);
+        Page<ThemeComment> comments = themeCommentRepository.findTopComments(aWeekAgo, pageable);
 
         List<CommentDto> commentDtos = mapEntityToDto(comments.getContent());
 
@@ -44,7 +44,7 @@ public class CommentService {
 
         Pageable pageable = pageReqDto.getPageable(Sort.by("regDate").descending());
 
-        Page<ThemeComment> comments = themeCommentRepository.findLatestComment(pageable);
+        Page<ThemeComment> comments = themeCommentRepository.findLatestComments(pageable);
 
         List<CommentDto> commentDtos = mapEntityToDto(comments.getContent());
 

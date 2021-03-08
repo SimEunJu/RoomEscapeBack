@@ -8,3 +8,4 @@ https://okky.kr/article/256528
 https://dev.mysql.com/doc/refman/8.0/en/integer-types.html
 https://dev.mysql.com/doc/refman/8.0/en/string-type-syntax.html
 https://yaboong.github.io/database/2018/03/09/database-normalization-1/
+https://javabydeveloper.com/field-access-vs-property-access-jpa-hibernate/

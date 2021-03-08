@@ -13,6 +13,7 @@ import java.util.Map;
 @Setter
 public class MemberDto extends User implements OAuth2User {
 
+    private long id;
     private String email;
     private SocialLogin socialLogin;
     private String name;
