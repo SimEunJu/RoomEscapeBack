@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 
@@ -18,5 +19,5 @@ public interface ThemeCommentRepository
     Page<ThemeComment> findLatestComments(Pageable pageable);
 
     @Query("select tc from ThemeComment tc where tc.isDeleted = false and tc.regDate > :aWeekAgo")
-    Page<ThemeComment> findTopComments(LocalDateTime aWeekAgo, Pageable pageable);
+    Page<ThemeComment> findTopComments(@Param("aWeekAgo") LocalDateTime aWeekAgo, Pageable pageable);
 }

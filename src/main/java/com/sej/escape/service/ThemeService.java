@@ -26,5 +26,35 @@ public class ThemeService {
     private ThemeRepository themeRepository;
     private ModelMapper modelMapper;
 
+    public List<ThemeDto> readTopThemes(PageReqDto pageReqDto){
+        /*
+        메인페이지 최대 10개
+        좋아요 + 리뷰수 + 최신순
+        */
+        Sort sort = Sort.by(Sort.Direction.DESC, "like", "reviewCnt", "regDate");
+        Pageable pageable = pageReqDto.getPageable(sort);
+        Page<Theme> themes = themeRepository.findTopThemes(pageable);
 
+        List<ThemeDto> themeDtos = mapEntityToDto(themes.getContent());
+        return themeDtos;
+    }
+
+    public List<ThemeDto> readLatestThemes(PageReqDto pageReqDto){
+
+        LocalDateTime aMonthAgo = LocalDateTime.now().minusMonths(1);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "regDate");
+        Pageable pageable = pageReqDto.getPageable(sort);
+
+        Page<Theme> themes = themeRepository.findLatestThemes(aMonthAgo, pageable);
+
+        List<ThemeDto> themeDtos = mapEntityToDto(themes.getContent());
+        return themeDtos;
+    }
+
+    private List<ThemeDto> mapEntityToDto(List<Theme> entities){
+        return entities.stream()
+                .map(entity -> modelMapper.map(entity, ThemeDto.class))
+                .collect(Collectors.toList());
+    }
 }

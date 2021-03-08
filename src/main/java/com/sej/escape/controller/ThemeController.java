@@ -18,18 +18,16 @@ import java.util.List;
 public class ThemeController {
 
     private ThemeService themeService;
-    /*
+
     @GetMapping("/top")
-    public ResponseEntity<List<CommentDto>> getTopReviews(PageReqDto pageReqDto){
-        List<ThemeDto> comments = themeService.readTopThemes(pageReqDto);
-        return ResponseEntity.ok(comments);
+    public ResponseEntity<List<ThemeDto>> getTopReviews(PageReqDto pageReqDto){
+        List<ThemeDto> themeDtos = themeService.readTopThemes(pageReqDto);
+        return ResponseEntity.ok(themeDtos);
     }
 
     @GetMapping("/latest")
-    public ResponseEntity<List<CommentDto>> getLatestReviews(PageReqDto pageReqDto){
-        List<ThemeDto> comments = themeService.readLatestThemes(pageReqDto);
-        return ResponseEntity.ok(comments);
+    public ResponseEntity<List<ThemeDto>> getLatestReviews(PageReqDto pageReqDto){
+        List<ThemeDto> themeDtos = themeService.readLatestThemes(pageReqDto);
+        return ResponseEntity.ok(themeDtos);
     }
-
-    */
 }
