@@ -1,4 +1,4 @@
-package com.sej.escape.dto;
+package com.sej.escape.dto.file;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

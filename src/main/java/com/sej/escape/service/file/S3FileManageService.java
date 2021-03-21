@@ -4,7 +4,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
-import com.sej.escape.dto.FileReqDto;
+import com.sej.escape.dto.file.FileReqDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;

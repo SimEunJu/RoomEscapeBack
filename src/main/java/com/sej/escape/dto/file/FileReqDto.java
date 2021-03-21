@@ -1,4 +1,4 @@
-package com.sej.escape.dto;
+package com.sej.escape.dto.file;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +18,8 @@ public class FileReqDto {
     private String subPath;
     private MultipartFile file;
     private int seq;
+
+    private long boardId;
 
     public String getUrl(){
         return rootPath + "/" + subPath + "/" + name;

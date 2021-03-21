@@ -1,6 +1,6 @@
 package com.sej.escape.service.file;
 
-import com.sej.escape.dto.FileReqDto;
+import com.sej.escape.dto.file.FileReqDto;
 import com.sej.escape.error.exception.file.LocalFileUploadException;
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnailator;

@@ -52,8 +52,4 @@ public class Board extends BaseWithDelete {
     @Column(columnDefinition = "int default 0", nullable = false)
     private Integer view;
 
-    @Column(columnDefinition = "tinyint(1) default 0")
-    private boolean isDeleted;
-
-    private LocalDateTime deleteDate;
 }

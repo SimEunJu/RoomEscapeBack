@@ -1,7 +1,7 @@
 package com.sej.escape.service.file;
 
-import com.sej.escape.dto.FileReqDto;
-import com.sej.escape.dto.FileResDto;
+import com.sej.escape.dto.file.FileReqDto;
+import com.sej.escape.dto.file.FileResDto;
 import com.sej.escape.entity.File;
 import com.sej.escape.repository.FileRepository;
 import lombok.RequiredArgsConstructor;

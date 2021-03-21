@@ -32,17 +32,17 @@ public class BoardService {
                 .addMapping(src -> src.getMember().getMemberName(), BoardDto::setWriter);
     }
 
-    public PageResDto getBoards(PageReqDto pageReqDto){
+    public PageResDto<Board, BoardDto> getBoards(PageReqDto pageReqDto){
         Sort sort = Sort.by(Sort.Direction.DESC, "regDate");
         Pageable pageable = pageReqDto.getPageable(sort);
         QBoard qBoard = QBoard.board;
         BooleanBuilder builder = new BooleanBuilder(qBoard.title.contains(pageReqDto.getSearchKeyword()));
-        Page<Board> boards = boardRepository.findAll(builder, pageable);
-        return new PageResDto<Board, BoardDto>(boards, this::mapBoardToDto);
+        Page<Board> boards = boardRepository.findAllByDeletedNot(builder, pageable);
+        return new PageResDto<>(boards, this::mapBoardToDto);
     }
 
     public BoardDto getBoard(long id){
-        Optional<Board> boardOpt = boardRepository.findById(id);
+        Optional<Board> boardOpt = boardRepository.findByIdByDeletedNot(id);
         Board board = getBoardIfExist(boardOpt, id);
         return mapBoardToDto(board);
     }
@@ -53,12 +53,19 @@ public class BoardService {
     }
 
     public BoardDto updateBoard(BoardDto boardDto) {
-        Optional<Board> boardOpt = boardRepository.findById(boardDto.getId());
+        Optional<Board> boardOpt = boardRepository.findByIdByDeletedNot(boardDto.getId());
         Board board = getBoardIfExist(boardOpt, boardDto.getId());
         board.setContent(boardDto.getContent());
         board.setTitle(boardDto.getTitle());
         Board boardUp = boardRepository.save(board);
         return mapBoardToDto(boardUp);
+    }
+
+    public BoardDto addBoard(BoardDto boardDto){
+        Board board = boardRepository.save(modelMapper.map(boardDto, Board.class));
+        boardDto.setId(board.getId());
+        boardDto.setRegDate(board.getRegDate());
+        return boardDto;
     }
 
     private Board getBoardIfExist(Optional<Board> boardOpt, long id) {

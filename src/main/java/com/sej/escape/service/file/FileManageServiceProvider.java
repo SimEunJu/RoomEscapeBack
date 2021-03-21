@@ -17,4 +17,8 @@ public class FileManageServiceProvider {
             default: throw new UnsupportedOperationException();
         }
     }
+
+    public FileManageService getDefault(){
+        return s3;
+    }
 }
