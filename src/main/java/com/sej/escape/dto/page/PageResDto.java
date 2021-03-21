@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
-public class PageResDto<Dto, En> {
+public class PageResDto<En, Dto> {
 
     private List<Dto> dtoList;
 

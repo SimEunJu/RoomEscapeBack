@@ -26,10 +26,12 @@ public class File extends BaseWithDelete {
 
     private String originalName;
 
-    private String fileName;
+    private String name;
 
     private String rootPath;
 
     private String subPath;
+
+    private Integer seq;
 
 }

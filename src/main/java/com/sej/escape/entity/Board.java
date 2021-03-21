@@ -3,18 +3,17 @@ package com.sej.escape.entity;
 import com.sej.escape.entity.base.BaseWithDelete;
 import com.sej.escape.entity.comment.BoardComment;
 import com.sej.escape.entity.comment.Comment;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Board extends BaseWithDelete {
@@ -49,4 +48,12 @@ public class Board extends BaseWithDelete {
 
     @Column(columnDefinition = "int default 0", nullable = false)
     private Integer report;
+
+    @Column(columnDefinition = "int default 0", nullable = false)
+    private Integer view;
+
+    @Column(columnDefinition = "tinyint(1) default 0")
+    private boolean isDeleted;
+
+    private LocalDateTime deleteDate;
 }

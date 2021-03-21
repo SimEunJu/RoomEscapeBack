@@ -1,4 +1,4 @@
-package com.sej.escape.exception;
+package com.sej.escape.error.exception;
 
 import java.util.function.Function;
 
