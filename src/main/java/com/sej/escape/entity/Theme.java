@@ -11,7 +11,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Entity
 @Builder
@@ -56,24 +59,37 @@ public class Theme extends BaseWithDelete {
     private Integer good;
 
     @Access(value=AccessType.PROPERTY)
-    private Integer genre;
+    @Column(columnDefinition = "text")
+    private String genre;
 
     public void setGenre(List<Genre> genres) {
-        this.genre = Genre.getEnumValSum(genres);
+        this.genre = mapEnumsToStr(genres);
     }
 
     public List<Genre> getGenre() {
-        return Genre.getEnumList(this.genre);
+        return mapStrToEnums(this.genre, Genre::valueOf);
     }
 
     @Access(value=AccessType.PROPERTY)
-    private Integer quizType;
+    private String quizType;
 
     public void setQuizType(List<QuizType> quizTypes) {
-        this.quizType = QuizType.getEnumValSum(quizTypes);
+        this.quizType = mapEnumsToStr(quizTypes);
     }
 
     public List<QuizType> getQuizType() {
-        return QuizType.getEnumList(this.quizType);
+        return mapStrToEnums(this.quizType, QuizType::valueOf);
+    }
+
+    private <T extends Enum> String mapEnumsToStr(List<T> enums){
+        return enums.stream()
+                .map(T::toString)
+                .collect(Collectors.joining(","));
+    }
+
+    private <T extends Enum> List<T> mapStrToEnums(String concatenated, Function<String, T> mapFunc){
+        return Arrays.stream(concatenated.split(","))
+                .map(mapFunc)
+                .collect(Collectors.toList());
     }
 }
