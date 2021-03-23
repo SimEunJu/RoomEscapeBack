@@ -4,30 +4,30 @@ import com.querydsl.core.BooleanBuilder;
 import com.sej.escape.dto.board.BoardDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.dto.page.PageResDto;
-import com.sej.escape.dto.page.SearchReqDto;
 import com.sej.escape.entity.Board;
 import com.sej.escape.entity.QBoard;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.BoardRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class BoardService {
 
-    private BoardRepository boardRepository;
-    private ModelMapper modelMapper;
+    private final BoardRepository boardRepository;
+    private final ModelMapper modelMapper;
 
-    public BoardService(BoardRepository boardRepository, ModelMapper modelMapper){
-        this.boardRepository = boardRepository;
-        this.modelMapper = modelMapper;
+    @PostConstruct
+    public void afterConstruct(){
         this.modelMapper.createTypeMap(Board.class, BoardDto.class)
                 .addMapping(src -> src.getMember().getMemberName(), BoardDto::setWriter);
     }
@@ -37,12 +37,12 @@ public class BoardService {
         Pageable pageable = pageReqDto.getPageable(sort);
         QBoard qBoard = QBoard.board;
         BooleanBuilder builder = new BooleanBuilder(qBoard.title.contains(pageReqDto.getSearchKeyword()));
-        Page<Board> boards = boardRepository.findAllByDeletedNot(builder, pageable);
+        Page<Board> boards = boardRepository.findAllByIsDeletedFalse(builder, pageable);
         return new PageResDto<>(boards, this::mapBoardToDto);
     }
 
     public BoardDto getBoard(long id){
-        Optional<Board> boardOpt = boardRepository.findByIdByDeletedNot(id);
+        Optional<Board> boardOpt = boardRepository.findByIdAndIsDeletedFalse(id);
         Board board = getBoardIfExist(boardOpt, id);
         return mapBoardToDto(board);
     }
@@ -53,7 +53,7 @@ public class BoardService {
     }
 
     public BoardDto updateBoard(BoardDto boardDto) {
-        Optional<Board> boardOpt = boardRepository.findByIdByDeletedNot(boardDto.getId());
+        Optional<Board> boardOpt = boardRepository.findByIdAndIsDeletedFalse(boardDto.getId());
         Board board = getBoardIfExist(boardOpt, boardDto.getId());
         board.setContent(boardDto.getContent());
         board.setTitle(boardDto.getTitle());

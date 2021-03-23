@@ -1,7 +1,6 @@
 package com.sej.escape.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.sej.escape.dto.page.SearchReqDto;
 import com.sej.escape.entity.Board;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +19,7 @@ public interface BoardRepository
     @Query("update Board b set b.isDeleted = true, b.deleteDate = current_timestamp where b.id in :ids")
     long updateDeleteTAllByIdIn(List<Long> ids);
 
-    Page<Board> findAllByDeletedNot(BooleanBuilder builder, Pageable pageable);
+    Page<Board> findAllByIsDeletedFalse(BooleanBuilder builder, Pageable pageable);
 
-    Optional<Board> findByIdByDeletedNot(long id);
+    Optional<Board> findByIdAndIsDeletedFalse(long id);
 }

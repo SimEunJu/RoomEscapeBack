@@ -7,7 +7,7 @@ public enum ErrorCode {
 
     INVALID_REQUEST_VALUE(400, "C001", "Invalid Request Value"),
     METHOD_NOT_ALLOWED(405, "C002", " Method Not Allowed"),
-    MISSING_REQUEST_VALUE(400, "C003", "Missing Request Value"),
+    //MISSING_REQUEST_VALUE(400, "C003", "Missing Request Value"),
 
     FILE_UPLOAD_FAIL(500, "C008", "FILE UPLOAD FAIL"),
 

@@ -10,4 +10,7 @@ public class StoreService {
 
     private StoreRepository storeRepository;
 
+    public List<StoreDto> getStores(){}
+
+
 }

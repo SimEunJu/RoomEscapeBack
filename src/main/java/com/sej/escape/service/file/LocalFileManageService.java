@@ -2,6 +2,7 @@ package com.sej.escape.service.file;
 
 import com.sej.escape.dto.file.FileReqDto;
 import com.sej.escape.error.exception.file.LocalFileUploadException;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,11 +15,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Service
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class LocalFileManageService implements FileManageService {
 
     @Value("${spring.servlet.multipart.location}")
-    private final String rootPath;
+    private String rootPath;
 
     public FileReqDto uploadFile(FileReqDto fileReqDto){
 

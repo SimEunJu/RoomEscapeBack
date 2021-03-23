@@ -25,7 +25,7 @@ public class Member extends Base {
     @Column(unique = true, columnDefinition = "varchar(1000)", nullable = false, updatable = false)
     String email;
 
-    @Column(columnDefinition = "varchar(1000)")
+    @Column(length = 1000)
     private String password;
 
     @Column(nullable = false, length = 100)
