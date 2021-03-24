@@ -39,6 +39,7 @@ dependencies {
     implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.14'
 
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-aws-context', version: '2.2.6.RELEASE'
+    implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '5.4.28.Final'
 }
 
 test {
