@@ -16,7 +16,7 @@ public class StoreController {
 
     @PostMapping
     public void getStores(@RequestBody StorePageReqDto storePageReqDto){
-        storeService
+        storeService.getStores(storePageReqDto);
     }
 
     @GetMapping("/{id}")

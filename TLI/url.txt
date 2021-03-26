@@ -21,3 +21,12 @@ https://www.baeldung.com/spring-mvc-custom-data-binder
 https://www.baeldung.com/jackson-serialize-enums
 https://multifrontgarden.tistory.com/172
 https://stackoverflow.com/questions/24157817/jackson-databind-enum-case-insensitive
+
+http://www.arubin.org/files/geo_search.pdf
+https://momentjin.tistory.com/m/136
+https://medium.com/%EC%98%A4%EB%8A%98%EC%9D%98%EC%8B%9D%EB%8B%B9/jpa%EC%99%80-mysql%EB%A1%9C-%EC%9C%84%EC%B9%98-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%8B%A4%EB%A3%A8%EA%B8%B0-4d2b450a24de
+https://purumae.tistory.com/198
+
+
+
+

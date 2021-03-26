@@ -2,12 +2,12 @@ package com.sej.escape.entity;
 
 import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.entity.geolocation.Address;
-import com.sej.escape.entity.geolocation.Location;
 import com.sej.escape.entity.base.BaseWithDelete;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -30,8 +30,8 @@ public class Store extends BaseWithDelete {
     @JoinColumn(name = "comment_id")
     private List<StoreComment> comments = new ArrayList<>();
 
-    @Embedded
-    private Location location;
+    @Column
+    private Point location;
 
     @Embedded
     private Address address;
@@ -46,7 +46,7 @@ public class Store extends BaseWithDelete {
     private String phoneNumber;
 
     @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer star;
+    private Integer zim;
 
     @Column(columnDefinition = "int default 0", nullable = false)
     private Integer good;
