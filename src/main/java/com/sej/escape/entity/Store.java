@@ -36,6 +36,9 @@ public class Store extends BaseWithDelete {
     @Embedded
     private Address address;
 
+    @Column
+    private double areaCode;
+
     @Column(length = 2000)
     private String storeName;
 

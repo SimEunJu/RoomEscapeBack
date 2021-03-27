@@ -1,6 +1,7 @@
 package com.sej.escape.service;
 
 import com.querydsl.core.BooleanBuilder;
+import com.sej.escape.constants.AreaSection;
 import com.sej.escape.constants.ListOrder;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.store.StorePageReqDto;
@@ -38,6 +39,17 @@ public class StoreService {
         String searchKeyword = storePageReqDto.getSearchKeyword();
         if(searchKeyword.isBlank()){
             queryWhere += " AND s.storeName = '"+searchKeyword+"'";
+        }
+
+        AreaSection[] areaSections = storePageReqDto.getSelectedAreaSection();
+        if(areaSections != null){
+            queryWhere += " AND true";
+            for (AreaSection areaSection: areaSections) {
+                AreaSection.AreaCode areaCode = areaSection.getAreaCodeByPostcode();
+                double lower = areaCode.getLower();
+                double upper = areaCode.getUpper();
+                queryWhere += " s.areaCode between "+lower+" AND "+upper+" OR";
+            }
         }
 
         ListOrder order = storePageReqDto.getOrder();
