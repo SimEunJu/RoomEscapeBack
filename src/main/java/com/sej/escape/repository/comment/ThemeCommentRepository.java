@@ -1,4 +1,4 @@
-package com.sej.escape.repository;
+package com.sej.escape.repository.comment;
 
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.comment.Comment;
@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 
 public interface ThemeCommentRepository
-        extends JpaRepository<ThemeComment, String>, QuerydslPredicateExecutor<ThemeComment> {
+        extends JpaRepository<ThemeComment, Long>, QuerydslPredicateExecutor<ThemeComment> {
 
     @Query("select tc from ThemeComment tc where tc.isDeleted = false")
     Page<ThemeComment> findLatestComments(Pageable pageable);

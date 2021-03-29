@@ -14,7 +14,9 @@ import lombok.ToString;
 @ToString
 public class StorePageReqDto extends PageReqDto {
 
-    private ListOrder order;
+    private String type;
+
+    private ListOrder order = ListOrder.DEFAULT;
 
     private AreaSection[] selectedAreaSection;
 

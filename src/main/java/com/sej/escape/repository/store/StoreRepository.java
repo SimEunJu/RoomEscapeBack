@@ -11,7 +11,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import java.util.Optional;
 
 public interface StoreRepository
-        extends JpaRepository<Store, String>, QuerydslPredicateExecutor<Store>
+        extends JpaRepository<Store, Long>, QuerydslPredicateExecutor<Store>
         , StoreRepositoryCustom{
 
     Page<Store> findAllByIsDeletedFalse(BooleanBuilder builder, Pageable pageable);

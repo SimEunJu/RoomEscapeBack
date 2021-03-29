@@ -21,29 +21,30 @@ public class Comment extends BaseWithDelete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private Long id;
+    protected Long id;
 
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    protected Member member;
 
     // TODO: 더 나은 방법이 없을까
-    private Integer referId;
+    // 보통 매핑 테이블 하나 더 두어서 관리 ex) 테이블1(comment-board), 테이블2(comment-theme) 등 
+    protected Long referId;
 
     @Column(columnDefinition = "text")
-    private String content;
+    protected String content;
 
     @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer good;
+    protected Integer good;
 
     @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer report;
+    protected Integer report;
 
     // 대댓글 깊이
     @Column(columnDefinition = "int default 0", nullable = false)
-    private int depth;
+    protected int depth;
 
     // 대댓글 순서
     @Column(columnDefinition = "int default 0", nullable = false)
-    private int seq;
+    protected int seq;
 }

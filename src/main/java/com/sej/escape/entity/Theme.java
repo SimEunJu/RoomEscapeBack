@@ -4,10 +4,7 @@ import com.sej.escape.entity.base.BaseWithDelete;
 import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.entity.constants.Genre;
 import com.sej.escape.entity.constants.QuizType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,6 +16,7 @@ import java.util.stream.Collectors;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Theme extends BaseWithDelete {
@@ -58,26 +56,31 @@ public class Theme extends BaseWithDelete {
     @Column(columnDefinition = "int default 0", nullable = false)
     private Integer good;
 
-    @Access(value=AccessType.PROPERTY)
-    @Column(columnDefinition = "text")
     private String genre;
 
     public void setGenre(List<Genre> genres) {
         this.genre = mapEnumsToStr(genres);
     }
 
-    public List<Genre> getGenre() {
+    @Access(value=AccessType.PROPERTY)
+    @Column(columnDefinition = "text")
+    public String getGenre() { return this.genre; };
+
+    public List<Genre> getGenreByList() {
         return mapStrToEnums(this.genre, Genre::valueOf);
     }
 
-    @Access(value=AccessType.PROPERTY)
     private String quizType;
 
     public void setQuizType(List<QuizType> quizTypes) {
         this.quizType = mapEnumsToStr(quizTypes);
     }
 
-    public List<QuizType> getQuizType() {
+    @Column(columnDefinition = "text")
+    @Access(value=AccessType.PROPERTY)
+    public String getQuizType() { return this.quizType; };
+
+    public List<QuizType> getQuizTypeByList() {
         return mapStrToEnums(this.quizType, QuizType::valueOf);
     }
 

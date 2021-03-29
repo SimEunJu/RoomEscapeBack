@@ -4,7 +4,7 @@ import com.sej.escape.dto.CommentDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.ThemeComment;
-import com.sej.escape.repository.ThemeCommentRepository;
+import com.sej.escape.repository.comment.ThemeCommentRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -28,7 +28,7 @@ public class CommentService {
         메인페이지 최대 10개
         좋아요 + 최신순
         */
-        Sort sort = Sort.by(Sort.Direction.DESC, "like", "regDate");
+        Sort sort = Sort.by(Sort.Direction.DESC, "good", "regDate");
         Pageable pageable = pageReqDto.getPageable(sort);
 
         LocalDateTime aWeekAgo = LocalDateTime.now().minusWeeks(1);

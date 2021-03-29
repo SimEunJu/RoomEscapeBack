@@ -1,4 +1,4 @@
-package com.sej.escape.utils.geolocation;
+package com.sej.escape.utils;
 
 import lombok.AllArgsConstructor;
 

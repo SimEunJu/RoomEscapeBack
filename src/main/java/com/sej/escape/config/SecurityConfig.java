@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource(){
 
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
+        //config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
@@ -67,7 +67,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
 
-                .cors(Customizer.withDefaults())
+                .cors()
+                .and()
+                //.cors(Customizer.withDefaults())
 
                 .formLogin()
                 .and()

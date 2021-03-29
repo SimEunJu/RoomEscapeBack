@@ -11,7 +11,8 @@ public enum ListOrder {
     LATEST("최신순"),
     GOOD("좋아요순"),
     ZIM("찜순"),
-    CLOSEST("가까운순")
+    CLOSEST("가까운순"),
+    DEFAULT(null)
     ;
 
     private String title;
