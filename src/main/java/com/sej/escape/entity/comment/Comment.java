@@ -45,4 +45,8 @@ public class Comment extends BaseWithDelete {
     // 대댓글 순서
     @Column(columnDefinition = "int default 0", nullable = false)
     protected int seq;
+
+    // 부모 댓글
+    @Column(columnDefinition = "int default 0", nullable = false)
+    protected Long parId;
 }

@@ -1,6 +1,6 @@
 package com.sej.escape.service.comment;
 
-import com.sej.escape.dto.CommentDto;
+import com.sej.escape.dto.comment.CommentDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.repository.comment.ThemeCommentRepository;

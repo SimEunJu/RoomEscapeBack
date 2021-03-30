@@ -1,6 +1,6 @@
 package com.sej.escape.controller.comment;
 
-import com.sej.escape.dto.CommentDto;
+import com.sej.escape.dto.comment.CommentDto;
 import com.sej.escape.service.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

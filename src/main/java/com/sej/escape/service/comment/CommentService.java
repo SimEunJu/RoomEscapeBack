@@ -1,24 +1,14 @@
 package com.sej.escape.service.comment;
 
-import com.sej.escape.dto.CommentDto;
-import com.sej.escape.dto.page.PageReqDto;
+import com.sej.escape.dto.comment.CommentDto;
 import com.sej.escape.entity.comment.Comment;
-import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.comment.CommentRepository;
-import com.sej.escape.repository.comment.ThemeCommentRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

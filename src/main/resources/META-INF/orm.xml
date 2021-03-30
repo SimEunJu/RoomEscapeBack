@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="http://java.sun.com/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+        version="2.0">
+
+    <named-native-query name="Comment.findAllByPaging" result-class="com.sej.escape.entity.comment.StoreComment"> <!-- 도메인클래스명이 리턴 클래스이다. -->
+        <query>
+            <![CDATA[
+                select c
+                from comment c
+                where in (
+                    select id
+                    from comment ic
+                    where ic.referId = :referId
+                        and ic.depth = 0
+                    order by id desc
+                    )
+                order by parId desc, seq asc
+                limit :page, :size
+            ]]>
+        </query>
+    </named-native-query>
+
+</entity-mappings>

@@ -1,6 +1,6 @@
 package com.sej.escape.service.comment;
 
-import com.sej.escape.dto.CommentDto;
+import com.sej.escape.dto.comment.CommentDto;
 import com.sej.escape.entity.comment.Comment;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

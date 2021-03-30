@@ -1,4 +1,4 @@
-package com.sej.escape.dto;
+package com.sej.escape.dto.comment;
 
 import lombok.*;
 import org.apache.tomcat.jni.Local;

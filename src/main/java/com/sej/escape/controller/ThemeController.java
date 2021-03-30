@@ -1,6 +1,5 @@
 package com.sej.escape.controller;
 
-import com.sej.escape.dto.CommentDto;
 import com.sej.escape.dto.ThemeDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.service.ThemeService;
