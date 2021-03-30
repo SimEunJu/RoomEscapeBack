@@ -2,10 +2,8 @@ package com.sej.escape.entity.zim;
 
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.base.Base;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
@@ -21,14 +19,20 @@ public class Zim extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "zim_id")
-    private Long id;
+    protected Long id;
 
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    protected Member member;
 
     @Column(nullable = false)
-    private boolean isZim;
+    protected boolean isZim;
 
-    private Long referId;
+    protected Long referId;
+
+    public Zim(Member member, boolean isZim, Long referId){
+        this.member = member;
+        this.isZim = isZim;
+        this.referId = referId;
+    }
 }

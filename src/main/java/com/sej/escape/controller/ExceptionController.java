@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -48,6 +49,14 @@ public class ExceptionController {
     public ResponseEntity<ErrorRes> handleBadCredentialsException(BadCredentialsException e){
         log.error("BadCredentialsException", e);
         ErrorRes response = new ErrorRes(ErrorCode.AUTHENTICATION_FAIL);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    // authentication 없는데, 필요한 정보 요청했을 때
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    public ResponseEntity<ErrorRes> handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException e){
+        log.error("BadCredentialsException", e);
+        ErrorRes response = new ErrorRes(ErrorCode.AUTHENTICATION_REQUIRED);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 

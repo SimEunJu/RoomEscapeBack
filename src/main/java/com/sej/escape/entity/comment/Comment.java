@@ -2,16 +2,14 @@ package com.sej.escape.entity.comment;
 
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.base.BaseWithDelete;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -28,7 +26,7 @@ public class Comment extends BaseWithDelete {
     protected Member member;
 
     // TODO: 더 나은 방법이 없을까
-    // 보통 매핑 테이블 하나 더 두어서 관리 ex) 테이블1(comment-board), 테이블2(comment-theme) 등 
+    // 보통 매핑 테이블 하나 더 두어서 관리 ex) 테이블1(comment-board), 테이블2(comment-theme) 등
     protected Long referId;
 
     @Column(columnDefinition = "text")

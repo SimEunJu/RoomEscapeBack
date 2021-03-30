@@ -15,7 +15,8 @@ public enum ErrorCode {
     REQUEST_RESOURCE_NOT_EXIST(404, "C005", "Request Resource Is Not Exist"),
 
     ACCESS_DENIED(401, "C006", "Access is Denied"),
-    AUTHENTICATION_FAIL(401, "C007", "Authentication Fail");
+    AUTHENTICATION_FAIL(401, "C007", "Authentication Fail"),
+    AUTHENTICATION_REQUIRED(401, "C008", "Authentication Required");
 
     private int status;
     private String code;

@@ -13,7 +13,11 @@ public class CommentDto {
 
     private long id;
     private String content;
-    private int like;
+    private int depth;
+    private int seq;
+    private int good;
+    private int star;
     private LocalDateTime regDate;
     private LocalDateTime updateDate;
+    private LocalDateTime deleteDate;
 }

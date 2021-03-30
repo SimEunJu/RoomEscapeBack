@@ -8,8 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface StoreZimRepository
         extends JpaRepository<StoreZim, Long>, QuerydslPredicateExecutor<Zim> {
 
-    public StoreZim findByReferIdAndMember(long referId, Member member);
+    public Optional<StoreZim> findByReferIdAndMember(long referId, Member member);
 }

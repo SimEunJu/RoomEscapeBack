@@ -17,7 +17,7 @@ public class StoreZimController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Boolean> toggleZim(@PathVariable long id, boolean isZimSet){
-        boolean isZimSet = zimService.toggleStoreZim(id, isZimSet);
+        zimService.toggleStoreZim(id, isZimSet);
         return ResponseEntity.ok(isZimSet);
     }
 

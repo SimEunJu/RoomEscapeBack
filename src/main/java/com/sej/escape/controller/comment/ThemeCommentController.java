@@ -3,12 +3,9 @@ package com.sej.escape.controller.comment;
 import com.sej.escape.dto.CommentDto;
 import com.sej.escape.dto.ThemeDto;
 import com.sej.escape.dto.page.PageReqDto;
-import com.sej.escape.entity.comment.ThemeComment;
-import com.sej.escape.service.CommentService;
-import com.sej.escape.service.ThemeService;
-import lombok.Getter;
+import com.sej.escape.service.comment.CommentService;
+import com.sej.escape.service.comment.ThemeCommentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +22,7 @@ import java.util.Map;
 @RequestMapping("/api/comment/theme")
 public class ThemeCommentController {
 
-    private final CommentService commentService;
+    private final ThemeCommentService themeCommentService;
 
     @GetMapping
     public ResponseEntity<List<ThemeDto>> getComments(){
@@ -39,10 +36,10 @@ public class ThemeCommentController {
         PageReqDto pageReqDto = new PageReqDto();
         switch (type){
             case "latest":
-                commentDtos = commentService.readLatestComments(pageReqDto);
+                commentDtos = themeCommentService.readLatestComments(pageReqDto);
                 break;
             case "top":
-                commentDtos = commentService.readTopComments(pageReqDto);
+                commentDtos = themeCommentService.readTopComments(pageReqDto);
                 break;
             default:
                 commentDtos = new ArrayList<>();
