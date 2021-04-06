@@ -1,20 +1,70 @@
 package com.sej.escape.entity.comment;
 
+import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Theme;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.sej.escape.entity.base.BaseWithDelete;
+import lombok.*;
 
 import javax.annotation.processing.Generated;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
+import javax.jdo.annotations.Join;
+import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@DiscriminatorValue("T")
-public class ThemeComment extends Comment {
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ThemeComment extends BaseWithDelete {
 
-    @Transient
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name="theme_id", nullable = false)
     private Theme theme;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @Column(columnDefinition = "int(2) default 0", nullable = false)
+    private int good;
+
+    @Column(nullable = false)
+    private LocalDateTime visitDate;
+
+    @Column(columnDefinition = "int(2) default 0", nullable = false)
+    private int visitorNum;
+
+    @Column(nullable = false)
+    private boolean isEscape;
+
+    @Column(columnDefinition = "int(2) default 0", nullable = false)
+    private int diffculty;
+
+    @Column(nullable = false)
+    private boolean isSecret;
+
+    @Column(columnDefinition = "text")
+    private String review;
+
+    @Column(columnDefinition = "int(2) default 0")
+    private Integer flowerRoad;
+
+    @Column(columnDefinition = "int(2) default 0")
+    private Integer quizType;
+
+    @Column(columnDefinition = "int(2) default 0")
+    private Integer hints;
+
+    private Integer takenTime;
+
+    private boolean isHorror;
+
+    private boolean isActive;
+
 }

@@ -13,10 +13,10 @@ import java.util.stream.Stream;
 @Getter
 public class AreaSectionComponent {
 
-    public final List<AreaSectionValue> areaSections;
+    public final List<AreaSectionValue> areaSectionTree;
 
     public AreaSectionComponent(){
-        this.areaSections = getAreaSections();
+        this.areaSectionTree = getAreaSections();
     }
 
     private List<AreaSectionValue> getAreaSections(){
@@ -30,6 +30,22 @@ public class AreaSectionComponent {
                 .collect(Collectors.toList());
     }
 
+    public List<String> getTitleFromAreaCode(double areaCode, List<String> areas){
+
+        for (AreaSectionValue item : areaSectionTree) {
+            AreaSection areaSection = AreaSection.valueOf(item.getName());
+            AreaSection.AreaCode itemAreaCode = areaSection.getAreaCodeByPostcode();
+            double lower = itemAreaCode.getLower();
+            double upper = itemAreaCode.getUpper();
+            if(areaCode >= lower && areaCode <= upper){
+                areas.add(item.getName());
+                return getTitleFromAreaCode(areaCode, areas);
+            }
+        }
+        return areas;
+    }
+
+    // TODO: title은 AreaSection.valueOf(name)으로 가져올 수 있으므로 없어도 되지 않을까
     @Getter
     @AllArgsConstructor
     public class AreaSectionValue{

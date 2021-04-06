@@ -11,6 +11,6 @@ import lombok.ToString;
 @NoArgsConstructor
 public class CommentReqDto  extends PageReqDto {
 
-    private long referId;
+    private long id;
 
 }

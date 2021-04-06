@@ -14,11 +14,13 @@ import lombok.ToString;
 @ToString
 public class StorePageReqDto extends PageReqDto {
 
+    // TODO: enum으로 관리
     private String type;
+    private String searchKeyword;
 
     private ListOrder order = ListOrder.DEFAULT;
 
-    private AreaSection[] selectedAreaSection;
+    private AreaSection[] areaSection;
 
     private double latitude;
     private double longitude;

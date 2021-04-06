@@ -2,11 +2,10 @@ package com.sej.escape.entity;
 
 import com.sej.escape.entity.base.BaseWithDelete;
 import com.sej.escape.entity.comment.BoardComment;
-import com.sej.escape.entity.comment.Comment;
+import com.sej.escape.entity.file.File;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

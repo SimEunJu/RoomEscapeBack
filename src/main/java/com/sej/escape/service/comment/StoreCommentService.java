@@ -20,7 +20,7 @@ public class StoreCommentService {
 
     public List<CommentDto> getCommentList(CommentReqDto commentReqDto) {
         List<StoreComment>  comments = commentRepository.findAllByPaging(
-                commentReqDto.getStoreId(),
+                commentReqDto.getId(),
                 commentReqDto.getPage(),
                 commentReqDto.getSize()
         );

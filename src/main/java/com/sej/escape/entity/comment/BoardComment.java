@@ -11,7 +11,4 @@ import javax.persistence.Transient;
 @DiscriminatorValue("B")
 public class BoardComment extends Comment {
 
-    @Transient
-    private Board board;
-
 }

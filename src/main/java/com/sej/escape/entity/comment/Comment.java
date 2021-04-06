@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="rtype")
+@DiscriminatorColumn(name="ctype")
 public class Comment extends BaseWithDelete {
 
     @Id
@@ -25,8 +25,6 @@ public class Comment extends BaseWithDelete {
     @JoinColumn(name = "member_id", nullable = false)
     protected Member member;
 
-    // TODO: 더 나은 방법이 없을까
-    // 보통 매핑 테이블 하나 더 두어서 관리 ex) 테이블1(comment-board), 테이블2(comment-theme) 등
     protected Long referId;
 
     @Column(columnDefinition = "text")

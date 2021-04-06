@@ -51,6 +51,4 @@ public class Store extends BaseWithDelete {
     @Column(columnDefinition = "int default 0", nullable = false)
     private Integer zim;
 
-    @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer good;
 }
