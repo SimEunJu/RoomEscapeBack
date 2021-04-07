@@ -1,13 +1,16 @@
 package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.CommentDto;
+import com.sej.escape.dto.comment.CommentReqDto;
 import com.sej.escape.entity.comment.Comment;
+import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.comment.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +19,15 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+
+    public List<CommentDto> getCommentList(CommentReqDto commentReqDto) {
+        List<Comment> comments = commentRepository.findAllByPaging(
+                commentReqDto.getId(),
+                commentReqDto.getPage(),
+                commentReqDto.getSize()
+        );
+        return commentMapper.mapEntitesToDtos(comments);
+    }
 
     public void reportComment(long id){
         Comment comment = getCommentByIdIfExist(id);

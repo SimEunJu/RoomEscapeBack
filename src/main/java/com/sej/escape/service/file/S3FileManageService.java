@@ -23,8 +23,7 @@ public class S3FileManageService implements FileManageService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
-    //@Value("${cloud.aws.s3.region}")
-    // private String region;
+;
     private TransferManager transferManager;
 
     public S3FileManageService(@Value("${cloud.aws.s3.region}") String region){

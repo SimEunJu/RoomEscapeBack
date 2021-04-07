@@ -15,7 +15,7 @@ public class CommentMapper {
 
     private final ModelMapper modelMapper;
 
-    public <T extends Comment> List<CommentDto> mapEntitesToDtos(List<T> entities){
+    public <T> List<CommentDto> mapEntitesToDtos(List<T> entities){
         return entities.stream()
                 .map(comment -> modelMapper.map(comment, CommentDto.class))
                 .collect(Collectors.toList());

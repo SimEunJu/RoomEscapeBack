@@ -28,6 +28,6 @@ https://medium.com/%EC%98%A4%EB%8A%98%EC%9D%98%EC%8B%9D%EB%8B%B9/jpa%EC%99%80-my
 https://purumae.tistory.com/198
 
 https://www.baeldung.com/lombok-builder-inheritance
-
-
+https://www.baeldung.com/spring-data-jpa-query
+https://attacomsian.com/blog/spring-data-jpa-named-queries
 

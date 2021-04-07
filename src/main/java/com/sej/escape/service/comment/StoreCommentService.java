@@ -18,12 +18,5 @@ public class StoreCommentService {
     private final StoreCommentRepository stotreCommentRepository;
     private final CommentMapper commentMapper;
 
-    public List<CommentDto> getCommentList(CommentReqDto commentReqDto) {
-        List<StoreComment>  comments = commentRepository.findAllByPaging(
-                commentReqDto.getId(),
-                commentReqDto.getPage(),
-                commentReqDto.getSize()
-        );
-        return commentMapper.mapEntitesToDtos(comments);
-    }
+
 }
