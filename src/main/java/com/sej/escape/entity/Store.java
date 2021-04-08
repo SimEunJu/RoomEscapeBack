@@ -48,7 +48,4 @@ public class Store extends BaseWithDelete {
     @Column(length = 100)
     private String phoneNumber;
 
-    @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer zim;
-
 }

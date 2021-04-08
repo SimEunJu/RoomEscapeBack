@@ -22,5 +22,13 @@
             ]]>
         </query>
     </named-native-query>
-
+    
+    <sql-result-set-mapping name="storeWithResultMap">
+        <entity-result entity-class="com.sej.escape.entity.Store" />
+        <column-result name="root_path"/>
+        <column-result name="sub_path"/>
+        <column-result name="star_avg"/>
+        <column-result name="zim_cnt"/>
+    </sql-result-set-mapping>
+    
 </entity-mappings>

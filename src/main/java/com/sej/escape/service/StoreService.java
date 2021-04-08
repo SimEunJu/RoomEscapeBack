@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,7 +74,7 @@ public class StoreService {
 
         String searchKeyword = storePageReqDto.getSearchKeyword();
         if(!Strings.isNullOrEmpty(searchKeyword)){
-            queryWhere += " AND store.store_name = '"+searchKeyword+"'";
+            queryWhere += " AND store.store_name LIKE '%"+searchKeyword+"%'";
         }
 
         AreaSection[] areaSections = storePageReqDto.getAreaSection();
@@ -114,14 +115,14 @@ public class StoreService {
         }
 
         String queryStr =
-                "SELECT store.*, file.*, " +
-                "(SELECT AVG(star) FROM comment WHERE ctype='S' AND refer_id = store.store_id) as star_avg " +
-                "(SELECT COUNT(id) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as zim_cnt" +
+                "SELECT store.*, file.root_path, file.sub_path,  " +
+                "(SELECT IFNULL(AVG(star), 0) FROM comment WHERE ctype='S' AND refer_id = store.store_id) as star_avg, " +
+                "(SELECT COUNT(*) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as zim_cnt " +
                 "FROM store LEFT OUTER JOIN file ON file.ftype = 'S' AND file.refer_id = store.store_id " +
                 "WHERE store.is_deleted = 0"+queryWhere+" " +
                 "ORDER BY"+queryOrder;
 
-        List<Object[]> results = em.createNativeQuery(queryStr)
+        List<Object[]> results = em.createNativeQuery(queryStr, "storeWithResultMap")
                 .setFirstResult(storePageReqDto.getPage())
                 .setMaxResults(storePageReqDto.getSize())
                 .getResultList();
@@ -129,14 +130,16 @@ public class StoreService {
         List<StoreDto> storeDtos = new ArrayList<>();
         for(Object[] row : results){
             Store store = (Store) row[0];
-            StoreFile storeFile = (StoreFile) row[1];
-            double starAvg = (double) row[2];
-            int zimCnt = (int) row[3];
+            String fileRootPath = (String) row[1];
+            String fileSubPath = (String) row[2];
+
+            double goodAvg = (double) row[3];
+            long zimCnt = ((BigInteger) row[4]).longValue();
 
             StoreDto storeDto = modelMapper.map(store, StoreDto.class);
-            storeDto.setStar(starAvg);
+            storeDto.setGood(goodAvg);
             storeDto.setZim(zimCnt);
-            storeDto.setImgUrl(storeFile.getFileUrl());
+            storeDto.setImgUrl(fileRootPath+"/"+fileSubPath);
             storeDtos.add(storeDto);
         }
         return storeDtos;

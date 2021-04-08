@@ -30,4 +30,8 @@ https://purumae.tistory.com/198
 https://www.baeldung.com/lombok-builder-inheritance
 https://www.baeldung.com/spring-data-jpa-query
 https://attacomsian.com/blog/spring-data-jpa-named-queries
+https://data-make.tistory.com/616
+https://jojoldu.tistory.com/165
+https://jojoldu.tistory.com/457
+
 

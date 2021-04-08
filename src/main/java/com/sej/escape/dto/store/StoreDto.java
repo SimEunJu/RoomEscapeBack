@@ -17,6 +17,6 @@ public class StoreDto {
     private String link;
     private String phoneNumber;
     private long zim;
-    private double star;
+    private double good;
     private String imgUrl;
 }
