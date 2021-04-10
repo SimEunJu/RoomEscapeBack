@@ -25,8 +25,8 @@ public class CommentController {
     private final StoreCommentService storeCommentService;
     private final BoardCommentService boardCommentService;
 
-    @PostMapping
-    public ResponseEntity<CommentResDto> addComment(CommentReqDto commentReqDto){
+    @PostMapping("/new")
+    public ResponseEntity<CommentResDto> addComment(@RequestBody CommentReqDto commentReqDto){
         String type = commentReqDto.getAncestor().getType();
         ToLongFunction<CommentReqDto> addFunc = null;
 

@@ -1,5 +1,6 @@
 package com.sej.escape.entity.comment;
 
+import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,13 +12,15 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 @DiscriminatorValue("S")
 public class StoreComment extends Comment {
 
-    @Column(columnDefinition = "double default 0")
-    private double star;
+    @Builder(builderMethodName = "storeCommentBuilder")
+    public StoreComment(Long id, Member member, Long referId, String content,
+                        Integer good, Integer report, Double star, int depth,
+                        int seq, Long parId) {
+        super(id, member, referId, content, good, report, star, depth, seq, parId);
+    }
 
 }

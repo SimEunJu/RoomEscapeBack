@@ -1,13 +1,11 @@
 package com.sej.escape.dto.comment;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class Ancestor {
 
     private String type;

@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.*;
 
 @Entity
-@SuperBuilder
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,4 +51,5 @@ public class Comment extends BaseWithDelete {
     // 부모 댓글
     @Column(columnDefinition = "int default 0", nullable = false)
     protected Long parId;
+
 }

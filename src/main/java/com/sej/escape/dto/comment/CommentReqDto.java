@@ -1,15 +1,14 @@
 package com.sej.escape.dto.comment;
 
 import com.sej.escape.dto.page.PageReqDto;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
-public class CommentReqDto  extends PageReqDto {
+@AllArgsConstructor
+public class CommentReqDto extends PageReqDto {
 
     private String content;
     private double starRate;
