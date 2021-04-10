@@ -21,6 +21,7 @@ public class ThemeComment extends BaseWithDelete {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "theme_comment_id")
     private Long id;
 
     @ManyToOne

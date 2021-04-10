@@ -3,11 +3,12 @@ package com.sej.escape.entity.comment;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.base.BaseWithDelete;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
 @Entity
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -35,6 +36,9 @@ public class Comment extends BaseWithDelete {
 
     @Column(columnDefinition = "int default 0", nullable = false)
     protected Integer report;
+
+    @Column(columnDefinition = "double default 0.0", nullable = false)
+    protected Double star;
 
     // 대댓글 깊이
     @Column(columnDefinition = "int default 0", nullable = false)

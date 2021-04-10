@@ -5,6 +5,7 @@ import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.entity.comment.ThemeComment;
 import org.hibernate.annotations.NamedNativeQuery;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
@@ -16,5 +17,9 @@ public interface CommentRepository
 
     @Query(nativeQuery = true)
     List<Comment> findAllByPaging(@Param("referId") long storeId, @Param("page") int page, @Param("size") int size);
+
+    @Modifying
+    @Query("update Comment c set c.seq = c.seq+1 where c.parId = :parId and c.seq > :parSeq")
+    long updateBelowCommentSeq(@Param("parId") long parId, @Param("parSeq") int parSeq);
 
 }

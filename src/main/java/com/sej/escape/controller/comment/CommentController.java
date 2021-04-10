@@ -1,13 +1,20 @@
 package com.sej.escape.controller.comment;
 
 import com.sej.escape.dto.comment.CommentDto;
+import com.sej.escape.dto.comment.CommentReqDto;
+import com.sej.escape.dto.comment.CommentResDto;
+import com.sej.escape.entity.comment.BoardComment;
+import com.sej.escape.entity.comment.Comment;
+import com.sej.escape.error.ErrorRes;
+import com.sej.escape.service.comment.BoardCommentService;
 import com.sej.escape.service.comment.CommentService;
+import com.sej.escape.service.comment.StoreCommentService;
+import com.sun.mail.iap.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.function.ToLongFunction;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,6 +22,38 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
 
     private final CommentService commentService;
+    private final StoreCommentService storeCommentService;
+    private final BoardCommentService boardCommentService;
+
+    @PostMapping
+    public ResponseEntity<CommentResDto> addComment(CommentReqDto commentReqDto){
+        String type = commentReqDto.getAncestor().getType();
+        ToLongFunction<CommentReqDto> addFunc = null;
+
+        switch (type){
+            case "store":
+                addFunc = (CommentReqDto reqDto) -> storeCommentService.addComment(reqDto);
+                break;
+            case "board":
+                addFunc = (CommentReqDto reqDto) -> boardCommentService.addComment(reqDto);
+        }
+
+        long id = commentService.addComment(commentReqDto, addFunc);
+
+        CommentResDto commentResDto = getResDto("add", id, commentReqDto, null);
+
+        return ResponseEntity.ok(commentResDto);
+    }
+
+    private CommentResDto getResDto(String type, long id, CommentReqDto reqDto, ErrorRes err){
+        return CommentResDto.builder()
+                .type(type)
+                .id(id)
+                .randId(reqDto.getRandId())
+                .hasError(err != null)
+                .error(err)
+                .build();
+    }
 
     @PatchMapping("/report/{id}")
     public void reportComment(@PathVariable long id){

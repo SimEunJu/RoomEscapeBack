@@ -11,6 +11,11 @@ import lombok.ToString;
 @NoArgsConstructor
 public class CommentReqDto  extends PageReqDto {
 
+    private String content;
+    private double starRate;
     private long id;
+    private long randId;
+    private CommentDto parComment;
+    private Ancestor ancestor;
 
 }

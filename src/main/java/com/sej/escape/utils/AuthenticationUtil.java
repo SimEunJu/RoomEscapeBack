@@ -21,4 +21,12 @@ public class AuthenticationUtil {
         MemberDto memberDto = (MemberDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return memberDto;
     }
+
+    public Member getAuthUserEntity(){
+        MemberDto memberDto = getAuthUser();
+        return Member.builder()
+                .id(memberDto.getId())
+                .email(memberDto.getEmail())
+                .build();
+    }
 }

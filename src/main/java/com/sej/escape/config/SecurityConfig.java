@@ -1,6 +1,7 @@
 package com.sej.escape.config;
 
 import com.sej.escape.config.oauth2.GoogleRegistration;
+import com.sej.escape.service.OauthService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,8 @@ import java.util.Map;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @NonNull
-    GoogleRegistration googleRegistration;
+    private final GoogleRegistration googleRegistration;
+    private final OauthService oauthService;
 
     @Value("${front.url.base}")
     private String FRONT_BASE_URL;
@@ -69,12 +71,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .cors()
                 .and()
-                //.cors(Customizer.withDefaults())
 
-                .formLogin()
-                .and()
+                //.formLogin()
+                //.and()
 
                 .oauth2Login()
+                    .userInfoEndpoint()
+                        .userService(oauthService)
+                        .and()
                     .authorizationEndpoint()
                         .baseUri("/auth/oauth2")
                         .and()

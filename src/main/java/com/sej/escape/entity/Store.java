@@ -46,6 +46,6 @@ public class Store extends BaseWithDelete {
     private String link;
 
     @Column(length = 100)
-    private String phoneNumber;
+    private String tel;
 
 }

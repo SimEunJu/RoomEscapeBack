@@ -19,7 +19,7 @@ public interface ThemeRepository
 
     // TODO: 인기글은 나중에 통계처리
     // THINK: select에서 count 버리고 t만 가져올 수 있을까
-    @Query("select t, count(t.comments) as reviewCnt from Theme t where t.isDeleted = false group by t.id")
+    @Query("select t, t.comments.size as reviewCnt from Theme t where t.isDeleted = false group by t.id")
     Page<Theme> findTopThemes(Pageable pageable);
 
 }

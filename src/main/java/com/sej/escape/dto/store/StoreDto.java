@@ -15,7 +15,7 @@ public class StoreDto {
     private List<String> area;
     private String name;
     private String link;
-    private String phoneNumber;
+    private String tel;
     private long zim;
     private double good;
     private String imgUrl;

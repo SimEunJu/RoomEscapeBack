@@ -31,8 +31,7 @@ public class Theme extends BaseWithDelete {
     private Store store;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
+    @OneToMany(mappedBy = "theme")
     private List<ThemeComment> comments = new ArrayList<>();
 
     @Column(length = 2000)
@@ -49,12 +48,6 @@ public class Theme extends BaseWithDelete {
 
     @Column(columnDefinition = "tinyint unsigned")
     private Integer difficulty;
-
-    @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer star;
-
-    @Column(columnDefinition = "int default 0", nullable = false)
-    private Integer good;
 
     private String genre;
 

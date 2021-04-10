@@ -2,16 +2,20 @@ package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.CommentDto;
 import com.sej.escape.dto.comment.CommentReqDto;
+import com.sej.escape.entity.comment.BoardComment;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.comment.CommentRepository;
+import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.ToLongFunction;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +23,19 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+
+    private long updateBelowCommentSeq(long parCommentId, int parCommentSeq){
+        return commentRepository.updateBelowCommentSeq(parCommentId, parCommentSeq);
+    }
+
+    public long addComment(CommentReqDto commentReqDto, ToLongFunction<CommentReqDto> addFunc){
+        CommentDto parComment = commentReqDto.getParComment();
+        boolean hasParComment = parComment != null;
+        if(hasParComment){
+            commentRepository.updateBelowCommentSeq(parComment.getId(), parComment.getSeq());
+        }
+        return addFunc.applyAsLong(commentReqDto);
+    }
 
     public List<CommentDto> getCommentList(CommentReqDto commentReqDto) {
         List<Comment> comments = commentRepository.findAllByPaging(
