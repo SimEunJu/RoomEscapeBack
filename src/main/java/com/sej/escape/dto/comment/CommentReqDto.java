@@ -3,7 +3,7 @@ package com.sej.escape.dto.comment;
 import com.sej.escape.dto.page.PageReqDto;
 import lombok.*;
 
-@Builder
+@Builder(builderMethodName = "commentReqDtoBuilder")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -25,6 +25,8 @@ public class CommentController {
     private final StoreCommentService storeCommentService;
     private final BoardCommentService boardCommentService;
 
+    private final long EMPTY_RAND_ID = 0;
+
     @PostMapping("/new")
     public ResponseEntity<CommentResDto> addComment(@RequestBody CommentReqDto commentReqDto){
         String type = commentReqDto.getAncestor().getType();
@@ -40,29 +42,32 @@ public class CommentController {
 
         long id = commentService.addComment(commentReqDto, addFunc);
 
-        CommentResDto commentResDto = getResDto("add", id, commentReqDto, null);
+        CommentResDto commentResDto = getResDto("add", id, commentReqDto.getRandId());
 
         return ResponseEntity.ok(commentResDto);
     }
 
-    private CommentResDto getResDto(String type, long id, CommentReqDto reqDto, ErrorRes err){
+    private CommentResDto getResDto(String type, long id, long randId){
         return CommentResDto.builder()
                 .type(type)
                 .id(id)
-                .randId(reqDto.getRandId())
-                .hasError(err != null)
-                .error(err)
+                .randId(randId)
+                .hasError(false)
                 .build();
     }
 
     @PatchMapping("/report/{id}")
-    public void reportComment(@PathVariable long id){
-        commentService.reportComment(id);
+    public ResponseEntity<CommentResDto> reportComment(@PathVariable long id){
+        long reportId = commentService.reportComment(id);
+        CommentResDto resDto = getResDto("report", reportId, EMPTY_RAND_ID);
+        return ResponseEntity.ok(resDto);
     }
 
     @PatchMapping("/delete/{id}")
-    public void deleteComment(@PathVariable long id){
-        commentService.deleteComment(id);
+    public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id){
+        long deleteId = commentService.deleteComment(id);
+        CommentResDto resDto = getResDto("delete", deleteId, EMPTY_RAND_ID);
+        return ResponseEntity.ok(resDto);
     }
 
     @PatchMapping("/update/{id}")
@@ -72,8 +77,10 @@ public class CommentController {
     }
 
     @PatchMapping("/like/{id}")
-    public void toggleLikeComment(@PathVariable long id, boolean isGood){
-        commentService.toggleLikeComment(id, isGood);
+    public ResponseEntity<CommentResDto> toggleLikeComment(@PathVariable long id, boolean isGood){
+        long likeId = commentService.toggleLikeComment(id, isGood);
+        CommentResDto resDto = getResDto("toggle", likeId, EMPTY_RAND_ID);
+        return ResponseEntity.ok(resDto);
     }
 
 

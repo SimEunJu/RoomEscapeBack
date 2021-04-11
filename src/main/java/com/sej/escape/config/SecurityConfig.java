@@ -1,14 +1,12 @@
 package com.sej.escape.config;
 
 import com.sej.escape.config.oauth2.GoogleRegistration;
-import com.sej.escape.service.OauthService;
-import lombok.NonNull;
+import com.sej.escape.service.OAuth2Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,10 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.management.MXBean;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,12 +28,21 @@ import java.util.Map;
 @Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @NonNull
     private final GoogleRegistration googleRegistration;
-    private final OauthService oauthService;
+    private final OAuth2Service oAuth2Service;
 
     @Value("${front.url.base}")
     private String FRONT_BASE_URL;
+
+    @Bean
+    public ExceptionMappingAuthenticationFailureHandler exceptionMappingAuthenticationFailureHandler(){
+        ExceptionMappingAuthenticationFailureHandler handler = new ExceptionMappingAuthenticationFailureHandler();
+        Map<String, String> failureUrlMap = new HashMap<>();
+        failureUrlMap.put("OAuth2SignUpAttemptException", FRONT_BASE_URL+"/signin");
+        handler.setExceptionMappings(failureUrlMap);
+        handler.setDefaultFailureUrl(FRONT_BASE_URL);
+        return handler;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -72,12 +81,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
 
-                //.formLogin()
-                //.and()
+                .formLogin()
+                .and()
 
                 .oauth2Login()
                     .userInfoEndpoint()
-                        .userService(oauthService)
+                        .userService(oAuth2Service)
                         .and()
                     .authorizationEndpoint()
                         .baseUri("/auth/oauth2")
@@ -87,7 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .baseUri("/auth/oauth2/code/*")
                         .and()
                     .defaultSuccessUrl(FRONT_BASE_URL)
-                    .failureUrl(FRONT_BASE_URL)
+                    .failureHandler(exceptionMappingAuthenticationFailureHandler())
                 .and()
 
                 .logout();

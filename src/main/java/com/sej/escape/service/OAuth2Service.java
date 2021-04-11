@@ -2,6 +2,7 @@ package com.sej.escape.service;
 
 import com.sej.escape.dto.MemberDto;
 import com.sej.escape.entity.Member;
+import com.sej.escape.error.exception.security.OAuth2SignUpAttemptException;
 import com.sej.escape.repository.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class OauthService extends DefaultOAuth2UserService {
+public class OAuth2Service extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
 
@@ -41,7 +42,7 @@ public class OauthService extends DefaultOAuth2UserService {
         Optional<Member> memberOpt = memberRepository.findMemberByEmail(email);
 
         if(memberOpt.isEmpty()) {
-            throw new UsernameNotFoundException(email+": 가입되지 않았습니다.");
+            throw new OAuth2SignUpAttemptException(email);
         }
 
         Member member = memberOpt.get();

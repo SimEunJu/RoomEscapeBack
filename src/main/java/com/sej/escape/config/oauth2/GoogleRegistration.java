@@ -12,11 +12,14 @@ public class GoogleRegistration {
     private String ID;
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     private String SECRET;
+    @Value("${spring.security.oauth2.client.registration.google.scope}")
+    private String[] scopes;
 
     public ClientRegistration getGoogleRegistration(){
         return CommonOAuth2Provider.GOOGLE.getBuilder("google")
                 .clientId(ID)
                 .clientSecret(SECRET)
+                .scope(scopes)
                 .redirectUriTemplate("{baseUrl}/auth/oauth2/code/{registrationId}")
                 .build();
     }

@@ -46,17 +46,19 @@ public class CommentService {
         return commentMapper.mapEntitesToDtos(comments);
     }
 
-    public void reportComment(long id){
+    public long reportComment(long id){
         Comment comment = getCommentByIdIfExist(id);
         comment.setReport(comment.getReport() + 1);
         commentRepository.save(comment);
+        return comment.getId();
     }
 
-    public void deleteComment(long id){
+    public long deleteComment(long id){
         Comment comment = getCommentByIdIfExist(id);
         comment.setDeleted(true);
         comment.setDeleteDate(LocalDateTime.now());
         commentRepository.save(comment);
+        return comment.getId();
     }
 
     public CommentDto updateComment(long id, CommentDto commentDto){
@@ -67,11 +69,12 @@ public class CommentService {
         return commentMapper.mapEntityToDto(commentUpdated);
     }
 
-    public void toggleLikeComment(long id, boolean isLikeSet){
+    public long toggleLikeComment(long id, boolean isLikeSet){
         Comment comment = getCommentByIdIfExist(id);
         int diff = isLikeSet ? 1 : -1;
         comment.setGood(comment.getGood() + diff);
         commentRepository.save(comment);
+        return comment.getId();
     }
 
     private Comment getCommentByIdIfExist(long id){
