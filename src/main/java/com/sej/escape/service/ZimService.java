@@ -1,15 +1,11 @@
 package com.sej.escape.service;
 
-import com.sej.escape.dto.MemberDto;
+import com.sej.escape.dto.member.MemberDto;
 import com.sej.escape.entity.Member;
-import com.sej.escape.entity.Store;
 import com.sej.escape.entity.zim.StoreZim;
-import com.sej.escape.entity.zim.Zim;
 import com.sej.escape.repository.zim.StoreZimRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
-import org.geolatte.geom.M;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

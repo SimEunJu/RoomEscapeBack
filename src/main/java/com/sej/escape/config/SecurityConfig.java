@@ -1,7 +1,7 @@
 package com.sej.escape.config;
 
 import com.sej.escape.config.oauth2.GoogleRegistration;
-import com.sej.escape.service.OAuth2Service;
+import com.sej.escape.service.security.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,12 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.management.MXBean;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,10 +29,11 @@ import java.util.Map;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final GoogleRegistration googleRegistration;
-    private final OAuth2Service oAuth2Service;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Value("${front.url.base}")
     private String FRONT_BASE_URL;
+
 
     @Bean
     public ExceptionMappingAuthenticationFailureHandler exceptionMappingAuthenticationFailureHandler(){
@@ -42,11 +43,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         handler.setExceptionMappings(failureUrlMap);
         handler.setDefaultFailureUrl(FRONT_BASE_URL);
         return handler;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -86,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .oauth2Login()
                     .userInfoEndpoint()
-                        .userService(oAuth2Service)
+                        .userService(customOAuth2UserService)
                         .and()
                     .authorizationEndpoint()
                         .baseUri("/auth/oauth2")

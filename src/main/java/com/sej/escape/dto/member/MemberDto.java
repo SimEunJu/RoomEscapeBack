@@ -1,5 +1,6 @@
-package com.sej.escape.dto;
+package com.sej.escape.dto.member;
 
+import com.sej.escape.entity.constants.MemberRole;
 import com.sej.escape.entity.constants.SocialLogin;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter

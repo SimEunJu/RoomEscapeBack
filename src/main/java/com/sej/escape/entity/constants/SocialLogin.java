@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum SocialLogin {
 
-    GOOGLE("Google");
+    GOOGLE;
 
-    private String social;
 }

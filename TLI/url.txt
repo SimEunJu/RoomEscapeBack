@@ -34,4 +34,8 @@ https://data-make.tistory.com/616
 https://jojoldu.tistory.com/165
 https://jojoldu.tistory.com/457
 
+https://www.baeldung.com/spring-bean-annotations
+https://www.tutorialspoint.com/difference-between-bean-and-component-annotation-in-spring
+
+
 

@@ -32,7 +32,7 @@ public class CommentMapper {
         return modelMapper.map(entity, CommentDto.class);
     }
 
-    private  <T extends Comment> T mapReqDtoToComment(Class<T> entityCls, CommentReqDto commentReqDto)  {
+    private <T extends Comment> T mapReqDtoToComment(Class<T> entityCls, CommentReqDto commentReqDto)  {
 
         CommentDto parComment = commentReqDto.getParComment();
         boolean hasParComment = parComment != null;

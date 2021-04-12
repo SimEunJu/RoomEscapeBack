@@ -1,12 +1,11 @@
 package com.sej.escape.utils;
 
-import com.sej.escape.dto.MemberDto;
+import com.sej.escape.dto.member.MemberDto;
 import com.sej.escape.entity.Member;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Component
 public class AuthenticationUtil {

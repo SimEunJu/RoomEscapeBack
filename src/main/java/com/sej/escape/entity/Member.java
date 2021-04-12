@@ -33,7 +33,7 @@ public class Member extends Base {
     private SocialLogin socialLogin;
 
     @Builder.Default
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<MemberRole> roles = new HashSet<>();
 
