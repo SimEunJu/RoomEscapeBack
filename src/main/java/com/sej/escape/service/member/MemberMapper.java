@@ -3,6 +3,7 @@ package com.sej.escape.service.member;
 import com.sej.escape.dto.member.MemberDto;
 import com.sej.escape.entity.Member;
 import lombok.RequiredArgsConstructor;
+import org.dom4j.rule.Mode;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -29,5 +30,9 @@ public class MemberMapper {
         memberDto.setNickname(member.getNickname());
 
         return memberDto;
+    }
+
+    public Member mapDtoToEntityForRef(long id){
+        return Member.builder().id(id).build();
     }
 }

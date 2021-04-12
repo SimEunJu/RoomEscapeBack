@@ -1,4 +1,4 @@
-package com.sej.escape.config.oauth2;
+package com.sej.escape.config.security.oauth2;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;

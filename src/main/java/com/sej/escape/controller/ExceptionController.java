@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -55,14 +56,22 @@ public class ExceptionController {
     // authentication 없는데, 필요한 정보 요청했을 때
     @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
     public ResponseEntity<ErrorRes> handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException e){
-        log.error("BadCredentialsException", e);
+        log.error("AuthenticationCredentialsNotFoundException", e);
+        ErrorRes response = new ErrorRes(ErrorCode.AUTHENTICATION_REQUIRED);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    // 권한 없을 때
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorRes> handleAccessDeniedException(AccessDeniedException e){
+        log.error("AccessDeniedException", e);
         ErrorRes response = new ErrorRes(ErrorCode.AUTHENTICATION_REQUIRED);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(NoSuchResourceException.class)
     public ResponseEntity<ErrorRes> handleNoSuchResourceException(NoSuchResourceException e){
-        log.error("BadCredentialsException", e);
+        log.error("NoSuchResourceException", e);
         ErrorRes response = new ErrorRes(ErrorCode.REQUEST_RESOURCE_NOT_EXIST);
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }

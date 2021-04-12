@@ -1,20 +1,19 @@
 package com.sej.escape.config;
 
-import com.sej.escape.config.oauth2.GoogleRegistration;
+import com.sej.escape.config.security.oauth2.GoogleRegistration;
 import com.sej.escape.service.security.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -24,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 @Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -33,7 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${front.url.base}")
     private String FRONT_BASE_URL;
-
 
     @Bean
     public ExceptionMappingAuthenticationFailureHandler exceptionMappingAuthenticationFailureHandler(){
@@ -49,8 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource(){
 
         CorsConfiguration config = new CorsConfiguration();
-        //config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin(FRONT_BASE_URL);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
@@ -80,6 +79,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .and()
 
+                .sessionManagement()
+                .and()
+
                 .oauth2Login()
                     .userInfoEndpoint()
                         .userService(customOAuth2UserService)
@@ -95,7 +97,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .failureHandler(exceptionMappingAuthenticationFailureHandler())
                 .and()
 
-                .logout();
+                .logout()
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+        ;
     }
 
     @Bean

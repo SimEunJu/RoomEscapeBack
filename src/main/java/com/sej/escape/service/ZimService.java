@@ -4,6 +4,7 @@ import com.sej.escape.dto.member.MemberDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.zim.StoreZim;
 import com.sej.escape.repository.zim.StoreZimRepository;
+import com.sej.escape.service.member.MemberMapper;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,22 +19,31 @@ public class ZimService {
 
     private final StoreZimRepository storeZimRepository;
     private final AuthenticationUtil authenticationUtil;
+    private final MemberMapper memberMapper;
+
+    private Member getMemberEntityForRef(){
+        MemberDto memberDto = authenticationUtil.getAuthUser();
+        return memberMapper.mapDtoToEntityForRef(memberDto.getId());
+    }
 
     public void toggleStoreZim(long storeId, boolean isZimSet){
-        MemberDto memberDto = authenticationUtil.getAuthUser();
-        Member member = Member.builder().id(memberDto.getId()).build();
+
+        Member member = getMemberEntityForRef();
         Optional<StoreZim> storeZimOpt = storeZimRepository.findByReferIdAndMember(storeId, member);
-        StoreZim storeZim = null;
+
+        StoreZim zim = null;
         if(storeZimOpt.isPresent()){
-            storeZim = storeZimOpt.get();
-            storeZim.setZim(isZimSet);
+            zim = storeZimOpt.get();
+            zim.setZim(isZimSet);
+
         }else{
-            storeZim = StoreZim.builder()
+            zim = StoreZim.builder()
                     .isZim(isZimSet)
                     .referId(storeId)
+                    .member(member)
                     .build();
         }
-        storeZimRepository.save(storeZim);
+        storeZimRepository.save(zim);
     }
 
 }
