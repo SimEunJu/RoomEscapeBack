@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StoreZimService {
 
-    private StoreZimRepository storeZimRepository;
+    private final StoreZimRepository storeZimRepository;
     private final MemberMapper memberMapper;
 
     public Optional<StoreZim> getByReferIdAndMember(long referId, Member member){

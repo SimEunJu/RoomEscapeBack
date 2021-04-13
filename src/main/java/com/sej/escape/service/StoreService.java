@@ -9,10 +9,13 @@ import com.sej.escape.constants.AreaSectionComponent;
 import com.sej.escape.constants.ListOrder;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.store.StorePageReqDto;
+import com.sej.escape.entity.QStore;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.file.StoreFile;
+import com.sej.escape.error.exception.BusinessException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.store.StoreRepository;
+import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -37,6 +41,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final ModelMapper modelMapper;
     private final AreaSectionComponent areaSectionComponent;
+    private final AuthenticationUtil authenticationUtil;
 
     @PostConstruct
     public void postConstruct(){
@@ -50,15 +55,33 @@ public class StoreService {
     }
 
     public StoreDto getStore(long id){
-        Optional<Store> storeOp = storeRepository.findById(id);
-        Store store = getStoreIfExist(storeOp, id);
-        return mapStoreToDto(store);
+
+        String querySelectIsZimChk = "";
+        if(authenticationUtil.isAuthenticated()){
+            long memberId = authenticationUtil.getAuthUser().getId();
+            querySelectIsZimChk = ", (SELECT SUM(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
+        }
+
+        String queryWhere = " AND store.store_id = "+id;
+
+        String queryStr = getStoreQuery(querySelectIsZimChk, queryWhere);
+
+        Object[] result = null;
+        try{
+            result = (Object[]) em.createNativeQuery(queryStr, getResultMapNameByAuth()).getSingleResult();
+        } catch (NoResultException e){
+            throw throwNoSuchResourceException(id);
+        }
+        return mapStoreRowToDto(result);
+    }
+
+    private NoSuchResourceException throwNoSuchResourceException(long id){
+        return new NoSuchResourceException(
+                String.format("%d와 일치하는 카페가 존재하지 않습니다.", id) );
     }
 
     private Store getStoreIfExist(Optional<Store> storeOpt, long id){
-        Store store = storeOpt.orElseThrow( () ->
-                new NoSuchResourceException(
-                        String.format("%d와 일치하는 카페가 존재하지 않습니다.", id)));
+        Store store = storeOpt.orElseThrow( () -> throwNoSuchResourceException(id) );
         return store;
     }
 
@@ -66,7 +89,7 @@ public class StoreService {
         return modelMapper.map(store, StoreDto.class);
     }
 
-    // TODO: 원래 이렇게 나오는게 맞나...
+    // TODO: 서비스 계층에서 쿼리 생성하는 게 맞나...
     public List<StoreDto> getStores(StorePageReqDto storePageReqDto){
 
         String queryWhere = "";
@@ -114,36 +137,67 @@ public class StoreService {
             }
         }
 
-        String queryStr =
-                "SELECT store.*, file.root_path, file.sub_path,  " +
-                "(SELECT IFNULL(AVG(star), 0) FROM comment WHERE ctype='S' AND refer_id = store.store_id) as star_avg, " +
-                "(SELECT COUNT(*) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as zim_cnt " +
-                "FROM store LEFT OUTER JOIN file ON file.ftype = 'S' AND file.refer_id = store.store_id " +
-                "WHERE store.is_deleted = 0"+queryWhere+" " +
-                "ORDER BY"+queryOrder;
+        String querySelectIsZimChk = "";
+        if(authenticationUtil.isAuthenticated()){
+            long memberId = authenticationUtil.getAuthUser().getId();
+            querySelectIsZimChk = ", (SELECT SUM(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
+        }
 
-        List<Object[]> results = em.createNativeQuery(queryStr, "storeWithResultMap")
+        String queryStr = getStoresQuery(querySelectIsZimChk, queryWhere, queryOrder);
+
+        List<Object[]> results = em.createNativeQuery(queryStr, getResultMapNameByAuth())
                 .setFirstResult(storePageReqDto.getPage())
                 .setMaxResults(storePageReqDto.getSize())
                 .getResultList();
 
         List<StoreDto> storeDtos = new ArrayList<>();
         for(Object[] row : results){
-            Store store = (Store) row[0];
-            String fileRootPath = (String) row[1];
-            String fileSubPath = (String) row[2];
-
-            double goodAvg = (double) row[3];
-            long zimCnt = ((BigInteger) row[4]).longValue();
-
-            StoreDto storeDto = modelMapper.map(store, StoreDto.class);
-            storeDto.setGood(goodAvg);
-            storeDto.setZim(zimCnt);
-            storeDto.setImgUrl(fileRootPath+"/"+fileSubPath);
-            storeDtos.add(storeDto);
+            storeDtos.add(mapStoreRowToDto(row));
         }
         return storeDtos;
 
     }
 
+    private String getStoresQuery(String querySelectIsZimChk, String queryWhere, String queryOrder){
+        return getStoreQuery(querySelectIsZimChk, queryWhere) +
+                "ORDER BY"+queryOrder;
+    }
+
+    private String getStoreQuery(String querySelectIsZimChk, String queryWhere){
+        String queryStr = "SELECT store.*, file.root_path, file.sub_path,  " +
+                "(SELECT IFNULL(AVG(star), 0) FROM comment WHERE ctype='S' AND refer_id = store.store_id) as star_avg, " +
+                "(SELECT COUNT(*) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as zim_cnt " +
+                querySelectIsZimChk +
+                "FROM store LEFT OUTER JOIN file ON file.ftype = 'S' AND file.refer_id = store.store_id " +
+                "WHERE store.is_deleted = 0 "+queryWhere;
+        return queryStr;
+    }
+
+    private StoreDto mapStoreRowToDto(Object[] row){
+        Store store = (Store) row[0];
+        String fileRootPath = (String) row[1];
+        String fileSubPath = (String) row[2];
+
+        double goodAvg = (double) row[3];
+        long zimCnt = ((BigInteger) row[4]).longValue();
+
+        StoreDto storeDto = modelMapper.map(store, StoreDto.class);
+        storeDto.setGood(goodAvg);
+        storeDto.setZim(zimCnt);
+
+        storeDto.setImgUrl(fileRootPath+"/"+fileSubPath);
+
+        if(authenticationUtil.isAuthenticated()){
+            boolean isMemberCheckZim = row[5] == null ? false : true;
+            storeDto.setZimChecked(isMemberCheckZim);
+        }
+
+        return storeDto;
+    }
+
+    private String getResultMapNameByAuth(){
+        if(authenticationUtil.isAuthenticated()) return "storeWithAuthResultMap";
+        return "storeResultMap";
+    }
+    
 }

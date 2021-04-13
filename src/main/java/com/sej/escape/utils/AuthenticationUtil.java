@@ -10,13 +10,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthenticationUtil {
 
+    public boolean isAuthenticated() {
+        Authentication authentication = this.getAuthentication();
+        return authentication.isAuthenticated() && authentication.getPrincipal() != "anonymousUser";
+    }
+
     public Authentication getAuthentication(){
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
     public MemberDto getAuthUser(){
-        Authentication authentication = this.getAuthentication();
-        if(!authentication.isAuthenticated() || authentication.getPrincipal() == "anonymousUser") throw new AuthenticationCredentialsNotFoundException("login is required");
+        if(!isAuthenticated()) throw new AuthenticationCredentialsNotFoundException("login is required");
         MemberDto memberDto = (MemberDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return memberDto;
     }

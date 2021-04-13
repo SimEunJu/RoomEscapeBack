@@ -36,6 +36,6 @@ https://jojoldu.tistory.com/457
 
 https://www.baeldung.com/spring-bean-annotations
 https://www.tutorialspoint.com/difference-between-bean-and-component-annotation-in-spring
-
+https://www.baeldung.com/jackson-annotations
 
 
