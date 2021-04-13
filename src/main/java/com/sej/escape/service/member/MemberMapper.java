@@ -2,6 +2,7 @@ package com.sej.escape.service.member;
 
 import com.sej.escape.dto.member.MemberDto;
 import com.sej.escape.entity.Member;
+import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.dom4j.rule.Mode;
 import org.modelmapper.ModelMapper;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberMapper {
 
+    private final AuthenticationUtil authenticationUtil;
     private final ModelMapper modelMapper;
 
     public MemberDto mapEntityToDto(Member member){
@@ -34,5 +36,10 @@ public class MemberMapper {
 
     public Member mapDtoToEntityForRef(long id){
         return Member.builder().id(id).build();
+    }
+
+    public Member getMemberEntityForRef(){
+        MemberDto memberDto = authenticationUtil.getAuthUser();
+        return this.mapDtoToEntityForRef(memberDto.getId());
     }
 }

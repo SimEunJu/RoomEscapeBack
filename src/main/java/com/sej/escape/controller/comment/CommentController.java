@@ -42,16 +42,22 @@ public class CommentController {
 
         long id = commentService.addComment(commentReqDto, addFunc);
 
-        CommentResDto commentResDto = getResDto("add", id, commentReqDto.getRandId());
+        CommentResDto commentResDto = getResDtoWithRandId("add", id, commentReqDto.getRandId());
 
         return ResponseEntity.ok(commentResDto);
     }
 
-    private CommentResDto getResDto(String type, long id, long randId){
+    private CommentResDto getResDtoWithRandId(String type, long id, long randId){
+        CommentResDto resDto = getResDto(type, id);
+        resDto.setRandId(randId);
+        return resDto;
+    }
+
+    private CommentResDto getResDto(String type, long id){
         return CommentResDto.builder()
                 .type(type)
                 .id(id)
-                .randId(randId)
+                .randId(EMPTY_RAND_ID)
                 .hasError(false)
                 .build();
     }
@@ -59,14 +65,14 @@ public class CommentController {
     @PatchMapping("/report/{id}")
     public ResponseEntity<CommentResDto> reportComment(@PathVariable long id){
         long reportId = commentService.reportComment(id);
-        CommentResDto resDto = getResDto("report", reportId, EMPTY_RAND_ID);
+        CommentResDto resDto = getResDto("report", reportId);
         return ResponseEntity.ok(resDto);
     }
 
     @PatchMapping("/delete/{id}")
     public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id){
         long deleteId = commentService.deleteComment(id);
-        CommentResDto resDto = getResDto("delete", deleteId, EMPTY_RAND_ID);
+        CommentResDto resDto = getResDto("delete", deleteId);
         return ResponseEntity.ok(resDto);
     }
 
@@ -79,7 +85,7 @@ public class CommentController {
     @PatchMapping("/like/{id}")
     public ResponseEntity<CommentResDto> toggleLikeComment(@PathVariable long id, boolean isGood){
         long likeId = commentService.toggleLikeComment(id, isGood);
-        CommentResDto resDto = getResDto("toggle", likeId, EMPTY_RAND_ID);
+        CommentResDto resDto = getResDto("toggle", likeId);
         return ResponseEntity.ok(resDto);
     }
 
