@@ -190,6 +190,8 @@ public class StoreService {
         if(authenticationUtil.isAuthenticated()){
             boolean isMemberCheckZim = row[5] == null ? false : true;
             storeDto.setZimChecked(isMemberCheckZim);
+            zimCnt = isMemberCheckZim ? zimCnt - 1 : zimCnt;
+            storeDto.setZim(zimCnt);
         }
 
         return storeDto;

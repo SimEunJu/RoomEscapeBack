@@ -14,7 +14,7 @@ public class ZimResDto {
     private Long referId;
     private String type;
     private Boolean isChecked;
-    private int cnt;
+    private Integer cnt;
     private boolean hasError;
     private ErrorRes error;
 }

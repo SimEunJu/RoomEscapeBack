@@ -8,17 +8,18 @@
     <named-native-query name="Comment.findAllByPaging" result-class="com.sej.escape.entity.comment.Comment">
         <query>
             <![CDATA[
-                select c
+                select c.*
                 from comment c
-                where c.id in (
-                    select id
+                where c.ctype = ?2
+                    and c.comment_id in (
+                    select comment_id
                     from comment ic
-                    where ic.referId = ?1
+                    where ic.refer_id = ?1
                         and ic.depth = 0
-                    order by id desc
+                    order by comment_id desc
                     )
-                order by parId desc, seq asc
-                limit ?2, ?3
+                order by par_id desc, seq asc
+                limit ?3, ?4
             ]]>
         </query>
     </named-native-query>

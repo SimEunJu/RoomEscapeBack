@@ -1,6 +1,7 @@
 package com.sej.escape.service.comment;
 
-import com.sej.escape.dto.comment.CommentReqDto;
+import com.sej.escape.dto.comment.CommentDto;
+import com.sej.escape.dto.comment.CommentModifyReqDto;
 import com.sej.escape.entity.comment.BoardComment;
 import com.sej.escape.repository.comment.BoardCommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +14,9 @@ public class BoardCommentService {
     private final BoardCommentRepository boardCommentRepository;
     private final CommentMapper commentMapper;
 
-    public long addComment(CommentReqDto commentReqDto){
-        BoardComment boardComment = commentMapper.mapReqDtoToBoardComment(commentReqDto);
+    public CommentDto addComment(CommentModifyReqDto commentModifyReqDto){
+        BoardComment boardComment = commentMapper.mapReqDtoToBoardComment(commentModifyReqDto);
         boardCommentRepository.save(boardComment);
-        return boardComment.getId();
+        return commentMapper.mapEntityToDto(boardComment);
     }
 }

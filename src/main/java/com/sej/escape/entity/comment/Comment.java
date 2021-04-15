@@ -31,25 +31,25 @@ public class Comment extends BaseWithDelete {
     @Column(columnDefinition = "text")
     protected String content;
 
-    @Column(columnDefinition = "int default 0", nullable = false)
-    protected Integer good;
+    @Column(columnDefinition = "int default 0")
+    protected int good;
 
-    @Column(columnDefinition = "int default 0", nullable = false)
-    protected Integer report;
+    @Column(columnDefinition = "int default 0")
+    protected int report;
 
-    @Column(columnDefinition = "double default 0.0", nullable = false)
-    protected Double star;
+    @Column(columnDefinition = "double default 0.0")
+    protected double star;
 
     // 대댓글 깊이
-    @Column(columnDefinition = "int default 0", nullable = false)
+    @Column(columnDefinition = "int default 0")
     protected int depth;
 
     // 대댓글 순서
-    @Column(columnDefinition = "int default 0", nullable = false)
+    @Column(columnDefinition = "int default 0")
     protected int seq;
 
     // 부모 댓글
-    @Column(columnDefinition = "int default 0", nullable = false)
+    @Column
     protected Long parId;
 
 }

@@ -1,21 +1,20 @@
 package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.CommentDto;
+import com.sej.escape.dto.comment.CommentModifyReqDto;
 import com.sej.escape.dto.comment.CommentReqDto;
-import com.sej.escape.entity.comment.BoardComment;
 import com.sej.escape.entity.comment.Comment;
-import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.comment.CommentRepository;
-import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.ToLongFunction;
 
 @Service
 @RequiredArgsConstructor
@@ -28,20 +27,22 @@ public class CommentService {
         return commentRepository.updateBelowCommentSeq(parCommentId, parCommentSeq);
     }
 
-    public long addComment(CommentReqDto commentReqDto, ToLongFunction<CommentReqDto> addFunc){
-        CommentDto parComment = commentReqDto.getParComment();
+    public CommentDto addComment(CommentModifyReqDto commentModifyReqDto, Function<CommentModifyReqDto, CommentDto> addFunc){
+        CommentDto parComment = commentModifyReqDto.getParComment();
         boolean hasParComment = parComment != null;
         if(hasParComment){
             commentRepository.updateBelowCommentSeq(parComment.getId(), parComment.getSeq());
         }
-        return addFunc.applyAsLong(commentReqDto);
+        return addFunc.apply(commentModifyReqDto);
     }
 
     public List<CommentDto> getCommentList(CommentReqDto commentReqDto) {
+        PageRequest pageRequest = commentReqDto.getPageable();
         List<Comment> comments = commentRepository.findAllByPaging(
-                commentReqDto.getId(),
-                commentReqDto.getPage(),
-                commentReqDto.getSize()
+                commentReqDto.getReferId(),
+                commentReqDto.getType(),
+                pageRequest.getPageNumber(),
+                pageRequest.getPageSize()
         );
         return commentMapper.mapEntitesToDtos(comments);
     }

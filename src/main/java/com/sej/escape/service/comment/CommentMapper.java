@@ -1,7 +1,7 @@
 package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.CommentDto;
-import com.sej.escape.dto.comment.CommentReqDto;
+import com.sej.escape.dto.comment.CommentModifyReqDto;
 import com.sej.escape.entity.comment.BoardComment;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.StoreComment;
@@ -9,8 +9,11 @@ import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.modelmapper.internal.asm.Type;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,9 +35,9 @@ public class CommentMapper {
         return modelMapper.map(entity, CommentDto.class);
     }
 
-    private <T extends Comment> T mapReqDtoToComment(Class<T> entityCls, CommentReqDto commentReqDto)  {
+    private <T extends Comment> T mapReqDtoToComment(Class<T> entityCls, CommentModifyReqDto commentModifyReqDto)  {
 
-        CommentDto parComment = commentReqDto.getParComment();
+        CommentDto parComment = commentModifyReqDto.getParComment();
         boolean hasParComment = parComment != null;
 
         int depth = hasParComment ? parComment.getDepth()+1 : 0;
@@ -52,8 +55,8 @@ public class CommentMapper {
         }
 
         entity.setMember(authenticationUtil.getAuthUserEntity());
-        entity.setReferId(commentReqDto.getAncestor().getId());
-        entity.setContent(commentReqDto.getContent());
+        entity.setReferId(commentModifyReqDto.getAncestor().getId());
+        entity.setContent(commentModifyReqDto.getContent());
         entity.setParId(parId);
         entity.setDepth(depth);
         entity.setSeq(seq);
@@ -61,13 +64,13 @@ public class CommentMapper {
         return entity;
     }
 
-    public BoardComment mapReqDtoToBoardComment(CommentReqDto commentReqDto) {
-        return mapReqDtoToComment(BoardComment.class, commentReqDto);
+    public BoardComment mapReqDtoToBoardComment(CommentModifyReqDto commentModifyReqDto) {
+        return mapReqDtoToComment(BoardComment.class, commentModifyReqDto);
     }
 
-    public StoreComment mapReqDtoToStoreComment(CommentReqDto commentReqDto) {
-        StoreComment storeComment = mapReqDtoToComment(StoreComment.class, commentReqDto);
-        storeComment.setStar(commentReqDto.getStarRate());
+    public StoreComment mapReqDtoToStoreComment(CommentModifyReqDto commentModifyReqDto) {
+        StoreComment storeComment = mapReqDtoToComment(StoreComment.class, commentModifyReqDto);
+        storeComment.setStar(commentModifyReqDto.getStarRate());
         return storeComment;
     }
 }
