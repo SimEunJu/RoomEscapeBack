@@ -3,18 +3,18 @@ package com.sej.escape.dto.comment;
 import com.sej.escape.dto.page.PageReqDto;
 import lombok.*;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 @Builder(builderMethodName = "commentReqDtoBuilder")
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class CommentReqDto extends PageReqDto {
 
-    private String content;
-    private double starRate;
-    private long id;
-    private long randId;
-    private CommentDto parComment;
-    private Ancestor ancestor;
+    private Long id;
+    @NotNull private Long referId;
+    @NotEmpty private String type;
 
 }
