@@ -3,6 +3,7 @@ package com.sej.escape.service.comment;
 import com.sej.escape.dto.comment.CommentDto;
 import com.sej.escape.dto.comment.CommentModifyReqDto;
 import com.sej.escape.dto.comment.CommentReqDto;
+import com.sej.escape.dto.comment.CommentResDto;
 import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.repository.comment.StoreCommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,10 @@ public class StoreCommentService {
     private final StoreCommentRepository stotreCommentRepository;
     private final CommentMapper commentMapper;
 
-    public CommentDto addComment(CommentModifyReqDto commentModifyReqDto){
+    public CommentResDto addComment(CommentModifyReqDto commentModifyReqDto){
         StoreComment storeComment = commentMapper.mapReqDtoToStoreComment(commentModifyReqDto);
         stotreCommentRepository.save(storeComment);
-        return commentMapper.mapEntityToDto(storeComment);
+        return commentMapper.mapEntityToDto(storeComment, CommentResDto.class);
     }
 
 }

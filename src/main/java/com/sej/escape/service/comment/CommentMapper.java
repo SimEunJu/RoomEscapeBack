@@ -35,6 +35,10 @@ public class CommentMapper {
         return modelMapper.map(entity, CommentDto.class);
     }
 
+    public <E extends Comment, D> D mapEntityToDto(E entity, Class<D> dto){
+        return modelMapper.map(entity, dto);
+    }
+
     private <T extends Comment> T mapReqDtoToComment(Class<T> entityCls, CommentModifyReqDto commentModifyReqDto)  {
 
         CommentDto parComment = commentModifyReqDto.getParComment();

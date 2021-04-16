@@ -35,7 +35,7 @@ public class CommentExceptionController {
     }
 
     private CommentResDto getResDto(ErrorRes errorRes){
-        return CommentResDto.builder()
+        return CommentResDto.resBuilder()
                 .hasError(true)
                 .error(errorRes)
                 .build();

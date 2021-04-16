@@ -16,22 +16,18 @@ import java.time.LocalDateTime;
 @Builder
 public class CommentDto {
 
-    private long id;
-    private String content;
-    private int depth;
-    private int seq;
-    private int good;
-    private double star;
+    protected long id;
+    protected String content;
 
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
-    private LocalDateTime regDate;
+    protected int depth;
+    protected int seq;
+    protected int good;
+    protected double star;
 
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
-    private LocalDateTime updateDate;
-
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
-    private LocalDateTime deleteDate;
+    // TODO: LocalDateTime json mapping 일괄 처리 되도록 설정 알아볼 것것
+   //@JsonDeserialize(using = LocalDateDeserializer.class)
+    //@JsonSerialize(using = LocalDateSerializer.class)
+    protected LocalDateTime regDate;
+    protected LocalDateTime updateDate;
+    protected LocalDateTime deleteDate;
 }

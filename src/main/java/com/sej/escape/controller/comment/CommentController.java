@@ -43,7 +43,7 @@ public class CommentController {
     @PostMapping("/new")
     public ResponseEntity<CommentResDto> addComment(@RequestBody CommentModifyReqDto commentModifyReqDto){
         String type = commentModifyReqDto.getAncestor().getType();
-        Function<CommentModifyReqDto, CommentDto> addFunc = null;
+        Function<CommentModifyReqDto, CommentResDto> addFunc = null;
 
         switch (type){
             case "store":
@@ -53,9 +53,9 @@ public class CommentController {
                 addFunc = (CommentModifyReqDto reqDto) -> boardCommentService.addComment(reqDto);
         }
 
-        CommentDto commentDto = commentService.addComment(commentModifyReqDto, addFunc);
-
-        CommentResDto commentResDto = getResDtoWithRandId("add", commentDto.getId(), commentModifyReqDto.getRandId());
+        CommentResDto commentResDto = commentService.addComment(commentModifyReqDto, addFunc);
+        commentResDto.setRandId(commentModifyReqDto.getRandId());
+        commentResDto.setType("add");
 
         return ResponseEntity.ok(commentResDto);
     }
@@ -67,7 +67,7 @@ public class CommentController {
     }
 
     private CommentResDto getResDto(String type, long id){
-        return CommentResDto.builder()
+        return CommentResDto.resBuilder()
                 .type(type)
                 .id(id)
                 .randId(EMPTY_RAND_ID)
@@ -90,8 +90,8 @@ public class CommentController {
     }
 
     @PatchMapping("/update/{id}")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable long id, CommentDto commentDto){
-        CommentDto commentDtoUpdated =  commentService.updateComment(id, commentDto);
+    public ResponseEntity<CommentDto> updateComment(@PathVariable long id, @RequestBody CommentModifyReqDto modifyReqDto){
+        CommentDto commentDtoUpdated =  commentService.updateComment(id, modifyReqDto);
         return ResponseEntity.ok(commentDtoUpdated);
     }
 

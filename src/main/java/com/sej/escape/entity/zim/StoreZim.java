@@ -12,8 +12,8 @@ import javax.persistence.Entity;
 @DiscriminatorValue("S")
 public class StoreZim extends Zim{
 
-    @Builder
-    public StoreZim(Member member, boolean isZim, Long referId){
-        super(member, isZim, referId);
+    @Builder(builderMethodName = "storeBuilder")
+    public StoreZim(Long id, Member member, boolean isZim, Long referId) {
+        super(id, member, isZim, referId);
     }
 }

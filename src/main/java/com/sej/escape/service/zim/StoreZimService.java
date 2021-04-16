@@ -32,7 +32,7 @@ public class StoreZimService {
         if(storeZimOpt.isPresent()){
             zim = storeZimOpt.get();
         }else{
-            zim = StoreZim.builder()
+            zim = StoreZim.storeBuilder()
                     .referId(reqDto.getReferId())
                     .member(member)
                     .build();

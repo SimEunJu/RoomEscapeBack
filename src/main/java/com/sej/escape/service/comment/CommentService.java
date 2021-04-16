@@ -3,6 +3,7 @@ package com.sej.escape.service.comment;
 import com.sej.escape.dto.comment.CommentDto;
 import com.sej.escape.dto.comment.CommentModifyReqDto;
 import com.sej.escape.dto.comment.CommentReqDto;
+import com.sej.escape.dto.comment.CommentResDto;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.comment.CommentRepository;
@@ -27,7 +28,7 @@ public class CommentService {
         return commentRepository.updateBelowCommentSeq(parCommentId, parCommentSeq);
     }
 
-    public CommentDto addComment(CommentModifyReqDto commentModifyReqDto, Function<CommentModifyReqDto, CommentDto> addFunc){
+    public CommentResDto addComment(CommentModifyReqDto commentModifyReqDto, Function<CommentModifyReqDto, CommentResDto> addFunc){
         CommentDto parComment = commentModifyReqDto.getParComment();
         boolean hasParComment = parComment != null;
         if(hasParComment){
@@ -62,10 +63,11 @@ public class CommentService {
         return comment.getId();
     }
 
-    public CommentDto updateComment(long id, CommentDto commentDto){
+    public CommentDto updateComment(long id, CommentModifyReqDto modifyReqDto){
         Comment comment = getCommentByIdIfExist(id);
-        comment.setContent(commentDto.getContent());
-        comment.setGood(commentDto.getGood());
+        comment.setContent(modifyReqDto.getContent());
+
+        comment.setStar(modifyReqDto.getStarRate());
         Comment commentUpdated = commentRepository.save(comment);
         return commentMapper.mapEntityToDto(commentUpdated);
     }

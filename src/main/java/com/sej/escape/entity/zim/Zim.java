@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -30,9 +31,4 @@ public class Zim extends Base {
 
     protected Long referId;
 
-    public Zim(Member member, boolean isZim, Long referId){
-        this.member = member;
-        this.isZim = isZim;
-        this.referId = referId;
-    }
 }
