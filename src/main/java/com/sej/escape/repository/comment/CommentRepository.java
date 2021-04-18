@@ -15,10 +15,6 @@ import java.util.List;
 public interface CommentRepository
         extends JpaRepository<Comment, Long>, QuerydslPredicateExecutor<Comment> {
 
-    @Query(nativeQuery = true)
-    List<Comment> findAllByPaging(long referId, String ctype,
-                                  int page, int size);
-
     @Modifying
     @Query("update Comment c set c.seq = c.seq+1 where c.parId = :parId and c.seq > :parSeq")
     long updateBelowCommentSeq(@Param("parId") long parId, @Param("parSeq") int parSeq);

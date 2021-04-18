@@ -155,7 +155,6 @@ public class StoreService {
             storeDtos.add(mapStoreRowToDto(row));
         }
         return storeDtos;
-
     }
 
     private String getStoresQuery(String querySelectIsZimChk, String queryWhere, String queryOrder){

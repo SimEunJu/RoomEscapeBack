@@ -5,17 +5,21 @@ import com.sej.escape.dto.comment.CommentModifyReqDto;
 import com.sej.escape.dto.comment.CommentReqDto;
 import com.sej.escape.dto.comment.CommentResDto;
 import com.sej.escape.entity.comment.Comment;
+import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.comment.CommentRepository;
+import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,8 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+    private final AuthenticationUtil authenticationUtil;
+    private final EntityManager em;
 
     private long updateBelowCommentSeq(long parCommentId, int parCommentSeq){
         return commentRepository.updateBelowCommentSeq(parCommentId, parCommentSeq);
@@ -39,13 +45,37 @@ public class CommentService {
 
     public List<CommentDto> getCommentList(CommentReqDto commentReqDto) {
         PageRequest pageRequest = commentReqDto.getPageable();
-        List<Comment> comments = commentRepository.findAllByPaging(
-                commentReqDto.getReferId(),
-                commentReqDto.getType(),
-                pageRequest.getPageNumber(),
-                pageRequest.getPageSize()
-        );
-        return commentMapper.mapEntitesToDtos(comments);
+
+        String querySelectIsGoodChk = ", (SELECT 0) as is_good_chk ";
+        boolean isAuthenticated = authenticationUtil.isAuthenticated();
+        if(isAuthenticated){
+            long memberId = authenticationUtil.getAuthUser().getId();
+            querySelectIsGoodChk = ", (SELECT SUM(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype='S' AND refer_id = store.store_id AND is_good = 1) as is_good_chk ";
+        }
+        String queryStr =   "SELECT c.* "+querySelectIsGoodChk+
+                            "FROM comment c WHERE c.ctype = :ctype AND c.comment_id IN ( "+
+                            "SELECT comment_id FROM comment ic WHERE ic.refer_id = :referId AND ic.depth = 0 ORDER BY comment_id desc ) "+
+                            "ORDER BY par_id DESC, seq ASC";
+
+        List<Object[]> results = em.createNativeQuery(queryStr, "storeCommentResultMap")
+                .setParameter("ctype", commentReqDto.getType())
+                .setParameter("referId", commentReqDto.getReferId())
+                .setFirstResult(pageRequest.getPageNumber())
+                .setMaxResults(pageRequest.getPageSize())
+                .getResultList();
+
+        List<CommentDto> commentDtos = results.stream().map(row -> {
+            StoreComment comment = (StoreComment) row[0];
+            CommentDto commentDto = commentMapper.mapEntityToDto(comment);
+            if(comment.isDeleted()) commentDto.setContent("삭제된 댓글입니다.");
+            if(isAuthenticated){
+                boolean isGoodChk = (boolean) row[1];
+                commentDto.setGoodChecked(isGoodChk);
+            }
+            return commentDto;
+        }).collect(Collectors.toList());
+
+        return commentDtos;
     }
 
     public long reportComment(long id){

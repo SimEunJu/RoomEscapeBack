@@ -17,8 +17,8 @@ public class CommentResDto extends CommentDto{
     private ErrorRes error;
 
     @Builder(builderMethodName = "resBuilder")
-    public CommentResDto(long id, String content, int depth, int seq, int good, double star, LocalDateTime regDate, LocalDateTime updateDate, LocalDateTime deleteDate, String type, long randId, boolean hasError, ErrorRes error) {
-        super(id, content, depth, seq, good, star, regDate, updateDate, deleteDate);
+    public CommentResDto(long id, String content, int depth, int seq, int good, boolean isGoodChecked, double star, LocalDateTime regDate, LocalDateTime updateDate, LocalDateTime deleteDate, String type, long randId, boolean hasError, ErrorRes error) {
+        super(id, content, depth, seq, good, isGoodChecked, star, regDate, updateDate, deleteDate);
         this.type = type;
         this.randId = randId;
         this.hasError = hasError;

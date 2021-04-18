@@ -1,5 +1,6 @@
 package com.sej.escape.dto.comment;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -22,12 +23,15 @@ public class CommentDto {
     protected int depth;
     protected int seq;
     protected int good;
+    @JsonProperty("isGoodChecked")
+    protected boolean isGoodChecked;
     protected double star;
 
     // TODO: LocalDateTime json mapping 일괄 처리 되도록 설정 알아볼 것것
-   //@JsonDeserialize(using = LocalDateDeserializer.class)
+    //@JsonDeserialize(using = LocalDateDeserializer.class)
     //@JsonSerialize(using = LocalDateSerializer.class)
     protected LocalDateTime regDate;
     protected LocalDateTime updateDate;
     protected LocalDateTime deleteDate;
+
 }
