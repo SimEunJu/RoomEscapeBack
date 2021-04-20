@@ -1,11 +1,11 @@
 package com.sej.escape.service.good;
 
-import com.sej.escape.dto.zim.ZimReqDto;
+import com.sej.escape.dto.good.GoodReqDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.good.StoreGood;
-import com.sej.escape.entity.zim.StoreZim;
+import com.sej.escape.entity.good.StoreGood;
 import com.sej.escape.repository.good.StoreGoodRepository;
-import com.sej.escape.repository.zim.StoreZimRepository;
+import com.sej.escape.repository.good.StoreGoodRepository;
 import com.sej.escape.service.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class StoreGoodService {
         return storeGoodRepository.findByReferIdAndMember(referId, member);
     }
 
-    public long toggleZim(ZimReqDto reqDto){
+    public long toggleGood(GoodReqDto reqDto){
         Member member = memberMapper.getMemberEntityForRef();
         Optional<StoreGood> StoreGoodOpt = this.getByReferIdAndMember(reqDto.getReferId(), member);
 

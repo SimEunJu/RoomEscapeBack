@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import java.awt.print.Pageable;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -50,14 +51,17 @@ public class CommentService {
         boolean isAuthenticated = authenticationUtil.isAuthenticated();
         if(isAuthenticated){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsGoodChk = ", (SELECT SUM(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype='S' AND refer_id = store.store_id AND is_good = 1) as is_good_chk ";
+            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :gtype AND refer_id = c.comment_id AND is_good = 1) as is_good_chk ";
         }
-        String queryStr =   "SELECT c.* "+querySelectIsGoodChk+
-                            "FROM comment c WHERE c.ctype = :ctype AND c.comment_id IN ( "+
+        String queryStr =   "SELECT c.*, m.nickname "+
+                            ", (SELECT COUNT(*) FROM good WHERE gtype='S' AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
+                            querySelectIsGoodChk+
+                            "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :ctype AND c.comment_id IN ( "+
                             "SELECT comment_id FROM comment ic WHERE ic.refer_id = :referId AND ic.depth = 0 ORDER BY comment_id desc ) "+
-                            "ORDER BY par_id DESC, seq ASC";
+                            "ORDER BY par_id DESC, seq ASC, comment_id desc";
 
         List<Object[]> results = em.createNativeQuery(queryStr, "storeCommentResultMap")
+                .setParameter("gtype", commentReqDto.getType())
                 .setParameter("ctype", commentReqDto.getType())
                 .setParameter("referId", commentReqDto.getReferId())
                 .setFirstResult(pageRequest.getPageNumber())
@@ -68,10 +72,19 @@ public class CommentService {
             StoreComment comment = (StoreComment) row[0];
             CommentDto commentDto = commentMapper.mapEntityToDto(comment);
             if(comment.isDeleted()) commentDto.setContent("삭제된 댓글입니다.");
+
+            String nickname = (String) row[1];
+            commentDto.setWriter(nickname);
+
+            int goodCnt = ((BigInteger) row[2]).intValue();
+
+            boolean isGoodChk = row[3] != null && ((BigInteger) row[3]).intValue() > 0;
+            commentDto.setGoodChecked(isGoodChk);
             if(isAuthenticated){
-                boolean isGoodChk = (boolean) row[1];
-                commentDto.setGoodChecked(isGoodChk);
+                goodCnt = isGoodChk ? goodCnt - 1 : goodCnt;
             }
+            commentDto.setGood(goodCnt);
+
             return commentDto;
         }).collect(Collectors.toList());
 

@@ -22,4 +22,8 @@ public class StoreDto {
     private boolean isZimChecked;
     private double good;
     private String imgUrl;
+
+    public double getGood(){
+        return Math.round(good*100) / 100;
+    }
 }

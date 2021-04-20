@@ -19,12 +19,15 @@ public class CommentDto {
 
     protected long id;
     protected String content;
+    protected String writer;
 
     protected int depth;
     protected int seq;
     protected int good;
     @JsonProperty("isGoodChecked")
     protected boolean isGoodChecked;
+    @JsonProperty("isDeleted")
+    protected boolean isDeleted;
     protected double star;
 
     // TODO: LocalDateTime json mapping 일괄 처리 되도록 설정 알아볼 것것
