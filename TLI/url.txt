@@ -39,3 +39,10 @@ https://www.tutorialspoint.com/difference-between-bean-and-component-annotation-
 https://www.baeldung.com/jackson-annotations
 
 https://www.baeldung.com/java-thread-safety
+https://stackoverflow.com/questions/23123251/java-enums-for-hierarchical-tree-like-structure
+
+
+
+
+
+

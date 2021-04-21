@@ -56,7 +56,7 @@ public class StoreService {
 
     public StoreDto getStore(long id){
 
-        String querySelectIsZimChk = ", (SELECT 0) as is_zim_chk";
+        String querySelectIsZimChk = ", (SELECT 0) as is_zim_chk ";
         if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
             querySelectIsZimChk = ", (SELECT SUM(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
@@ -89,7 +89,7 @@ public class StoreService {
         return modelMapper.map(store, StoreDto.class);
     }
 
-    // TODO: 서비스 계층에서 쿼리 생성하는 게 맞나...
+    // TODO: 서비스 계층에서 쿼리 생성하는 게 맞나... ->  repositoryImpl로 이동
     public List<StoreDto> getStores(StorePageReqDto storePageReqDto){
 
         String queryWhere = "";
@@ -122,7 +122,7 @@ public class StoreService {
                     queryOrder += " store.reg_date DESC";
                     break;
                 case ZIM:
-                    queryOrder += " store.zim DESC";
+                    queryOrder += " zim_cnt DESC";
                     break;
                 case CLOSEST:
                     double latitude = storePageReqDto.getLatitude();
@@ -140,7 +140,7 @@ public class StoreService {
         String querySelectIsZimChk = ", (SELECT 0) as is_zim_chk ";
         if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
+            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1 and is_deleted = 0) as is_zim_chk ";
         }
 
         String queryStr = getStoresQuery(querySelectIsZimChk, queryWhere, queryOrder);
@@ -164,8 +164,8 @@ public class StoreService {
 
     private String getStoreQuery(String querySelectIsZimChk, String queryWhere){
         String queryStr = "SELECT store.*, file.root_path, file.sub_path,  " +
-                "(SELECT IFNULL(AVG(star), 0) FROM comment WHERE ctype='S' AND refer_id = store.store_id) as star_avg, " +
-                "(SELECT COUNT(*) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as zim_cnt " +
+                "(SELECT IFNULL(AVG(star), 0) FROM comment WHERE ctype='S' AND refer_id = store.store_id and is_deleted = 0) as star_avg, " +
+                "(SELECT COUNT(*) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1 and is_deleted = 0) as zim_cnt " +
                 querySelectIsZimChk +
                 "FROM store LEFT OUTER JOIN file ON file.ftype = 'S' AND file.refer_id = store.store_id " +
                 "WHERE store.is_deleted = 0 "+queryWhere;
@@ -177,14 +177,14 @@ public class StoreService {
 
         StoreDto storeDto = modelMapper.map(store, StoreDto.class);
 
-        double goodAvg = (double) row[3];
-        storeDto.setGood(goodAvg);
+        double starAvg = (double) row[3];
+        storeDto.setStar(starAvg);
 
         String fileRootPath = (String) row[1];
         String fileSubPath = (String) row[2];
         storeDto.setImgUrl(fileRootPath+"/"+fileSubPath);
 
-        long zimCnt = ((BigInteger) row[4]).longValue();
+        long zimCnt = row[4] != null ? ((BigInteger) row[4]).longValue() : 0;
         boolean isMemberCheckZim = row[5] != null && ((BigInteger)row[5]).intValue() > 0;
         storeDto.setZimChecked(isMemberCheckZim);
         if(authenticationUtil.isAuthenticated()){

@@ -51,18 +51,17 @@ public class CommentService {
         boolean isAuthenticated = authenticationUtil.isAuthenticated();
         if(isAuthenticated){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :gtype AND refer_id = c.comment_id AND is_good = 1) as is_good_chk ";
+            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :type AND refer_id = c.comment_id AND is_good = 1) as is_good_chk ";
         }
         String queryStr =   "SELECT c.*, m.nickname "+
                             ", (SELECT COUNT(*) FROM good WHERE gtype='S' AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
                             querySelectIsGoodChk+
-                            "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :ctype AND c.comment_id IN ( "+
+                            "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :type AND c.comment_id IN ( "+
                             "SELECT comment_id FROM comment ic WHERE ic.refer_id = :referId AND ic.depth = 0 ORDER BY comment_id desc ) "+
                             "ORDER BY par_id DESC, seq ASC, comment_id desc";
 
         List<Object[]> results = em.createNativeQuery(queryStr, "storeCommentResultMap")
-                .setParameter("gtype", commentReqDto.getType())
-                .setParameter("ctype", commentReqDto.getType())
+                .setParameter("type", commentReqDto.getType())
                 .setParameter("referId", commentReqDto.getReferId())
                 .setFirstResult(pageRequest.getPageNumber())
                 .setMaxResults(pageRequest.getPageSize())

@@ -48,4 +48,7 @@ public class Store extends BaseWithDelete {
     @Column(length = 100)
     private String tel;
 
+    @Column(columnDefinition = "text")
+    private String introduce;
+
 }

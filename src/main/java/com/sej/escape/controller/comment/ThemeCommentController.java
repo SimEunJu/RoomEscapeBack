@@ -1,7 +1,7 @@
 package com.sej.escape.controller.comment;
 
 import com.sej.escape.dto.comment.CommentDto;
-import com.sej.escape.dto.ThemeDto;
+import com.sej.escape.dto.theme.ThemeForListDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.service.comment.ThemeCommentService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ public class ThemeCommentController {
     private final ThemeCommentService themeCommentService;
 
     @GetMapping
-    public ResponseEntity<List<ThemeDto>> getComments(){
-        List<ThemeDto> CommentDto = new ArrayList<>();
+    public ResponseEntity<List<ThemeForListDto>> getComments(){
+        List<ThemeForListDto> CommentDto = new ArrayList<>();
         return ResponseEntity.ok(CommentDto);
     }
 

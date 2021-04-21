@@ -11,7 +11,17 @@
         <column-result name="good_cnt"/>
         <column-result name="is_good_chk"/>
     </sql-result-set-mapping>
-    
+
+    <sql-result-set-mapping name="themeResultMap">
+        <entity-result entity-class="com.sej.escape.entity.Theme" />
+        <column-result name="store_name"/>
+        <column-result name="root_path"/>
+        <column-result name="sub_path"/>
+        <column-result name="star_avg"/>
+        <column-result name="zim_cnt"/>
+        <column-result name="is_zim_chk"/>
+    </sql-result-set-mapping>
+
     <sql-result-set-mapping name="storeResultMap">
         <entity-result entity-class="com.sej.escape.entity.Store" />
         <column-result name="root_path"/>

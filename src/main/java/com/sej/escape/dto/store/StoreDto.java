@@ -20,10 +20,11 @@ public class StoreDto {
     private long zim;
     @JsonProperty("isZimChecked")
     private boolean isZimChecked;
-    private double good;
+    private double star;
     private String imgUrl;
+    private String introduce;
 
-    public double getGood(){
-        return Math.round(good*100) / 100;
+    public double getStar(){
+        return Math.round(star*100) / 100;
     }
 }

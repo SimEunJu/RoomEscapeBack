@@ -7,6 +7,8 @@ import com.sej.escape.entity.constants.QuizType;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,34 +49,43 @@ public class Theme extends BaseWithDelete {
     private Integer personnel;
 
     @Column(columnDefinition = "tinyint unsigned")
+    @Min(1)
+    @Max(5)
     private Integer difficulty;
 
-    private String genre;
+    @Column(columnDefinition = "text")
+    private String introduce;
 
-    public void setGenre(List<Genre> genres) {
-        this.genre = mapEnumsToStr(genres);
-    }
+    @Transient
+    private List<Genre> genre;
 
     @Access(value=AccessType.PROPERTY)
     @Column(columnDefinition = "text")
-    public String getGenre() { return this.genre; };
+    public String getGenre() { return mapEnumsToStr(this.genre); };
+
+    @Access(value=AccessType.PROPERTY)
+    public void setGenre(String genre){
+        this.genre = mapStrToEnums(genre, Genre::valueOf);
+    }
 
     public List<Genre> getGenreByList() {
-        return mapStrToEnums(this.genre, Genre::valueOf);
+        return this.genre;
     }
 
-    private String quizType;
-
-    public void setQuizType(List<QuizType> quizTypes) {
-        this.quizType = mapEnumsToStr(quizTypes);
-    }
+    @Transient
+    private List<QuizType> quizType;
 
     @Column(columnDefinition = "text")
     @Access(value=AccessType.PROPERTY)
-    public String getQuizType() { return this.quizType; };
+    public String getQuizType() { return mapEnumsToStr(this.quizType); };
+
+    @Access(value=AccessType.PROPERTY)
+    public void setQuizType(String quizType){
+        this.quizType = mapStrToEnums(quizType, QuizType::valueOf);
+    }
 
     public List<QuizType> getQuizTypeByList() {
-        return mapStrToEnums(this.quizType, QuizType::valueOf);
+        return this.quizType;
     }
 
     private <T extends Enum> String mapEnumsToStr(List<T> enums){
@@ -83,8 +94,8 @@ public class Theme extends BaseWithDelete {
                 .collect(Collectors.joining(","));
     }
 
-    private <T extends Enum> List<T> mapStrToEnums(String concatenated, Function<String, T> mapFunc){
-        return Arrays.stream(concatenated.split(","))
+    private <T> List<T> mapStrToEnums(String enumStr, Function<String, T> mapFunc){
+        return Arrays.stream(enumStr.split(","))
                 .map(mapFunc)
                 .collect(Collectors.toList());
     }
