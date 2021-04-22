@@ -7,6 +7,7 @@ import com.sej.escape.entity.good.StoreGood;
 import com.sej.escape.repository.good.StoreGoodRepository;
 import com.sej.escape.repository.good.StoreGoodRepository;
 import com.sej.escape.service.member.MemberMapper;
+import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +20,15 @@ import java.util.Optional;
 public class StoreGoodService {
 
     private final StoreGoodRepository storeGoodRepository;
-    private final MemberMapper memberMapper;
+    private final AuthenticationUtil authenticationUtil;
+    //private final MemberMapper memberMapper;
 
     public Optional<StoreGood> getByReferIdAndMember(long referId, Member member){
         return storeGoodRepository.findByReferIdAndMember(referId, member);
     }
 
     public long toggleGood(GoodReqDto reqDto){
-        Member member = memberMapper.getMemberEntityForRef();
+        Member member = authenticationUtil.getAuthUserEntity();
         Optional<StoreGood> StoreGoodOpt = this.getByReferIdAndMember(reqDto.getReferId(), member);
 
         StoreGood good = null;

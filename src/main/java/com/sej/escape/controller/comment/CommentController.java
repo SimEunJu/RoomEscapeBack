@@ -76,12 +76,14 @@ public class CommentController {
                 .build();
     }
 
+    /*
     @PatchMapping("/report/{id}")
     public ResponseEntity<CommentResDto> reportComment(@PathVariable long id){
         long reportId = commentService.reportComment(id);
         CommentResDto resDto = getResDto("report", reportId);
         return ResponseEntity.ok(resDto);
     }
+    */
 
     @PatchMapping("/delete/{id}")
     public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id){

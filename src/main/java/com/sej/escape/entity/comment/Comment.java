@@ -31,13 +31,10 @@ public class Comment extends BaseWithDelete {
     @Column(columnDefinition = "text")
     protected String content;
 
-    @Column(columnDefinition = "int default 0")
+    @Column(columnDefinition = "int(2) default 0", nullable = false)
     protected int good;
 
-    @Column(columnDefinition = "int default 0")
-    protected int report;
-
-    @Column(columnDefinition = "double default 0.0")
+    @Column(columnDefinition = "int(2) default 0", nullable = false)
     protected double star;
 
     // 대댓글 깊이

@@ -4,6 +4,7 @@ import com.sej.escape.error.ErrorCode;
 import com.sej.escape.error.ErrorRes;
 import com.sej.escape.error.exception.BusinessException;
 import com.sej.escape.error.exception.NoSuchResourceException;
+import com.sej.escape.error.exception.UnDefinedConstantException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class ExceptionController {
+
+    // @Valid 실패 시
+    @ExceptionHandler(UnDefinedConstantException.class)
+    public ResponseEntity<ErrorRes> handleUnDefinedConstantException(UnDefinedConstantException e){
+        log.error("MethodArgumentNotValidException", e);
+        ErrorRes response = new ErrorRes(ErrorCode.INVALID_REQUEST_VALUE);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
     // @Valid 실패 시
     @ExceptionHandler(MethodArgumentNotValidException.class)

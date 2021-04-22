@@ -14,7 +14,7 @@
 
     <sql-result-set-mapping name="themeResultMap">
         <entity-result entity-class="com.sej.escape.entity.Theme" />
-        <column-result name="store_name"/>
+        <entity-result entity-class="com.sej.escape.entity.Store" />
         <column-result name="root_path"/>
         <column-result name="sub_path"/>
         <column-result name="star_avg"/>

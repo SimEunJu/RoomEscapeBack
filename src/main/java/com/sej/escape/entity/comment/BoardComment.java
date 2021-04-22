@@ -20,8 +20,7 @@ import javax.persistence.Transient;
 public class BoardComment extends Comment {
 
     @Builder(builderMethodName = "boardBuilder")
-    public BoardComment(Long id, Member member, Long referId, String content,
-                        int good, int report, double star, int depth, int seq, Long parId) {
-        super(id, member, referId, content, good, report, star, depth, seq, parId);
+    public BoardComment(Long id, Member member, Long referId, String content, int good, double star, int depth, int seq, Long parId) {
+        super(id, member, referId, content, good, star, depth, seq, parId);
     }
 }

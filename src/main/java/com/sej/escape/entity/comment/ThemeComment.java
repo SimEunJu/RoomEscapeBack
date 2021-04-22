@@ -35,6 +35,9 @@ public class ThemeComment extends BaseWithDelete {
     @Column(columnDefinition = "int(2) default 0", nullable = false)
     private int good;
 
+    @Column(columnDefinition = "int(2) default 0", nullable = false)
+    private int star;
+
     @Column(nullable = false)
     private LocalDateTime visitDate;
 

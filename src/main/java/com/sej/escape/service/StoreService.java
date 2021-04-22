@@ -140,7 +140,7 @@ public class StoreService {
         String querySelectIsZimChk = ", (SELECT 0) as is_zim_chk ";
         if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1 and is_deleted = 0) as is_zim_chk ";
+            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
         }
 
         String queryStr = getStoresQuery(querySelectIsZimChk, queryWhere, queryOrder);
@@ -164,8 +164,8 @@ public class StoreService {
 
     private String getStoreQuery(String querySelectIsZimChk, String queryWhere){
         String queryStr = "SELECT store.*, file.root_path, file.sub_path,  " +
-                "(SELECT IFNULL(AVG(star), 0) FROM comment WHERE ctype='S' AND refer_id = store.store_id and is_deleted = 0) as star_avg, " +
-                "(SELECT COUNT(*) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1 and is_deleted = 0) as zim_cnt " +
+                "(SELECT AVG(star) FROM comment WHERE ctype='S' AND refer_id = store.store_id and comment.is_deleted = 0) as star_avg, " +
+                "(SELECT COUNT(*) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as zim_cnt " +
                 querySelectIsZimChk +
                 "FROM store LEFT OUTER JOIN file ON file.ftype = 'S' AND file.refer_id = store.store_id " +
                 "WHERE store.is_deleted = 0 "+queryWhere;
@@ -177,7 +177,7 @@ public class StoreService {
 
         StoreDto storeDto = modelMapper.map(store, StoreDto.class);
 
-        double starAvg = (double) row[3];
+        double starAvg = row[3] != null ? (double) row[3] : 0.0;
         storeDto.setStar(starAvg);
 
         String fileRootPath = (String) row[1];

@@ -1,6 +1,7 @@
 package com.sej.escape.dto.theme;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sej.escape.dto.store.StoreDto;
 import lombok.*;
 
 import javax.annotation.security.DenyAll;
@@ -13,7 +14,6 @@ import javax.annotation.security.DenyAll;
 public class ThemeForListDto {
 
     protected long id;
-    protected String storeName;
     protected String name;
     protected double star;
     protected String imgUrl;
@@ -22,4 +22,5 @@ public class ThemeForListDto {
     protected int zim;
     protected String introduce;
 
+    protected StoreDto store;
 }

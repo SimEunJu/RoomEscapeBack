@@ -5,6 +5,7 @@ import com.sej.escape.dto.comment.CommentModifyReqDto;
 import com.sej.escape.entity.comment.BoardComment;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.StoreComment;
+import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

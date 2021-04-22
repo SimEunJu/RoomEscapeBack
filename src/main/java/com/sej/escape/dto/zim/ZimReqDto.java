@@ -1,5 +1,6 @@
 package com.sej.escape.dto.zim;
 
+import com.sej.escape.constants.ZimType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,7 @@ public class ZimReqDto {
 
     private Long id;
     @NotNull private Long referId;
-    @NotEmpty private String type;
+    @NotNull private ZimType type;
     @NotNull private Boolean isChecked;
 
 }

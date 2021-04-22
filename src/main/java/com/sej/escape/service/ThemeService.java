@@ -6,6 +6,7 @@ import com.sej.escape.constants.AreaSection;
 import com.sej.escape.constants.AreaSectionComponent;
 import com.sej.escape.constants.ListOrder;
 
+import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.theme.ThemeDto;
 import com.sej.escape.dto.theme.ThemeForListDto;
 import com.sej.escape.dto.page.PageReqDto;
@@ -17,6 +18,7 @@ import com.sej.escape.repository.ThemeRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.AdviceMode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -49,6 +51,15 @@ public class ThemeService {
                 .addMappings(mapper -> {
                     mapper.map(Theme::getThemeName, ThemeForListDto::setName);
                 });
+
+        this.modelMapper.createTypeMap(Theme.class, ThemeDto.class)
+                .addMappings(mapper -> {
+                    mapper.map(Theme::getThemeName, ThemeDto::setName);
+                    mapper.map(Theme::getGenreByList, ThemeDto::setGenre);
+                    mapper.map(Theme::getQuizTypeByList, ThemeDto::setQuizType);
+                    mapper.map(src -> areaSectionComponent.getTitleFromAreaCode(src.getStore().getAreaCode(), new ArrayList<>()),
+                            (dest, v) -> dest.getStore().setArea( (List<String>) v));
+                });
     }
 
     public ThemeDto getTheme(long id){
@@ -56,7 +67,7 @@ public class ThemeService {
         String querySelectIsZimChk = ", (SELECT 0) as is_zim_chk ";
         if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsZimChk = ", (SELECT SUM(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
+            querySelectIsZimChk = ", (SELECT SUM(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='T' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
         }
 
         String queryWhere = " AND theme.theme_id = "+id;
@@ -69,7 +80,17 @@ public class ThemeService {
         } catch (NoResultException e){
             throw throwNoSuchResourceException(id);
         }
-        return mapThemeRowToDto(result, ThemeDto.class);
+        ThemeDto themeDto = mapThemeRowToDto(result, ThemeDto.class);
+        long storeId = themeDto.getStore().getId();
+        List<ThemeForListDto> relatedThemes = getThemesUnderSameStore(storeId);
+        themeDto.setRelated(relatedThemes);
+        return themeDto;
+    }
+
+    public List<ThemeForListDto> getThemesUnderSameStore(long storeId){
+        Store store = Store.builder().id(storeId).build();
+        List<Theme> themes = themeRepository.findAllByIsDeletedFalseAndStoreEquals(store);
+        return themes.stream().map(theme -> modelMapper.map(theme, ThemeForListDto.class)).collect(Collectors.toList());
     }
 
     private NoSuchResourceException throwNoSuchResourceException(long id){
@@ -118,7 +139,7 @@ public class ThemeService {
                     }
                     break;
                 default:
-                    queryOrder += " theme.store_id DESC";
+                    queryOrder += " theme.theme_id DESC";
                     break;
             }
         }
@@ -126,7 +147,7 @@ public class ThemeService {
         String querySelectIsZimChk = ", (SELECT 0) as is_zim_chk ";
         if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = theme.theme_id AND is_zim = 1) as is_zim_chk ";
+            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='T' AND refer_id = theme.theme_id AND is_zim = 1) as is_zim_chk ";
         }
 
         String queryStr = getThemesQuery(querySelectIsZimChk, queryWhere, queryOrder);
@@ -147,8 +168,8 @@ public class ThemeService {
                 "ORDER BY"+queryOrder;
     }
     private String getThemeQuery(String querySelectIsZimChk, String queryWhere){
-        String queryStr = "SELECT theme.*, store.store_name, file.root_path, file.sub_path,  " +
-                "(SELECT IFNULL(AVG(star), 0) FROM theme_comment WHERE theme_id = theme.theme_id and is_deleted = 0) as star_avg, " +
+        String queryStr = "SELECT theme.*, store.*, file.root_path, file.sub_path,  " +
+                "(SELECT AVG(star) FROM theme_comment WHERE theme_id = theme.theme_id and theme_comment.is_deleted = 0) as star_avg, " +
                 "(SELECT COUNT(*) FROM zim WHERE ztype='T' AND refer_id = theme.theme_id AND is_zim = 1) as zim_cnt " +
                 querySelectIsZimChk +
                 "FROM theme INNER JOIN store ON theme.store_id = store.store_id " +
@@ -161,10 +182,11 @@ public class ThemeService {
 
         T themeDto = modelMapper.map(theme, dtoCls);
 
-        String storeName = (String) row[1];
-        themeDto.setStoreName(storeName);
+        Store store = (Store) row[1];
+        StoreDto storeDto = modelMapper.map(store, StoreDto.class);
+        themeDto.setStore(storeDto);
 
-        double starAvg = row[4] != null ? (double) row[4] : 0;
+        double starAvg = row[4] != null ? (double) row[4] : 0.0;
         themeDto.setStar(starAvg);
 
         String fileRootPath = (String) row[2];

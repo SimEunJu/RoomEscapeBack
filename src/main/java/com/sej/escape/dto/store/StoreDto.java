@@ -2,13 +2,17 @@ package com.sej.escape.dto.store;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sej.escape.entity.geolocation.Address;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class StoreDto {
 
     private long id;

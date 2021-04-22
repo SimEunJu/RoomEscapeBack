@@ -1,6 +1,7 @@
 package com.sej.escape.repository;
 
 import com.sej.escape.entity.Member;
+import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface ThemeRepository
         extends JpaRepository<Theme, Long>, QuerydslPredicateExecutor<Theme> {
@@ -21,5 +23,5 @@ public interface ThemeRepository
     // THINK: select에서 count 버리고 t만 가져올 수 있을까
     @Query("select t, t.comments.size as reviewCnt from Theme t where t.isDeleted = false group by t.id")
     Page<Theme> findTopThemes(Pageable pageable);
-
+    List<Theme> findAllByIsDeletedFalseAndStoreEquals(Store store);
 }

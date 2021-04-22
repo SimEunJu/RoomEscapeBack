@@ -90,12 +90,14 @@ public class CommentService {
         return commentDtos;
     }
 
+    /*
     public long reportComment(long id){
         Comment comment = getCommentByIdIfExist(id);
         comment.setReport(comment.getReport() + 1);
         commentRepository.save(comment);
         return comment.getId();
     }
+    */
 
     public long deleteComment(long id){
         Comment comment = getCommentByIdIfExist(id);
