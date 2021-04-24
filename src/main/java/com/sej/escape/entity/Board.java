@@ -27,13 +27,11 @@ public class Board extends BaseWithDelete {
     private Member member;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
+    @Transient
     private List<BoardComment> comments = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "file_id")
+    @Transient
     private List<File> files = new ArrayList<>();
 
     @Column(columnDefinition = "text")

@@ -1,14 +1,14 @@
 package com.sej.escape.dto.file;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.sej.escape.constants.FileType;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class FileReqDto {
 
@@ -16,10 +16,13 @@ public class FileReqDto {
     private String originalName;
     private String rootPath;
     private String subPath;
-    private MultipartFile file;
+    private MultipartFile uploadFile;
     private int seq;
 
-    private long boardId;
+    private long randomId;
+    private long id;
+    private long referId;
+    @NonNull private FileType type;
 
     public String getUrl(){
         return rootPath + "/" + subPath + "/" + name;

@@ -1,5 +1,7 @@
-package com.sej.escape.service.file;
+package com.sej.escape.service.file.manage;
 
+import com.sej.escape.service.file.upload.LocalFileManageService;
+import com.sej.escape.service.file.upload.S3FileManageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

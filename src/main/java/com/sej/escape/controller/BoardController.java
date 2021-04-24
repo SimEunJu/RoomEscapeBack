@@ -8,8 +8,8 @@ import com.sej.escape.dto.file.FileResDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.service.BoardService;
-import com.sej.escape.service.file.FileManageService;
-import com.sej.escape.service.file.FileManageServiceProvider;
+import com.sej.escape.service.file.manage.FileManageService;
+import com.sej.escape.service.file.manage.FileManageServiceProvider;
 import com.sej.escape.service.file.FileService;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -59,7 +59,7 @@ public class BoardController {
 
         FileManageService fileManageService = fileManageServiceProvider.getDefault();
         FileReqDto fileReqDto = FileControllerUtils.getFileReqDto(multipartFile);
-        fileReqDto.setBoardId(boardResDto.getId());
+        fileReqDto.setReferId(boardResDto.getId());
         FileResDto fileResDto = fileService.saveFile(fileReqDto, fileManageService);
 
         boardResDto.setFile(fileResDto);

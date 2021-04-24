@@ -40,7 +40,8 @@ https://www.baeldung.com/jackson-annotations
 
 https://www.baeldung.com/java-thread-safety
 https://stackoverflow.com/questions/23123251/java-enums-for-hierarchical-tree-like-structure
-
+https://www.baeldung.com/spring-mvc-custom-data-binder
+https://www.baeldung.com/spring-enum-request-param
 
 
 
