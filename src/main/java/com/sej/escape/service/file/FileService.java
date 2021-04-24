@@ -12,6 +12,8 @@ import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -21,13 +23,17 @@ public class FileService {
     private final BoardFileRepository boardFileRepository;
     private final ModelMapper modelMapper;
 
+    public long updateReferIds(List<Long> ids, long referId){
+        return fileRepository.updateReferIds(referId, ids);
+    }
+
     public FileResDto saveFile(FileReqDto fileReqDto, FileManageService fileManageService) throws FileUploadException {
         fileManageService.uploadFile(fileReqDto);
         long fileId = 0;
         switch (fileReqDto.getType()){
             case BOARD: {
                 BoardFile file = modelMapper.map(fileReqDto, BoardFile.class);
-                boardFileRepository.save(file);
+                file = boardFileRepository.save(file);
                 fileId = file.getId();
                 break;
             }
@@ -35,7 +41,7 @@ public class FileService {
         return FileResDto.builder()
                 .url(fileReqDto.getUrl())
                 .id(fileId)
-                .randomId(fileReqDto.getId())
+                .randomId(fileReqDto.getRandomId())
                 .type(fileReqDto.getType())
                 .build();
     }

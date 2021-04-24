@@ -30,23 +30,19 @@ public class Board extends BaseWithDelete {
     @Transient
     private List<BoardComment> comments = new ArrayList<>();
 
-    @Builder.Default
-    @Transient
-    private List<File> files = new ArrayList<>();
-
     @Column(columnDefinition = "text")
     private String title;
 
     @Column(columnDefinition = "longtext")
     private String content;
 
-    @Column(columnDefinition = "int default 0", nullable = false)
+    @Column(columnDefinition = "int default 0")
     private Integer good;
 
-    @Column(columnDefinition = "int default 0", nullable = false)
+    @Column(columnDefinition = "int default 0")
     private Integer report;
 
-    @Column(columnDefinition = "int default 0", nullable = false)
+    @Column(columnDefinition = "int default 0")
     private Integer view;
 
 }

@@ -3,6 +3,7 @@ package com.sej.escape.controller;
 import com.sej.escape.controller.file.FileControllerUtils;
 import com.sej.escape.dto.ModifyResDto;
 import com.sej.escape.dto.board.BoardDto;
+import com.sej.escape.dto.board.BoardResDto;
 import com.sej.escape.dto.file.FileReqDto;
 import com.sej.escape.dto.file.FileResDto;
 import com.sej.escape.dto.page.PageReqDto;
@@ -54,16 +55,8 @@ public class BoardController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<BoardDto> addBoard(BoardDto boardDto, MultipartFile multipartFile) throws FileUploadException {
-        BoardDto boardResDto = boardService.addBoard(boardDto);
-
-        FileManageService fileManageService = fileManageServiceProvider.getDefault();
-        FileReqDto fileReqDto = FileControllerUtils.getFileReqDto(multipartFile);
-        fileReqDto.setReferId(boardResDto.getId());
-        FileResDto fileResDto = fileService.saveFile(fileReqDto, fileManageService);
-
-        boardResDto.setFile(fileResDto);
-
+    public ResponseEntity<BoardResDto> addBoard(@RequestBody BoardDto boardDto, MultipartFile multipartFile) throws FileUploadException {
+        BoardResDto boardResDto = boardService.addBoard(boardDto);
         return ResponseEntity.ok(boardResDto);
     }
 

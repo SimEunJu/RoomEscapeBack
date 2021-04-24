@@ -24,7 +24,7 @@ public class FileController {
     private final FileManageServiceProvider fileManagerServiceProvider;
     private final FileService fileService;
 
-    @PostMapping("/cloud")
+    @PostMapping(value="/cloud", consumes = { "multipart/form-data" })
     public ResponseEntity<FileResDto> uploadFileToCloud(@Valid FileReqDto reqDto) throws FileUploadException {
 
         FileReqDto fileReqDto = FileControllerUtils.getFileReqDto(reqDto);

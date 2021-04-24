@@ -2,12 +2,16 @@ package com.sej.escape.service;
 
 import com.querydsl.core.BooleanBuilder;
 import com.sej.escape.dto.board.BoardDto;
+import com.sej.escape.dto.board.BoardResDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.entity.Board;
+import com.sej.escape.entity.Member;
 import com.sej.escape.entity.QBoard;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.BoardRepository;
+import com.sej.escape.service.file.FileService;
+import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -16,20 +20,25 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final FileService fileService;
+    private final AuthenticationUtil authenticationUtil;
     private final ModelMapper modelMapper;
 
     @PostConstruct
     public void afterConstruct(){
         this.modelMapper.createTypeMap(Board.class, BoardDto.class)
-                .addMapping(src -> src.getMember().getMemberName(), BoardDto::setWriter);
+                .addMapping(src -> src.getMember().getNickname(), BoardDto::setWriter);
     }
 
     public PageResDto<Board, BoardDto> getBoards(PageReqDto pageReqDto){
@@ -61,11 +70,22 @@ public class BoardService {
         return mapBoardToDto(boardUp);
     }
 
-    public BoardDto addBoard(BoardDto boardDto){
-        Board board = boardRepository.save(modelMapper.map(boardDto, Board.class));
-        boardDto.setId(board.getId());
-        boardDto.setRegDate(board.getRegDate());
-        return boardDto;
+    public BoardResDto addBoard(BoardDto boardDto){
+        Board board = modelMapper.map(boardDto, Board.class);
+        Member member = authenticationUtil.getAuthUserEntity();
+        board.setMember(member);
+        board = boardRepository.save(board);
+
+        if(boardDto.getUploadFiles().length > 0){
+            List<Long> ids = Arrays.stream(boardDto.getUploadFiles()).map(file -> file.getId()).collect(Collectors.toList());
+            fileService.updateReferIds(ids, board.getId());
+        }
+
+        BoardResDto resDto = modelMapper.map(boardDto, BoardResDto.class);
+        resDto.setId(board.getId());
+        resDto.setRegDate(board.getRegDate());
+        resDto.setWriter(member.getNickname());
+        return resDto;
     }
 
     private Board getBoardIfExist(Optional<Board> boardOpt, long id) {

@@ -50,6 +50,10 @@ public class S3FileManageService implements FileManageService {
         this.transferManager = transferManager.build();
     }
 
+    private String getRootUrl(){
+        return "https://"+bucketName+".s3."+region+".amazonaws.com";
+    }
+
     @Override
     public FileReqDto uploadFile(FileReqDto fileReqDto) throws FileUploadException {
         try {
@@ -61,8 +65,7 @@ public class S3FileManageService implements FileManageService {
             File fileTo = File.createTempFile(nameWithFullPath, ".tmp");
             file.transferTo(fileTo);
 
-            String realRootPath = "https://"+bucketName+".s3."+region;
-            fileReqDto.setRootPath(realRootPath);
+            fileReqDto.setRootPath(getRootUrl());
 
             String uploadName = fileReqDto.getSubPath() + "/" + fileReqDto.getName();
             Upload upload = transferManager.upload(bucketName, uploadName, fileTo);

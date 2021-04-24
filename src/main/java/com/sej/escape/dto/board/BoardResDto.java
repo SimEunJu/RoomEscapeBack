@@ -1,21 +1,18 @@
 package com.sej.escape.dto.board;
 
-import com.sej.escape.dto.file.FileResDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class BoardDto {
+@AllArgsConstructor
+public class BoardResDto {
 
     private long id;
     private long randomId;
-    private String title;
     private String writer;
     private LocalDateTime regDate;
-    private String content;
-    private FileResDto[] uploadFiles;
 }
