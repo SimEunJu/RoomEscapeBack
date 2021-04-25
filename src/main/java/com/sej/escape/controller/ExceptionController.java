@@ -12,6 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,6 +21,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class ExceptionController {
+
+    // @Valid 실패 시
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<ErrorRes> handleBindException(BindException e){
+        log.error("BindException", e);
+        ErrorRes response = new ErrorRes(ErrorCode.INVALID_REQUEST_VALUE, e.getFieldErrors());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
     // @Valid 실패 시
     @ExceptionHandler(UnDefinedConstantException.class)

@@ -35,7 +35,7 @@ public class BoardController {
         return ResponseEntity.ok(pageResDto);
     }
 
-    @GetMapping("/:id")
+    @GetMapping("{id}")
     public ResponseEntity<BoardDto> getBoard(@PathVariable long id){
         BoardDto boardDto = boardService.getBoard(id);
         return ResponseEntity.ok(boardDto);
@@ -48,8 +48,8 @@ public class BoardController {
         return ResponseEntity.ok(new ModifyResDto(reqCnt, deleteCnt, reqCnt == deleteCnt));
     }
 
-    @PatchMapping("/update/:id")
-    public ResponseEntity<BoardDto> updateBoard(BoardDto boardDto){
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<BoardDto> updateBoard(@RequestBody BoardDto boardDto){
         BoardDto boardDtoUp = boardService.updateBoard(boardDto);
         return ResponseEntity.ok(boardDtoUp);
     }

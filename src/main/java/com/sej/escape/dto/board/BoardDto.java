@@ -18,4 +18,5 @@ public class BoardDto {
     private LocalDateTime regDate;
     private String content;
     private FileResDto[] uploadFiles;
+
 }

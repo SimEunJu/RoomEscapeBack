@@ -13,6 +13,7 @@ public class BoardResDto {
 
     private long id;
     private long randomId;
+    private String title;
     private String writer;
     private LocalDateTime regDate;
 }

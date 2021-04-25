@@ -37,12 +37,12 @@ public class Board extends BaseWithDelete {
     private String content;
 
     @Column(columnDefinition = "int default 0")
-    private Integer good;
+    private int good;
 
     @Column(columnDefinition = "int default 0")
-    private Integer report;
+    private int report;
 
     @Column(columnDefinition = "int default 0")
-    private Integer view;
+    private int view;
 
 }

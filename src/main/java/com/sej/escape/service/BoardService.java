@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -45,8 +46,12 @@ public class BoardService {
         Sort sort = Sort.by(Sort.Direction.DESC, "regDate");
         Pageable pageable = pageReqDto.getPageable(sort);
         QBoard qBoard = QBoard.board;
-        BooleanBuilder builder = new BooleanBuilder(qBoard.title.contains(pageReqDto.getSearchKeyword()));
-        Page<Board> boards = boardRepository.findAllByIsDeletedFalse(builder, pageable);
+
+        BooleanBuilder builder = new BooleanBuilder(qBoard.isDeleted.isFalse());
+        if(StringUtils.hasText(pageReqDto.getSearchKeyword())){
+            builder.and(qBoard.title.contains(pageReqDto.getSearchKeyword()));
+        }
+        Page<Board> boards = boardRepository.findAll(builder, pageable);
         return new PageResDto<>(boards, this::mapBoardToDto);
     }
 
