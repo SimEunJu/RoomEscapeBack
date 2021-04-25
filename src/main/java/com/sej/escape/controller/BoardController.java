@@ -26,8 +26,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final FileService fileService;
-    private final FileManageServiceProvider fileManageServiceProvider;
 
     @GetMapping
     public ResponseEntity<PageResDto> getBoards(PageReqDto pageReqDto){
@@ -41,10 +39,11 @@ public class BoardController {
         return ResponseEntity.ok(boardDto);
     }
 
+
     @PatchMapping("/delete")
-    public ResponseEntity<ModifyResDto> deleteBoards(List<Long> ids){
-        long deleteCnt = boardService.deleteBoards(ids);
-        long reqCnt = ids.size();
+    public ResponseEntity<ModifyResDto> deleteBoards(@RequestBody List<Long> ids){
+        int deleteCnt = boardService.deleteBoards(ids);
+        int reqCnt = ids.size();
         return ResponseEntity.ok(new ModifyResDto(reqCnt, deleteCnt, reqCnt == deleteCnt));
     }
 

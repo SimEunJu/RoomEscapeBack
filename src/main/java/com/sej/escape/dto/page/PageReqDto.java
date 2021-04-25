@@ -1,14 +1,12 @@
 package com.sej.escape.dto.page;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor
 public class PageReqDto {
 
@@ -19,6 +17,14 @@ public class PageReqDto {
     public PageReqDto(){
         this.page = 1;
         this.size = 10;
+    }
+
+    public void setPage(int page) {
+        if(page <= 0){
+            this.page = 1;
+            return;
+        }
+        this.page = page;
     }
 
     public Pageable getPageable(Sort sort){

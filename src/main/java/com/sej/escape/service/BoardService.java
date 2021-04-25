@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BoardService {
 
@@ -61,8 +63,8 @@ public class BoardService {
         return mapBoardToDto(board);
     }
 
-    public long deleteBoards(List<Long> ids){
-        long deleteCnt = boardRepository.updateDeleteTAllByIdIn(ids);
+    public int deleteBoards(List<Long> ids){
+        int deleteCnt = boardRepository.updateDeleteTAllByIdIn(ids);
         return deleteCnt;
     }
 
