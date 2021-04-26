@@ -9,6 +9,7 @@ import com.sej.escape.constants.AreaSectionComponent;
 import com.sej.escape.constants.ListOrder;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.store.StorePageReqDto;
+import com.sej.escape.entity.Member;
 import com.sej.escape.entity.QStore;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.file.StoreFile;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.AdviceMode;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +29,13 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +63,7 @@ public class StoreService {
         String querySelectIsZimChk = ", (SELECT 0) as is_zim_chk ";
         if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsZimChk = ", (SELECT SUM(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
+            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
         }
 
         String queryWhere = " AND store.store_id = "+id;
@@ -87,6 +91,20 @@ public class StoreService {
 
     private StoreDto mapStoreToDto(Store store) {
         return modelMapper.map(store, StoreDto.class);
+    }
+
+    public List<StoreDto> getStoresByZim(StorePageReqDto reqDto){
+        Member member = authenticationUtil.getAuthUserEntity();
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = reqDto.getPageable(sort);
+
+        List<Store> stores = storeRepository.findallByZim(member, pageable);
+        return mapStoresToDtos(stores);
+    }
+
+    private List<StoreDto> mapStoresToDtos(List<Store> stores){
+        return stores.stream().map(this::mapStoreToDto).collect(Collectors.toList());
     }
 
     // TODO: 서비스 계층에서 쿼리 생성하는 게 맞나... ->  repositoryImpl로 이동
@@ -185,7 +203,7 @@ public class StoreService {
         storeDto.setImgUrl(fileRootPath+"/"+fileSubPath);
 
         long zimCnt = row[4] != null ? ((BigInteger) row[4]).longValue() : 0;
-        boolean isMemberCheckZim = row[5] != null && ((BigInteger)row[5]).intValue() > 0;
+        boolean isMemberCheckZim = row[5] != null && ((BigDecimal)row[5]).intValue() > 0;
         storeDto.setZimChecked(isMemberCheckZim);
         if(authenticationUtil.isAuthenticated()){
             zimCnt = isMemberCheckZim ? zimCnt - 1 : zimCnt;

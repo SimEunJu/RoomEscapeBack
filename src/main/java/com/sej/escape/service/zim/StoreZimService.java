@@ -19,7 +19,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class StoreZimService {
+public class StoreZimService implements IZimService{
 
     private final StoreZimRepository storeZimRepository;
     private final ModelMapper modelMapper;

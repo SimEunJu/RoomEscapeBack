@@ -25,6 +25,12 @@ public class StoreController {
         return ResponseEntity.ok(stores);
     }
 
+    @GetMapping("/zim")
+    public ResponseEntity<List<StoreDto>> getStoresByZim(StorePageReqDto storePageReqDto){
+        List<StoreDto> stores = storeService.getStoresByZim(storePageReqDto);
+        return ResponseEntity.ok(stores);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<StoreDto> getStore(@PathVariable long id){
         StoreDto storeDto = storeService.getStore(id);
