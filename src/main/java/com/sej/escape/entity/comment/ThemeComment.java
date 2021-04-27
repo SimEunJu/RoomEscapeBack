@@ -71,4 +71,6 @@ public class ThemeComment extends BaseWithDelete {
 
     private boolean isActive;
 
+    private boolean isHidden;
+
 }

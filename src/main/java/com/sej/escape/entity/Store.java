@@ -51,4 +51,7 @@ public class Store extends BaseWithDelete {
     @Column(columnDefinition = "text")
     private String introduce;
 
+    @Column(columnDefinition = "smallint default 0")
+    private int themeCnt;
+
 }
