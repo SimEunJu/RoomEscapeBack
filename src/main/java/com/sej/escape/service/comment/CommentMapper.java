@@ -2,6 +2,8 @@ package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.CommentDto;
 import com.sej.escape.dto.comment.CommentModifyReqDto;
+import com.sej.escape.dto.comment.StoreCommentDto;
+import com.sej.escape.entity.Store;
 import com.sej.escape.entity.comment.BoardComment;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.StoreComment;
@@ -26,18 +28,14 @@ public class CommentMapper {
     private final ModelMapper modelMapper;
     private final AuthenticationUtil authenticationUtil;
 
-    public <T> List<CommentDto> mapEntitesToDtos(List<T> entities){
+    public <T, D> List<D> mapEntitesToDtos(List<T> entities, Class<D> dest){
         return entities.stream()
-                .map(comment -> modelMapper.map(comment, CommentDto.class))
+                .map(comment -> modelMapper.map(comment, dest))
                 .collect(Collectors.toList());
     }
 
-    public <T extends Comment> CommentDto mapEntityToDto(T entity){
-        return modelMapper.map(entity, CommentDto.class);
-    }
-
-    public <E extends Comment, D> D mapEntityToDto(E entity, Class<D> dto){
-        return modelMapper.map(entity, dto);
+    public <E extends Comment, D> D mapEntityToDto(E entity, Class<D> dest){
+        return modelMapper.map(entity, dest);
     }
 
     private <T extends Comment> T mapReqDtoToComment(Class<T> entityCls, CommentModifyReqDto commentModifyReqDto)  {
@@ -52,6 +50,7 @@ public class CommentMapper {
         T entity = null;
         try {
             entity = entityCls.newInstance();
+
         } catch (InstantiationException | IllegalAccessException e) {
             log.error(e.getMessage());
             RuntimeException re = new RuntimeException(String.format("fail to create %s instance", entityCls.getName()));
@@ -77,5 +76,15 @@ public class CommentMapper {
         StoreComment storeComment = mapReqDtoToComment(StoreComment.class, commentModifyReqDto);
         storeComment.setStar(commentModifyReqDto.getStarRate());
         return storeComment;
+    }
+
+    public List<StoreCommentDto> mapStoreCommentsToDtos(List<Object[]> entitis){
+        return entitis.stream().map(e -> {
+            StoreComment storeComment = (StoreComment) e[0];
+            Store store = (Store) e[1];
+            StoreCommentDto dto = modelMapper.map(storeComment, StoreCommentDto.class);
+            dto.setName(store.getStoreName());
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

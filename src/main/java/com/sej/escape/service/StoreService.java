@@ -8,6 +8,7 @@ import com.sej.escape.constants.AreaSection;
 import com.sej.escape.constants.AreaSectionComponent;
 import com.sej.escape.constants.ListOrder;
 import com.sej.escape.dto.store.StoreDto;
+import com.sej.escape.dto.store.StoreForListDto;
 import com.sej.escape.dto.store.StorePageReqDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.QStore;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.AdviceMode;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,6 +60,17 @@ public class StoreService {
                                     areaSectionComponent.getTitleFromAreaCode(src.getAreaCode(), new ArrayList<>()),
                             StoreDto::setArea);
                 });
+        // TODO: setName을 자동화할 수 없을까? -> interface?
+        this.modelMapper.createTypeMap(Store.class, StoreForListDto.class)
+                .addMappings(mapper -> {
+                    mapper.map(Store::getStoreName, StoreForListDto::setName);
+                });
+    }
+
+    public List<StoreForListDto> getStoresByName(String keyword){
+        Pageable pageable = PageRequest.of(1, 20);
+        List<Store> stores = storeRepository.findAllByIsDeletedFalseAndStoreNameContaining(keyword);
+        return mapStoresToDtos(stores, StoreForListDto.class);
     }
 
     public StoreDto getStore(long id){
@@ -89,22 +104,29 @@ public class StoreService {
         return store;
     }
 
-    private StoreDto mapStoreToDto(Store store) {
-        return modelMapper.map(store, StoreDto.class);
+    private <T> T mapStoreToDto(Store store, Class<T> dest) {
+        return modelMapper.map(store, dest);
     }
 
     public List<StoreDto> getStoresByZim(StorePageReqDto reqDto){
         Member member = authenticationUtil.getAuthUserEntity();
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Sort sort = Sort.by(Sort.Direction.DESC, "updateDate");
         Pageable pageable = reqDto.getPageable(sort);
 
         List<Store> stores = storeRepository.findallByZim(member, pageable);
-        return mapStoresToDtos(stores);
+        return mapStoresToDtos(stores, StoreDto.class, storeDto -> { storeDto.setZimChecked(true); return storeDto; });
     }
 
-    private List<StoreDto> mapStoresToDtos(List<Store> stores){
-        return stores.stream().map(this::mapStoreToDto).collect(Collectors.toList());
+    private <T> List<T> mapStoresToDtos(List<Store> stores, Class<T> dest){
+        return stores.stream().map(store -> mapStoreToDto(store, dest)).collect(Collectors.toList());
+    }
+
+    private <T> List<T> mapStoresToDtos(List<Store> stores, Class<T> dest, UnaryOperator<T> func){
+        return stores.stream().map(store -> {
+            T dto = mapStoreToDto(store, dest);
+            return func.apply(dto);
+        }).collect(Collectors.toList());
     }
 
     // TODO: 서비스 계층에서 쿼리 생성하는 게 맞나... ->  repositoryImpl로 이동
@@ -195,7 +217,7 @@ public class StoreService {
 
         StoreDto storeDto = modelMapper.map(store, StoreDto.class);
 
-        double starAvg = row[3] != null ? (double) row[3] : 0.0;
+        double starAvg = row[3] != null ? ((BigDecimal) row[3]).doubleValue() : 0.0;
         storeDto.setStar(starAvg);
 
         String fileRootPath = (String) row[1];
@@ -203,7 +225,7 @@ public class StoreService {
         storeDto.setImgUrl(fileRootPath+"/"+fileSubPath);
 
         long zimCnt = row[4] != null ? ((BigInteger) row[4]).longValue() : 0;
-        boolean isMemberCheckZim = row[5] != null && ((BigDecimal)row[5]).intValue() > 0;
+        boolean isMemberCheckZim = row[5] != null && ((BigInteger)row[5]).intValue() > 0;
         storeDto.setZimChecked(isMemberCheckZim);
         if(authenticationUtil.isAuthenticated()){
             zimCnt = isMemberCheckZim ? zimCnt - 1 : zimCnt;

@@ -69,7 +69,7 @@ public class CommentService {
 
         List<CommentDto> commentDtos = results.stream().map(row -> {
             StoreComment comment = (StoreComment) row[0];
-            CommentDto commentDto = commentMapper.mapEntityToDto(comment);
+            CommentDto commentDto = commentMapper.mapEntityToDto(comment, CommentDto.class);
             if(comment.isDeleted()) commentDto.setContent("삭제된 댓글입니다.");
 
             String nickname = (String) row[1];
@@ -113,13 +113,20 @@ public class CommentService {
 
         comment.setStar(modifyReqDto.getStarRate());
         Comment commentUpdated = commentRepository.save(comment);
-        return commentMapper.mapEntityToDto(commentUpdated);
+        return commentMapper.mapEntityToDto(commentUpdated, CommentDto.class);
     }
 
     public long toggleLikeComment(long id, boolean isLikeSet){
         Comment comment = getCommentByIdIfExist(id);
         int diff = isLikeSet ? 1 : -1;
         comment.setGood(comment.getGood() + diff);
+        commentRepository.save(comment);
+        return comment.getId();
+    }
+
+    public long toggleHideComment(long id, boolean isHidden){
+        Comment comment = getCommentByIdIfExist(id);
+        comment.setHidden(isHidden);
         commentRepository.save(comment);
         return comment.getId();
     }

@@ -105,5 +105,10 @@ public class CommentController {
         return ResponseEntity.ok(resDto);
     }
 
-
+    @PatchMapping("/hidden/{id}")
+    public ResponseEntity<CommentResDto> toggleHideComment(@PathVariable long id, boolean isHidden){
+        long likeId = commentService.toggleHideComment(id, isHidden);
+        CommentResDto resDto = getResDto("hide", likeId);
+        return ResponseEntity.ok(resDto);
+    }
 }

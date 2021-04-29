@@ -32,7 +32,7 @@ public class ThemeCommentService {
 
         Page<ThemeComment> comments = themeCommentRepository.findTopComments(aWeekAgo, pageable);
 
-        List<CommentDto> commentDtos = commentMapper.mapEntitesToDtos(comments.getContent());
+        List<CommentDto> commentDtos = commentMapper.mapEntitesToDtos(comments.getContent(), CommentDto.class);
 
         return commentDtos;
     }
@@ -43,7 +43,7 @@ public class ThemeCommentService {
 
         Page<ThemeComment> comments = themeCommentRepository.findLatestComments(pageable);
 
-        List<CommentDto> commentDtos = commentMapper.mapEntitesToDtos(comments.getContent());
+        List<CommentDto> commentDtos = commentMapper.mapEntitesToDtos(comments.getContent(), CommentDto.class);
 
         return commentDtos;
     }

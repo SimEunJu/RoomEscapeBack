@@ -18,7 +18,7 @@ public class StoreComment extends Comment {
 
     @Builder(builderMethodName = "storeBuilder")
 
-    public StoreComment(Long id, Member member, Long referId, String content, int good, double star, int depth, int seq, Long parId) {
-        super(id, member, referId, content, good, star, depth, seq, parId);
+    public StoreComment(Long id, Member member, Long referId, String content, int good, double star, int depth, int seq, Long parId, boolean isHidden) {
+        super(id, member, referId, content, good, star, depth, seq, parId, isHidden);
     }
 }

@@ -49,4 +49,6 @@ public class Comment extends BaseWithDelete {
     @Column
     protected Long parId;
 
+    private boolean isHidden;
+
 }

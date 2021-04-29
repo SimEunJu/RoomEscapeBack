@@ -1,6 +1,7 @@
 package com.sej.escape.controller;
 
 import com.sej.escape.dto.store.StoreDto;
+import com.sej.escape.dto.store.StoreForListDto;
 import com.sej.escape.dto.store.StorePageReqDto;
 import com.sej.escape.service.StoreService;
 import com.sun.mail.iap.Response;
@@ -35,6 +36,12 @@ public class StoreController {
     public ResponseEntity<StoreDto> getStore(@PathVariable long id){
         StoreDto storeDto = storeService.getStore(id);
         return ResponseEntity.ok(storeDto);
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<List<StoreForListDto>> getStore(@RequestParam String keyword){
+        List<StoreForListDto> stores = storeService.getStoresByName(keyword);
+        return ResponseEntity.ok(stores);
     }
 
 }
