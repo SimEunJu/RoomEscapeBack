@@ -1,6 +1,8 @@
 package com.sej.escape.controller.comment;
 
 
+import com.sej.escape.dto.comment.CommentListReqDto;
+import com.sej.escape.dto.comment.CommentListResDto;
 import com.sej.escape.dto.comment.CommentResDto;
 import com.sej.escape.dto.comment.StoreCommentDto;
 import com.sej.escape.dto.page.PageReqDto;
@@ -19,8 +21,8 @@ public class StoreCommentController {
     private final StoreCommentService storeCommentService;
 
     @GetMapping("/member")
-    public ResponseEntity<List<StoreCommentDto>> getCommentsByMember(PageReqDto pageReqDto){
-        List<StoreCommentDto> comments = storeCommentService.getComments(pageReqDto);
+    public ResponseEntity<CommentListResDto> getCommentsByMember(CommentListReqDto reqDto){
+        CommentListResDto comments = storeCommentService.getComments(reqDto);
         return ResponseEntity.ok(comments);
     }
 }

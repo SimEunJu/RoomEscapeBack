@@ -29,6 +29,8 @@ public class CommentDto {
     @JsonProperty("isDeleted")
     protected boolean isDeleted;
     protected double star;
+    @JsonProperty("isHidden")
+    protected boolean isHidden;
 
     // TODO: LocalDateTime json mapping 일괄 처리 되도록 설정 알아볼 것것
     //@JsonDeserialize(using = LocalDateDeserializer.class)

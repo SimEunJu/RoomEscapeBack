@@ -90,15 +90,6 @@ public class CommentService {
         return commentDtos;
     }
 
-    /*
-    public long reportComment(long id){
-        Comment comment = getCommentByIdIfExist(id);
-        comment.setReport(comment.getReport() + 1);
-        commentRepository.save(comment);
-        return comment.getId();
-    }
-    */
-
     public long deleteComment(long id){
         Comment comment = getCommentByIdIfExist(id);
         comment.setDeleted(true);
@@ -116,19 +107,11 @@ public class CommentService {
         return commentMapper.mapEntityToDto(commentUpdated, CommentDto.class);
     }
 
-    public long toggleLikeComment(long id, boolean isLikeSet){
-        Comment comment = getCommentByIdIfExist(id);
-        int diff = isLikeSet ? 1 : -1;
-        comment.setGood(comment.getGood() + diff);
-        commentRepository.save(comment);
-        return comment.getId();
-    }
-
-    public long toggleHideComment(long id, boolean isHidden){
+    public CommentResDto toggleHideComment(long id, boolean isHidden){
         Comment comment = getCommentByIdIfExist(id);
         comment.setHidden(isHidden);
         commentRepository.save(comment);
-        return comment.getId();
+        return commentMapper.mapEntityToDto(comment, CommentResDto.class);
     }
 
     private Comment getCommentByIdIfExist(long id){

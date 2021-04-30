@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 @RestController
@@ -76,15 +77,6 @@ public class CommentController {
                 .build();
     }
 
-    /*
-    @PatchMapping("/report/{id}")
-    public ResponseEntity<CommentResDto> reportComment(@PathVariable long id){
-        long reportId = commentService.reportComment(id);
-        CommentResDto resDto = getResDto("report", reportId);
-        return ResponseEntity.ok(resDto);
-    }
-    */
-
     @PatchMapping("/delete/{id}")
     public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id){
         long deleteId = commentService.deleteComment(id);
@@ -98,17 +90,10 @@ public class CommentController {
         return ResponseEntity.ok(commentDtoUpdated);
     }
 
-    @PatchMapping("/like/{id}")
-    public ResponseEntity<CommentResDto> toggleLikeComment(@PathVariable long id, boolean isGood){
-        long likeId = commentService.toggleLikeComment(id, isGood);
-        CommentResDto resDto = getResDto("toggle", likeId);
-        return ResponseEntity.ok(resDto);
-    }
-
-    @PatchMapping("/hidden/{id}")
-    public ResponseEntity<CommentResDto> toggleHideComment(@PathVariable long id, boolean isHidden){
-        long likeId = commentService.toggleHideComment(id, isHidden);
-        CommentResDto resDto = getResDto("hide", likeId);
+    @PatchMapping("/hide/{id}")
+    public ResponseEntity<CommentResDto> toggleHideComment(@PathVariable long id, @RequestBody Map<String, Boolean> paramMap){
+        CommentResDto resDto = commentService.toggleHideComment(id, paramMap.get("isHidden"));
+        resDto.setType("hide");
         return ResponseEntity.ok(resDto);
     }
 }

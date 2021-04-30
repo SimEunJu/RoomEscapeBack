@@ -78,7 +78,7 @@ public class StoreService {
         String querySelectIsZimChk = ", (SELECT 0) as is_zim_chk ";
         if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
+            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, NULL)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
         }
 
         String queryWhere = " AND store.store_id = "+id;
@@ -180,7 +180,7 @@ public class StoreService {
         String querySelectIsZimChk = ", (SELECT 0) as is_zim_chk ";
         if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
+            querySelectIsZimChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, NULL)) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as is_zim_chk ";
         }
 
         String queryStr = getStoresQuery(querySelectIsZimChk, queryWhere, queryOrder);

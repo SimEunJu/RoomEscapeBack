@@ -78,13 +78,5 @@ public class CommentMapper {
         return storeComment;
     }
 
-    public List<StoreCommentDto> mapStoreCommentsToDtos(List<Object[]> entitis){
-        return entitis.stream().map(e -> {
-            StoreComment storeComment = (StoreComment) e[0];
-            Store store = (Store) e[1];
-            StoreCommentDto dto = modelMapper.map(storeComment, StoreCommentDto.class);
-            dto.setName(store.getStoreName());
-            return dto;
-        }).collect(Collectors.toList());
-    }
+
 }

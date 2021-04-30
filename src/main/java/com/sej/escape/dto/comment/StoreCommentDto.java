@@ -1,5 +1,6 @@
 package com.sej.escape.dto.comment;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,11 +12,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class StoreCommentDto {
 
+    // store
+    private long storeId;
     private String name;
-    private LocalDateTime visitDate;
+
+    // comment
+    private long id;
+    private LocalDateTime regDate;
     private int star;
-    private int themeCnt;
-    private int visitThemeCnt;
+    @JsonProperty("isHidden")
     private boolean isHidden;
 
+    // theme
+    private int themeCnt;
+    private int visitThemeCnt;
 }
