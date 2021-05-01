@@ -1,4 +1,4 @@
-package com.sej.escape.service;
+package com.sej.escape.service.theme;
 
 import com.google.common.base.Strings;
 import com.querydsl.core.util.ArrayUtils;
@@ -7,10 +7,13 @@ import com.sej.escape.constants.AreaSectionComponent;
 import com.sej.escape.constants.ListOrder;
 
 import com.sej.escape.dto.store.StoreDto;
+import com.sej.escape.dto.store.StoreForListDto;
+import com.sej.escape.dto.store.StorePageReqDto;
 import com.sej.escape.dto.theme.ThemeDto;
 import com.sej.escape.dto.theme.ThemeForListDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.dto.theme.ThemePageReqDto;
+import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
 import com.sej.escape.error.exception.NoSuchResourceException;
@@ -20,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -40,26 +44,14 @@ import java.util.stream.Collectors;
 public class ThemeService {
 
     private final ThemeRepository themeRepository;
-    private final ModelMapper modelMapper;
     private final AuthenticationUtil authenticationUtil;
     private final EntityManager em;
-    private final AreaSectionComponent areaSectionComponent;
+    private final ThemeMapper mapper;
 
-    @PostConstruct
-    public void postConstruct(){
-        this.modelMapper.createTypeMap(Theme.class, ThemeForListDto.class)
-                .addMappings(mapper -> {
-                    mapper.map(Theme::getThemeName, ThemeForListDto::setName);
-                });
-
-        this.modelMapper.createTypeMap(Theme.class, ThemeDto.class)
-                .addMappings(mapper -> {
-                    mapper.map(Theme::getThemeName, ThemeDto::setName);
-                    mapper.map(Theme::getGenreByList, ThemeDto::setGenre);
-                    mapper.map(Theme::getQuizTypeByList, ThemeDto::setQuizType);
-                    mapper.map(src -> areaSectionComponent.getTitleFromAreaCode(src.getStore().getAreaCode(), new ArrayList<>()),
-                            (dest, v) -> dest.getStore().setArea( (List<String>) v));
-                });
+    public List<ThemeForListDto> getStoresByName(String keyword){
+        Pageable pageable = PageRequest.of(1, 20);
+        List<Theme> themes = themeRepository.findAllByIsDeletedFalseAndStoreNameContaining(keyword);
+        return mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
     }
 
     public ThemeDto getTheme(long id){
@@ -80,7 +72,7 @@ public class ThemeService {
         } catch (NoResultException e){
             throw throwNoSuchResourceException(id);
         }
-        ThemeDto themeDto = mapThemeRowToDto(result, ThemeDto.class);
+        ThemeDto themeDto = mapper.mapThemeRowToDto(result, ThemeDto.class);
         long storeId = themeDto.getStore().getId();
         List<ThemeForListDto> relatedThemes = getThemesUnderSameStore(storeId);
         themeDto.setRelated(relatedThemes);
@@ -90,12 +82,23 @@ public class ThemeService {
     public List<ThemeForListDto> getThemesUnderSameStore(long storeId){
         Store store = Store.builder().id(storeId).build();
         List<Theme> themes = themeRepository.findAllByIsDeletedFalseAndStoreEquals(store);
-        return themes.stream().map(theme -> modelMapper.map(theme, ThemeForListDto.class)).collect(Collectors.toList());
+        return mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
     }
 
     private NoSuchResourceException throwNoSuchResourceException(long id){
         return new NoSuchResourceException(
                 String.format("%d와 일치하는 카페가 존재하지 않습니다.", id) );
+    }
+
+    public List<ThemeForListDto> getStoresByZim(StorePageReqDto reqDto){
+        Member member = authenticationUtil.getAuthUserEntity();
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "updateDate");
+        Pageable pageable = reqDto.getPageable(sort);
+
+        List<Theme> themes = themeRepository.findallByZim(member, pageable);
+        return mapper.mapEntitiesToDtos(themes, ThemeForListDto.class,
+                themeDto -> { themeDto.setZimChecked(true); return themeDto; });
     }
 
     public List<ThemeForListDto> getThemes(ThemePageReqDto themePageReqDto){
@@ -159,14 +162,16 @@ public class ThemeService {
 
         List<ThemeForListDto> themeForListDtos = new ArrayList<>();
         for(Object[] row : results){
-            themeForListDtos.add(mapThemeRowToDto(row, ThemeForListDto.class));
+            themeForListDtos.add(mapper.mapThemeRowToDto(row, ThemeForListDto.class));
         }
         return themeForListDtos;
     }
+
     private String getThemesQuery(String querySelectIsZimChk, String queryWhere, String queryOrder){
         return getThemeQuery(querySelectIsZimChk, queryWhere) +
                 "ORDER BY"+queryOrder;
     }
+
     private String getThemeQuery(String querySelectIsZimChk, String queryWhere){
         String queryStr = "SELECT theme.*, store.*, file.root_path, file.sub_path,  " +
                 "(SELECT AVG(star) FROM theme_comment WHERE theme_id = theme.theme_id and theme_comment.is_deleted = 0) as star_avg, " +
@@ -177,32 +182,7 @@ public class ThemeService {
                 "WHERE theme.is_deleted = 0 "+queryWhere;
         return queryStr;
     }
-    private <T extends ThemeForListDto> T mapThemeRowToDto(Object[] row, Class<T> dtoCls){
-        Theme theme = (Theme) row[0];
 
-        T themeDto = modelMapper.map(theme, dtoCls);
-
-        Store store = (Store) row[1];
-        StoreDto storeDto = modelMapper.map(store, StoreDto.class);
-        themeDto.setStore(storeDto);
-
-        double starAvg = row[4] != null ? (double) row[4] : 0.0;
-        themeDto.setStar(starAvg);
-
-        String fileRootPath = (String) row[2];
-        String fileSubPath = (String) row[3];
-        themeDto.setImgUrl(fileRootPath+"/"+fileSubPath);
-
-        int zimCnt = row[5] != null ? ((BigInteger) row[5]).intValue() : 0;
-        boolean isMemberCheckZim = row[6] != null && ((BigInteger)row[6]).intValue() > 0;
-        themeDto.setZimChecked(isMemberCheckZim);
-        if(authenticationUtil.isAuthenticated()){
-            zimCnt = isMemberCheckZim ? zimCnt - 1 : zimCnt;
-        }
-        themeDto.setZim(zimCnt);
-
-        return themeDto;
-    }
     public List<ThemeForListDto> readTopThemes(PageReqDto pageReqDto){
         /*
         메인페이지 최대 10개
@@ -212,7 +192,7 @@ public class ThemeService {
         Pageable pageable = pageReqDto.getPageable(sort);
         Page<Theme> themes = themeRepository.findTopThemes(pageable);
 
-        List<ThemeForListDto> themeForListDtos = mapEntityToDto(themes.getContent());
+        List<ThemeForListDto> themeForListDtos = mapper.mapEntitiesToDtos(themes.getContent(), ThemeForListDto.class);
         return themeForListDtos;
     }
 
@@ -225,13 +205,9 @@ public class ThemeService {
 
         Page<Theme> themes = themeRepository.findLatestThemes(aMonthAgo, pageable);
 
-        List<ThemeForListDto> themeForListDtos = mapEntityToDto(themes.getContent());
+        List<ThemeForListDto> themeForListDtos = mapper.mapEntitiesToDtos(themes.getContent(), ThemeForListDto.class);
         return themeForListDtos;
     }
 
-    private List<ThemeForListDto> mapEntityToDto(List<Theme> entities){
-        return entities.stream()
-                .map(entity -> modelMapper.map(entity, ThemeForListDto.class))
-                .collect(Collectors.toList());
-    }
+
 }

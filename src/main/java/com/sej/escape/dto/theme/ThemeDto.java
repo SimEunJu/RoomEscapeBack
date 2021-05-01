@@ -1,5 +1,6 @@
 package com.sej.escape.dto.theme;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.entity.constants.Genre;
 import com.sej.escape.entity.constants.QuizType;

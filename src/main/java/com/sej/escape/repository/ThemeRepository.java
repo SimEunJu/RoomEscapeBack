@@ -24,4 +24,9 @@ public interface ThemeRepository
     @Query("select t, t.comments.size as reviewCnt from Theme t where t.isDeleted = false group by t.id")
     Page<Theme> findTopThemes(Pageable pageable);
     List<Theme> findAllByIsDeletedFalseAndStoreEquals(Store store);
+
+    @Query("select t from Theme t inner join ThemeZim tz on tz.referId = t.id and tz.isZim = true and tz.member = :member where t.isDeleted = false")
+    List<Theme> findallByZim(@Param("member") Member memer, Pageable pageable);
+
+    List<Theme> findAllByIsDeletedFalseAndStoreNameContaining(String storeName);
 }

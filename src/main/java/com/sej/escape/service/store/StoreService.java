@@ -1,4 +1,4 @@
-package com.sej.escape.service;
+package com.sej.escape.service.store;
 
 import com.google.common.base.Strings;
 import com.nimbusds.oauth2.sdk.AbstractOptionallyAuthenticatedRequest;
@@ -47,30 +47,13 @@ public class StoreService {
 
     private final EntityManager em;
     private final StoreRepository storeRepository;
-    private final ModelMapper modelMapper;
-    private final AreaSectionComponent areaSectionComponent;
     private final AuthenticationUtil authenticationUtil;
-
-    @PostConstruct
-    public void postConstruct(){
-        this.modelMapper.createTypeMap(Store.class, StoreDto.class)
-                .addMappings(mapper -> {
-                    mapper.map(Store::getStoreName, StoreDto::setName);
-                    mapper.map(src ->
-                                    areaSectionComponent.getTitleFromAreaCode(src.getAreaCode(), new ArrayList<>()),
-                            StoreDto::setArea);
-                });
-        // TODO: setName을 자동화할 수 없을까? -> interface?
-        this.modelMapper.createTypeMap(Store.class, StoreForListDto.class)
-                .addMappings(mapper -> {
-                    mapper.map(Store::getStoreName, StoreForListDto::setName);
-                });
-    }
+    private final StoreMapper mapper;
 
     public List<StoreForListDto> getStoresByName(String keyword){
         Pageable pageable = PageRequest.of(1, 20);
         List<Store> stores = storeRepository.findAllByIsDeletedFalseAndStoreNameContaining(keyword);
-        return mapStoresToDtos(stores, StoreForListDto.class);
+        return mapper.mapStoresToDtos(stores, StoreForListDto.class);
     }
 
     public StoreDto getStore(long id){
@@ -91,7 +74,7 @@ public class StoreService {
         } catch (NoResultException e){
             throw throwNoSuchResourceException(id);
         }
-        return mapStoreRowToDto(result);
+        return mapper.mapStoreRowToDto(result);
     }
 
     private NoSuchResourceException throwNoSuchResourceException(long id){
@@ -104,10 +87,6 @@ public class StoreService {
         return store;
     }
 
-    private <T> T mapStoreToDto(Store store, Class<T> dest) {
-        return modelMapper.map(store, dest);
-    }
-
     public List<StoreDto> getStoresByZim(StorePageReqDto reqDto){
         Member member = authenticationUtil.getAuthUserEntity();
 
@@ -115,18 +94,7 @@ public class StoreService {
         Pageable pageable = reqDto.getPageable(sort);
 
         List<Store> stores = storeRepository.findallByZim(member, pageable);
-        return mapStoresToDtos(stores, StoreDto.class, storeDto -> { storeDto.setZimChecked(true); return storeDto; });
-    }
-
-    private <T> List<T> mapStoresToDtos(List<Store> stores, Class<T> dest){
-        return stores.stream().map(store -> mapStoreToDto(store, dest)).collect(Collectors.toList());
-    }
-
-    private <T> List<T> mapStoresToDtos(List<Store> stores, Class<T> dest, UnaryOperator<T> func){
-        return stores.stream().map(store -> {
-            T dto = mapStoreToDto(store, dest);
-            return func.apply(dto);
-        }).collect(Collectors.toList());
+        return mapper.mapStoresToDtos(stores, StoreDto.class, storeDto -> { storeDto.setZimChecked(true); return storeDto; });
     }
 
     // TODO: 서비스 계층에서 쿼리 생성하는 게 맞나... ->  repositoryImpl로 이동
@@ -192,7 +160,7 @@ public class StoreService {
 
         List<StoreDto> storeDtos = new ArrayList<>();
         for(Object[] row : results){
-            storeDtos.add(mapStoreRowToDto(row));
+            storeDtos.add(mapper.mapStoreRowToDto(row));
         }
         return storeDtos;
     }
@@ -210,29 +178,6 @@ public class StoreService {
                 "FROM store LEFT OUTER JOIN file ON file.ftype = 'S' AND file.refer_id = store.store_id " +
                 "WHERE store.is_deleted = 0 "+queryWhere;
         return queryStr;
-    }
-
-    private StoreDto mapStoreRowToDto(Object[] row){
-        Store store = (Store) row[0];
-
-        StoreDto storeDto = modelMapper.map(store, StoreDto.class);
-
-        double starAvg = row[3] != null ? ((BigDecimal) row[3]).doubleValue() : 0.0;
-        storeDto.setStar(starAvg);
-
-        String fileRootPath = (String) row[1];
-        String fileSubPath = (String) row[2];
-        storeDto.setImgUrl(fileRootPath+"/"+fileSubPath);
-
-        long zimCnt = row[4] != null ? ((BigInteger) row[4]).longValue() : 0;
-        boolean isMemberCheckZim = row[5] != null && ((BigInteger)row[5]).intValue() > 0;
-        storeDto.setZimChecked(isMemberCheckZim);
-        if(authenticationUtil.isAuthenticated()){
-            zimCnt = isMemberCheckZim ? zimCnt - 1 : zimCnt;
-        }
-        storeDto.setZim(zimCnt);
-
-        return storeDto;
     }
     
 }

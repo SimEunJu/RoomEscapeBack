@@ -1,10 +1,12 @@
 package com.sej.escape.controller;
 
+import com.sej.escape.dto.store.StoreForListDto;
+import com.sej.escape.dto.store.StorePageReqDto;
 import com.sej.escape.dto.theme.ThemeDto;
 import com.sej.escape.dto.theme.ThemeForListDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.dto.theme.ThemePageReqDto;
-import com.sej.escape.service.ThemeService;
+import com.sej.escape.service.theme.ThemeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +36,12 @@ public class ThemeController {
         return ResponseEntity.ok(themeDtos);
     }
 
+    @GetMapping("/zim")
+    public ResponseEntity<List<ThemeForListDto>> getStoresByZim(StorePageReqDto storePageReqDto){
+        List<ThemeForListDto> themes = themeService.getStoresByZim(storePageReqDto);
+        return ResponseEntity.ok(themes);
+    }
+
     @GetMapping("/by/{type}")
     public ResponseEntity<Map<String, Object>> getThemesByType(@PathVariable String type){
         List<ThemeForListDto> themeForListDtos = null;
@@ -53,5 +61,11 @@ public class ThemeController {
         map.put("type", type);
         map.put("list", themeForListDtos);
         return ResponseEntity.ok(map);
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<List<ThemeForListDto>> getStore(@RequestParam String keyword){
+        List<ThemeForListDto> themes = themeService.getStoresByName(keyword);
+        return ResponseEntity.ok(themes);
     }
 }
