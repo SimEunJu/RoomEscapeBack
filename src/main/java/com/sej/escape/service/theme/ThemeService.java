@@ -6,6 +6,7 @@ import com.sej.escape.constants.AreaSection;
 import com.sej.escape.constants.AreaSectionComponent;
 import com.sej.escape.constants.ListOrder;
 
+import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.store.StoreForListDto;
 import com.sej.escape.dto.store.StorePageReqDto;
@@ -13,9 +14,11 @@ import com.sej.escape.dto.theme.ThemeDto;
 import com.sej.escape.dto.theme.ThemeForListDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.dto.theme.ThemePageReqDto;
+import com.sej.escape.dto.theme.ThemeZimListResDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
+import com.sej.escape.entity.zim.ThemeZim;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.ThemeRepository;
 import com.sej.escape.utils.AuthenticationUtil;
@@ -50,7 +53,7 @@ public class ThemeService {
 
     public List<ThemeForListDto> getStoresByName(String keyword){
         Pageable pageable = PageRequest.of(1, 20);
-        List<Theme> themes = themeRepository.findAllByIsDeletedFalseAndStoreNameContaining(keyword);
+        List<Theme> themes = themeRepository.findAllByIsDeletedFalseAndThemeNameContaining(keyword);
         return mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
     }
 
@@ -90,15 +93,30 @@ public class ThemeService {
                 String.format("%d와 일치하는 카페가 존재하지 않습니다.", id) );
     }
 
-    public List<ThemeForListDto> getStoresByZim(StorePageReqDto reqDto){
+    public PageResDto getStoresByZim(StorePageReqDto reqDto){
         Member member = authenticationUtil.getAuthUserEntity();
 
         Sort sort = Sort.by(Sort.Direction.DESC, "updateDate");
         Pageable pageable = reqDto.getPageable(sort);
 
-        List<Theme> themes = themeRepository.findallByZim(member, pageable);
-        return mapper.mapEntitiesToDtos(themes, ThemeForListDto.class,
-                themeDto -> { themeDto.setZimChecked(true); return themeDto; });
+        Page<Object[]> themesPage = themeRepository.findallByZim(member, pageable);
+        PageResDto resDto = new PageResDto(themesPage,
+                (objects) -> {
+                    Object[] themeZim = (Object[]) objects;
+                    Theme theme = (Theme) themeZim[0];
+                    ThemeZim zim = (ThemeZim) themeZim[1];
+                    Store store = (Store) themeZim[2];
+
+                    ThemeZimListResDto themeZimListResDto = ThemeZimListResDto.builder()
+                            .id(theme.getId())
+                            .zimId(zim.getId())
+                            .name(theme.getThemeName())
+                            .isZimChecked(true)
+                            .storeName(store.getStoreName())
+                            .build();
+                    return themeZimListResDto;
+                });
+        return resDto;
     }
 
     public List<ThemeForListDto> getThemes(ThemePageReqDto themePageReqDto){

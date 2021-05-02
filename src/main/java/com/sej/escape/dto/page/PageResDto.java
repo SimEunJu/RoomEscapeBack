@@ -11,26 +11,18 @@ import java.util.stream.Collectors;
 @Getter
 public class PageResDto<En, Dto> {
 
-    private List<Dto> dtoList;
+    private List<Dto> targetList;
 
-    private int totalPages;
+    private int total;
     private int page;
     private int size;
     private boolean hasNext;
 
     public PageResDto(Page<En> result, Function<En, Dto> fn){
-        this.dtoList = result.stream().map(fn).collect(Collectors.toList());
-        this.totalPages = result.getTotalPages();
-        makePageList(result.getPageable());
+        this.targetList = result.stream().map(fn).collect(Collectors.toList());
+        this.total = result.getTotalPages();
+        this.page = result.getNumber() + 1;
+        this.size = result.getSize();
+        this.hasNext = result.hasNext();
     }
-
-    private void makePageList(Pageable pageable){
-
-        this.page = pageable.getPageNumber() + 1;
-        this.size = pageable.getPageSize();
-
-        this.hasNext = page < totalPages;
-
-    }
-
 }

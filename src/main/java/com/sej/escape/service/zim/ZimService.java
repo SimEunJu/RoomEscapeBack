@@ -4,6 +4,7 @@ import com.sej.escape.constants.ZimType;
 import com.sej.escape.dto.zim.ZimDto;
 import com.sej.escape.dto.zim.ZimListReqDto;
 import com.sej.escape.dto.zim.ZimReqDto;
+import com.sej.escape.dto.zim.ZimResDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.zim.StoreZim;
 import com.sej.escape.entity.zim.ThemeZim;
@@ -30,11 +31,17 @@ public class ZimService {
     private final ThemeZimService themeZimService;
     private final AuthenticationUtil authenticationUtil;
 
-    public long toggleZim(ZimReqDto reqDto){
-        long zimId = 0;
+    public ZimResDto toggleZim(ZimReqDto reqDto){
         IZimService service = getServiceByType(reqDto.getType());
-        service.toggleZim(reqDto);
-        return zimId;
+        Zim zim = service.toggleZim(reqDto);
+
+        ZimResDto resDto = ZimResDto.builder()
+                .id(zim.getId())
+                .referId(zim.getReferId())
+                .type(reqDto.getType().name().toLowerCase())
+                .isChecked(zim.isZim())
+                .build();
+        return resDto;
     }
 
     private IZimService getServiceByType(ZimType zimType){

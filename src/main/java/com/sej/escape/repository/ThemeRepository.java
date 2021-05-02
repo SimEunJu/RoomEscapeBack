@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
+import javax.naming.event.ObjectChangeListener;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,8 +26,8 @@ public interface ThemeRepository
     Page<Theme> findTopThemes(Pageable pageable);
     List<Theme> findAllByIsDeletedFalseAndStoreEquals(Store store);
 
-    @Query("select t from Theme t inner join ThemeZim tz on tz.referId = t.id and tz.isZim = true and tz.member = :member where t.isDeleted = false")
-    List<Theme> findallByZim(@Param("member") Member memer, Pageable pageable);
+    @Query("select t, tz, s from Theme t inner join ThemeZim tz on tz.referId = t.id and tz.isZim = true and tz.member = :member inner join Store s on t.store = s where t.isDeleted = false")
+    Page<Object[]> findallByZim(@Param("member") Member memer, Pageable pageable);
 
-    List<Theme> findAllByIsDeletedFalseAndStoreNameContaining(String storeName);
+    List<Theme> findAllByIsDeletedFalseAndThemeNameContaining(String themeName);
 }

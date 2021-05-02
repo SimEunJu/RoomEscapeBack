@@ -14,4 +14,8 @@ import lombok.Setter;
 public class ZimListReqDto extends PageReqDto {
 
     private ZimType type;
+
+    public String getType() {
+        return type.name().toLowerCase();
+    }
 }

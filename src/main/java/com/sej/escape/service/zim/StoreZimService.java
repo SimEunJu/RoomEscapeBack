@@ -1,6 +1,7 @@
 package com.sej.escape.service.zim;
 
 import com.sej.escape.dto.zim.ZimReqDto;
+import com.sej.escape.dto.zim.ZimResDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.zim.StoreZim;
@@ -28,7 +29,7 @@ public class StoreZimService implements IZimService{
     public Optional<StoreZim> getByReferIdAndMember(long referId, Member member){
         return storeZimRepository.findByReferIdAndMember(referId, member);
     }
-    public long toggleZim(ZimReqDto reqDto){
+    public Zim toggleZim(ZimReqDto reqDto){
         Member member = authenticationUtil.getAuthUserEntity();
         Optional<StoreZim> zimOpt = this.getByReferIdAndMember(reqDto.getReferId(), member);
 
@@ -44,6 +45,6 @@ public class StoreZimService implements IZimService{
         zim.setZim(reqDto.getIsChecked());
 
         storeZimRepository.save(zim);
-        return zim.getId();
+        return zim;
     }
 }

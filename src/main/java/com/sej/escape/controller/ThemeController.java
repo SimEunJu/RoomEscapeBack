@@ -1,5 +1,6 @@
 package com.sej.escape.controller;
 
+import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.dto.store.StoreForListDto;
 import com.sej.escape.dto.store.StorePageReqDto;
 import com.sej.escape.dto.theme.ThemeDto;
@@ -37,9 +38,9 @@ public class ThemeController {
     }
 
     @GetMapping("/zim")
-    public ResponseEntity<List<ThemeForListDto>> getStoresByZim(StorePageReqDto storePageReqDto){
-        List<ThemeForListDto> themes = themeService.getStoresByZim(storePageReqDto);
-        return ResponseEntity.ok(themes);
+    public ResponseEntity<PageResDto> getStoresByZim(StorePageReqDto storePageReqDto){
+        PageResDto resDto = themeService.getStoresByZim(storePageReqDto);
+        return ResponseEntity.ok(resDto);
     }
 
     @GetMapping("/by/{type}")

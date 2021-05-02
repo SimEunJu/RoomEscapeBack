@@ -7,13 +7,16 @@ import com.querydsl.core.util.ArrayUtils;
 import com.sej.escape.constants.AreaSection;
 import com.sej.escape.constants.AreaSectionComponent;
 import com.sej.escape.constants.ListOrder;
+import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.store.StoreForListDto;
 import com.sej.escape.dto.store.StorePageReqDto;
+import com.sej.escape.dto.store.StoreZimListResDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.QStore;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.file.StoreFile;
+import com.sej.escape.entity.zim.StoreZim;
 import com.sej.escape.error.exception.BusinessException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.store.StoreRepository;
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.AdviceMode;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -87,14 +91,27 @@ public class StoreService {
         return store;
     }
 
-    public List<StoreDto> getStoresByZim(StorePageReqDto reqDto){
+    public PageResDto getStoresByZim(StorePageReqDto reqDto){
         Member member = authenticationUtil.getAuthUserEntity();
 
         Sort sort = Sort.by(Sort.Direction.DESC, "updateDate");
         Pageable pageable = reqDto.getPageable(sort);
 
-        List<Store> stores = storeRepository.findallByZim(member, pageable);
-        return mapper.mapStoresToDtos(stores, StoreDto.class, storeDto -> { storeDto.setZimChecked(true); return storeDto; });
+        Page<Object[]> storesPage = storeRepository.findallByZim(member, pageable);
+        PageResDto resDto = new PageResDto(storesPage,
+                (objects) -> {
+                    Object[] storeZim = (Object[]) objects;
+                    Store store = (Store) storeZim[0];
+                    StoreZim zim = (StoreZim) storeZim[1];
+                    StoreZimListResDto storeZimListResDto = StoreZimListResDto.builder()
+                            .id(store.getId())
+                            .zimId(zim.getId())
+                            .name(store.getStoreName())
+                            .isZimChecked(true)
+                            .build();
+                    return storeZimListResDto;
+        });
+        return resDto;
     }
 
     // TODO: 서비스 계층에서 쿼리 생성하는 게 맞나... ->  repositoryImpl로 이동

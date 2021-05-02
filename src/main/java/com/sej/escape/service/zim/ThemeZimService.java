@@ -6,6 +6,7 @@ import com.sej.escape.dto.zim.ZimReqDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.zim.ThemeZim;
 import com.sej.escape.entity.zim.ThemeZim;
+import com.sej.escape.entity.zim.Zim;
 import com.sej.escape.repository.zim.ThemeZimRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class ThemeZimService implements IZimService{
     }
 
     @Override
-    public long toggleZim(ZimReqDto reqDto){
+    public Zim toggleZim(ZimReqDto reqDto){
         Member member = authenticationUtil.getAuthUserEntity();
         Optional<ThemeZim> zimOpt = this.getByReferIdAndMember(reqDto.getReferId(), member);
 
@@ -42,6 +43,6 @@ public class ThemeZimService implements IZimService{
         zim.setZim(reqDto.getIsChecked());
 
         themeZimRepository.save(zim);
-        return zim.getId();
+        return zim;
     }
 }

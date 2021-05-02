@@ -29,16 +29,7 @@ public class ZimController {
 
     @PatchMapping("/toggle")
     public ResponseEntity<ZimResDto> toggleZim(@Valid @RequestBody ZimReqDto zimReqDto){
-        ZimType type = zimReqDto.getType();
-        long zimId = zimService.toggleZim(zimReqDto);
-        ZimResDto resDto = this.getResDto(zimId, zimReqDto);
+        ZimResDto resDto = zimService.toggleZim(zimReqDto);
         return ResponseEntity.ok(resDto);
-    }
-
-
-    private ZimResDto getResDto(long id, ZimReqDto reqDto){
-        ZimResDto resDto = modelMapper.map(reqDto, ZimResDto.class);
-        resDto.setId(id);
-        return resDto;
     }
 }

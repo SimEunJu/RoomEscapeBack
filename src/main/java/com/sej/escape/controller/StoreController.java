@@ -1,5 +1,6 @@
 package com.sej.escape.controller;
 
+import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.store.StoreForListDto;
 import com.sej.escape.dto.store.StorePageReqDto;
@@ -26,9 +27,9 @@ public class StoreController {
     }
 
     @GetMapping("/zim")
-    public ResponseEntity<List<StoreDto>> getStoresByZim(StorePageReqDto storePageReqDto){
-        List<StoreDto> stores = storeService.getStoresByZim(storePageReqDto);
-        return ResponseEntity.ok(stores);
+    public ResponseEntity<PageResDto> getStoresByZim(StorePageReqDto storePageReqDto){
+        PageResDto resDto = storeService.getStoresByZim(storePageReqDto);
+        return ResponseEntity.ok(resDto);
     }
 
     @GetMapping("/{id}")

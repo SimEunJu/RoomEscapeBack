@@ -17,4 +17,8 @@ public class ZimResDto {
     private Integer cnt;
     private boolean hasError;
     private ErrorRes error;
+
+    public String getType() {
+        return type.toLowerCase();
+    }
 }
