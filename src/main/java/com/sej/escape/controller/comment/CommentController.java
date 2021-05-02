@@ -37,6 +37,12 @@ public class CommentController {
         return ResponseEntity.ok(commentList);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<CommentDto> getList(@PathVariable long id){
+        CommentDto commentDto = commentService.getComment(id);
+        return ResponseEntity.ok(commentDto);
+    }
+
     // TODO: 추후 enum으로 매핑 후 get
     private String getTypeFlag(String type){
         return type.substring(0, 1).toUpperCase();

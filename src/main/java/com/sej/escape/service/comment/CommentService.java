@@ -114,6 +114,10 @@ public class CommentService {
         return commentMapper.mapEntityToDto(comment, CommentResDto.class);
     }
 
+    public CommentDto getComment(long id){
+        return commentMapper.mapEntityToDto(getCommentByIdIfExist(id), CommentDto.class);
+    }
+
     private Comment getCommentByIdIfExist(long id){
         Optional<Comment> commentOpt = getCommentById(id);
         return getCommentIfExist(commentOpt, id);
