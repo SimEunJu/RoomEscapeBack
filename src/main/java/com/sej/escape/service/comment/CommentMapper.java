@@ -34,7 +34,7 @@ public class CommentMapper {
                 .collect(Collectors.toList());
     }
 
-    public <E extends Comment, D> D mapEntityToDto(E entity, Class<D> dest){
+    public <E, D> D mapEntityToDto(E entity, Class<D> dest){
         return modelMapper.map(entity, dest);
     }
 

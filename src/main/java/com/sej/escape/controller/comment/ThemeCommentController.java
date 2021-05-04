@@ -1,6 +1,8 @@
 package com.sej.escape.controller.comment;
 
 import com.sej.escape.dto.comment.CommentDto;
+import com.sej.escape.dto.comment.CommentListReqDto;
+import com.sej.escape.dto.comment.CommentListResDto;
 import com.sej.escape.dto.theme.ThemeForListDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.service.comment.ThemeCommentService;
@@ -29,7 +31,13 @@ public class ThemeCommentController {
         return ResponseEntity.ok(CommentDto);
     }
 
-    @GetMapping("/{type}")
+    @GetMapping("/member")
+    public ResponseEntity<CommentListResDto> getCommentsByMember(CommentListReqDto reqDto){
+        CommentListResDto comments = themeCommentService.getCommentsByMember(reqDto);
+        return ResponseEntity.ok(comments);
+    }
+
+    @GetMapping("/by/{type}")
     public ResponseEntity<Map<String, Object>> getCommentsByType(@PathVariable String type){
         List<CommentDto> commentDtos = null;
         PageReqDto pageReqDto = new PageReqDto();

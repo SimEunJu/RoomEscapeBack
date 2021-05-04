@@ -2,7 +2,7 @@ package com.sej.escape.service.store;
 
 import com.sej.escape.constants.AreaSectionComponent;
 import com.sej.escape.dto.store.StoreDto;
-import com.sej.escape.dto.store.StoreForListDto;
+import com.sej.escape.dto.store.StoreNameDto;
 import com.sej.escape.entity.Store;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +35,9 @@ public class StoreMapper {
                             StoreDto::setArea);
                 });
         // TODO: setName을 자동화할 수 없을까? -> interface?
-        this.modelMapper.createTypeMap(Store.class, StoreForListDto.class)
+        this.modelMapper.createTypeMap(Store.class, StoreNameDto.class)
                 .addMappings(mapper -> {
-                    mapper.map(Store::getStoreName, StoreForListDto::setName);
+                    mapper.map(Store::getStoreName, StoreNameDto::setName);
                 });
     }
 

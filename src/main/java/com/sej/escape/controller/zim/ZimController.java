@@ -1,13 +1,7 @@
 package com.sej.escape.controller.zim;
 
-import com.sej.escape.constants.ZimType;
-import com.sej.escape.dto.zim.ZimDto;
-import com.sej.escape.dto.zim.ZimListReqDto;
 import com.sej.escape.dto.zim.ZimReqDto;
 import com.sej.escape.dto.zim.ZimResDto;
-import com.sej.escape.error.exception.UnDefinedConstantException;
-import com.sej.escape.service.zim.StoreZimService;
-import com.sej.escape.service.zim.ThemeZimService;
 import com.sej.escape.service.zim.ZimService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

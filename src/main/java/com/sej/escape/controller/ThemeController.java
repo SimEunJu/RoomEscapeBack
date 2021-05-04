@@ -1,11 +1,11 @@
 package com.sej.escape.controller;
 
 import com.sej.escape.dto.page.PageResDto;
-import com.sej.escape.dto.store.StoreForListDto;
 import com.sej.escape.dto.store.StorePageReqDto;
 import com.sej.escape.dto.theme.ThemeDto;
 import com.sej.escape.dto.theme.ThemeForListDto;
 import com.sej.escape.dto.page.PageReqDto;
+import com.sej.escape.dto.theme.ThemeNameDto;
 import com.sej.escape.dto.theme.ThemePageReqDto;
 import com.sej.escape.service.theme.ThemeService;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ public class ThemeController {
     }
 
     @GetMapping("/by/{type}")
-    public ResponseEntity<Map<String, Object>> getThemesByType(@PathVariable String type){
+    public ResponseEntity<Map<String, Object>> getThemesByType(@PathVariable String type, @RequestParam Map<String, String> params){
         List<ThemeForListDto> themeForListDtos = null;
         PageReqDto pageReqDto = new PageReqDto();
         switch (type){
@@ -64,9 +64,17 @@ public class ThemeController {
         return ResponseEntity.ok(map);
     }
 
+    @GetMapping("/names/store")
+    public ResponseEntity<List<ThemeNameDto>> getThemeNamesByStore(@RequestParam long storeId){
+        List<ThemeNameDto> names = themeService.getThemeNamesByStore(storeId);
+        return ResponseEntity.ok(names);
+    }
+
+
     @GetMapping("/names")
-    public ResponseEntity<List<ThemeForListDto>> getStore(@RequestParam String keyword){
-        List<ThemeForListDto> themes = themeService.getStoresByName(keyword);
+    public ResponseEntity<List<ThemeForListDto>> getThemeNames(@RequestParam String keyword){
+        List<ThemeForListDto> themes = themeService.getThemeNamesAndStore(keyword);
         return ResponseEntity.ok(themes);
     }
+
 }

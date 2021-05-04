@@ -1,6 +1,7 @@
-package com.sej.escape.error.exception;
+package com.sej.escape.error.exception.validation;
 
 import com.sej.escape.error.ErrorCode;
+import com.sej.escape.error.exception.BusinessException;
 
 public class UnDefinedConstantException extends BusinessException {
 

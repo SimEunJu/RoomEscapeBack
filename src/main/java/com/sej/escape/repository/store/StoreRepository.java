@@ -3,6 +3,7 @@ package com.sej.escape.repository.store;
 import com.querydsl.core.BooleanBuilder;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
+import com.sej.escape.entity.Theme;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,4 +28,6 @@ public interface StoreRepository
     @Query("select s, sz from Store s inner join StoreZim sz on sz.referId = s.id and sz.isZim = true and sz.member = :member where s.isDeleted = false")
     Page<Object[]> findallByZim(@Param("member") Member memer, Pageable pageable);
 
+    @Query("select t.store from Theme t where t.id = :themeId")
+    Optional<Store> findByTheme(@Param("themeId") long id);
 }

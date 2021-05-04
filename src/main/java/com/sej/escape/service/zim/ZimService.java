@@ -1,26 +1,15 @@
 package com.sej.escape.service.zim;
 
 import com.sej.escape.constants.ZimType;
-import com.sej.escape.dto.zim.ZimDto;
-import com.sej.escape.dto.zim.ZimListReqDto;
 import com.sej.escape.dto.zim.ZimReqDto;
 import com.sej.escape.dto.zim.ZimResDto;
-import com.sej.escape.entity.Member;
-import com.sej.escape.entity.zim.StoreZim;
-import com.sej.escape.entity.zim.ThemeZim;
 import com.sej.escape.entity.zim.Zim;
-import com.sej.escape.error.exception.UnDefinedConstantException;
-import com.sej.escape.repository.zim.StoreZimRepository;
-import com.sej.escape.repository.zim.ThemeZimRepository;
-import com.sej.escape.service.member.MemberMapper;
+import com.sej.escape.error.exception.validation.UnDefinedConstantException;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional

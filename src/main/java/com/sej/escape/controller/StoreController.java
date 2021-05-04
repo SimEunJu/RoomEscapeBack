@@ -2,8 +2,10 @@ package com.sej.escape.controller;
 
 import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.dto.store.StoreDto;
-import com.sej.escape.dto.store.StoreForListDto;
+import com.sej.escape.dto.store.StoreNameDto;
 import com.sej.escape.dto.store.StorePageReqDto;
+import com.sej.escape.dto.theme.ThemeDto;
+import com.sej.escape.dto.theme.ThemeNameDto;
 import com.sej.escape.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,10 +40,15 @@ public class StoreController {
         return ResponseEntity.ok(storeDto);
     }
 
-    @GetMapping("/names")
-    public ResponseEntity<List<StoreForListDto>> getStore(@RequestParam String keyword){
-        List<StoreForListDto> stores = storeService.getStoresByName(keyword);
-        return ResponseEntity.ok(stores);
+    @GetMapping("/name/theme")
+    public ResponseEntity<StoreNameDto> getTheme(@RequestParam long themeId) {
+        StoreNameDto nameDto = storeService.getStoreByTheme(themeId);
+        return ResponseEntity.ok(nameDto);
     }
 
+    @GetMapping("/names")
+    public ResponseEntity<List<StoreNameDto>> getStoreNames(@RequestParam String keyword){
+        List<StoreNameDto> stores = storeService.getStoresByName(keyword);
+        return ResponseEntity.ok(stores);
+    }
 }

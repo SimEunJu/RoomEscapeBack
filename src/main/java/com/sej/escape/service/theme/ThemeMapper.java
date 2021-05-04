@@ -15,6 +15,8 @@ import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -53,11 +55,11 @@ public class ThemeMapper {
                 .collect(Collectors.toList());
     }
 
-    public <D> List<D> mapEntitiesToDtos(List<Theme> entities, Class<D> dest, UnaryOperator<D> func){
+    public <D> List<D> mapEntitiesToDtos(List<Theme> entities, Class<D> dest, BiFunction<Theme, D, D> func){
         return entities.stream()
                 .map(entity -> {
                     D dto = mapEntityToDto(entity, dest);
-                    return func.apply(dto);
+                    return func.apply(entity, dto);
                 }).collect(Collectors.toList());
     }
 

@@ -4,7 +4,7 @@ import com.sej.escape.error.ErrorCode;
 import com.sej.escape.error.ErrorRes;
 import com.sej.escape.error.exception.BusinessException;
 import com.sej.escape.error.exception.NoSuchResourceException;
-import com.sej.escape.error.exception.UnDefinedConstantException;
+import com.sej.escape.error.exception.validation.UnDefinedConstantException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

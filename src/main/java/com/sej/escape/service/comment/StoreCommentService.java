@@ -36,7 +36,7 @@ public class StoreCommentService {
         return commentMapper.mapEntityToDto(storeComment, CommentResDto.class);
     }
 
-    public CommentListResDto getComments(CommentListReqDto reqDto){
+    public CommentListResDto getCommentsByMember(CommentListReqDto reqDto){
 
         Sort sort = reqDto.getOrder().getSort();
         Pageable pageable = reqDto.getPageable(sort);

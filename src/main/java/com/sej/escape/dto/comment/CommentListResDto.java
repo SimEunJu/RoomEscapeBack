@@ -15,5 +15,5 @@ public class CommentListResDto {
     private int page;
     private int size;
     private boolean hasNext;
-    private List<StoreCommentDto> comments;
+    private List<?> comments;
 }

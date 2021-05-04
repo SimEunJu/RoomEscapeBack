@@ -1,9 +1,14 @@
 package com.sej.escape.service.comment;
 
-import com.sej.escape.dto.comment.CommentDto;
+import com.sej.escape.dto.comment.*;
 import com.sej.escape.dto.page.PageReqDto;
+import com.sej.escape.entity.Member;
+import com.sej.escape.entity.Store;
+import com.sej.escape.entity.Theme;
+import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.repository.comment.ThemeCommentRepository;
+import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,13 +17,46 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ThemeCommentService {
 
     private final ThemeCommentRepository themeCommentRepository;
+    private final AuthenticationUtil authenticationUtil;
     private final CommentMapper commentMapper;
+
+    public CommentListResDto getCommentsByMember(CommentListReqDto reqDto){
+
+        Sort sort = reqDto.getOrder().getSort();
+        Pageable pageable = reqDto.getPageable(sort);
+        Member member = authenticationUtil.getAuthUserEntity();
+
+        Page<Object[]> commentPage = themeCommentRepository.findAllByMember(pageable, member);
+        List<Object[]> themeComments = commentPage.getContent();
+        return CommentListResDto.builder()
+                .total(commentPage.getTotalElements())
+                .comments(mapStoreCommentsToDtos(themeComments))
+                .size(commentPage.getSize())
+                .hasNext(commentPage.hasNext())
+                .page(reqDto.getPage())
+                .build();
+    }
+
+    private List<ThemeCommentDto> mapStoreCommentsToDtos(List<Object[]> entitis){
+        return entitis.stream().map(e -> {
+
+            ThemeComment themeComment = (ThemeComment) e[0];
+            Theme theme = (Theme) e[1];
+
+            ThemeCommentDto dto = commentMapper.mapEntityToDto(themeComment, ThemeCommentDto.class);
+            dto.setName(theme.getThemeName());
+            dto.setThemeId(theme.getId());
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
 
     public List<CommentDto> readTopComments(PageReqDto pageReqDto){
         /*

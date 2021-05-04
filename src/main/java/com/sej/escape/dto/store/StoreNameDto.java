@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StoreForListDto {
+public class StoreNameDto {
 
     protected long id;
     protected String name;

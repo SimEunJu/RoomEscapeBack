@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ThemeCommentDto {
 
+    private long id;
+    private long themeId;
+
     private String name;
     private LocalDateTime visitDate;
     private int star;

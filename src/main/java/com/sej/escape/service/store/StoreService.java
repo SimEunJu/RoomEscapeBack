@@ -1,49 +1,35 @@
 package com.sej.escape.service.store;
 
 import com.google.common.base.Strings;
-import com.nimbusds.oauth2.sdk.AbstractOptionallyAuthenticatedRequest;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.util.ArrayUtils;
 import com.sej.escape.constants.AreaSection;
-import com.sej.escape.constants.AreaSectionComponent;
 import com.sej.escape.constants.ListOrder;
 import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.dto.store.StoreDto;
-import com.sej.escape.dto.store.StoreForListDto;
+import com.sej.escape.dto.store.StoreNameDto;
 import com.sej.escape.dto.store.StorePageReqDto;
 import com.sej.escape.dto.store.StoreZimListResDto;
+import com.sej.escape.dto.theme.ThemeNameDto;
 import com.sej.escape.entity.Member;
-import com.sej.escape.entity.QStore;
 import com.sej.escape.entity.Store;
-import com.sej.escape.entity.file.StoreFile;
+import com.sej.escape.entity.Theme;
 import com.sej.escape.entity.zim.StoreZim;
-import com.sej.escape.error.exception.BusinessException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.store.StoreRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
-import org.springframework.context.annotation.AdviceMode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,10 +40,10 @@ public class StoreService {
     private final AuthenticationUtil authenticationUtil;
     private final StoreMapper mapper;
 
-    public List<StoreForListDto> getStoresByName(String keyword){
+    public List<StoreNameDto> getStoresByName(String keyword){
         Pageable pageable = PageRequest.of(1, 20);
         List<Store> stores = storeRepository.findAllByIsDeletedFalseAndStoreNameContaining(keyword);
-        return mapper.mapStoresToDtos(stores, StoreForListDto.class);
+        return mapper.mapStoresToDtos(stores, StoreNameDto.class);
     }
 
     public StoreDto getStore(long id){
@@ -86,9 +72,15 @@ public class StoreService {
                 String.format("%d와 일치하는 카페가 존재하지 않습니다.", id) );
     }
 
-    private Store getStoreIfExist(Optional<Store> storeOpt, long id){
-        Store store = storeOpt.orElseThrow( () -> throwNoSuchResourceException(id) );
+    private Store getStoreIfExist(Optional<Store> storeOpt, long id) {
+        Store store = storeOpt.orElseThrow(() -> throwNoSuchResourceException(id));
         return store;
+    }
+
+    public StoreNameDto getStoreByTheme(long themeId){
+        Optional<Store> storeOpt = storeRepository.findByTheme(themeId);
+        Store store = getStoreIfExist(storeOpt, themeId);
+        return mapper.mapStoreToDto(store, StoreNameDto.class);
     }
 
     public PageResDto getStoresByZim(StorePageReqDto reqDto){

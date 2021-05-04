@@ -3,18 +3,12 @@ package com.sej.escape.service.theme;
 import com.google.common.base.Strings;
 import com.querydsl.core.util.ArrayUtils;
 import com.sej.escape.constants.AreaSection;
-import com.sej.escape.constants.AreaSectionComponent;
 import com.sej.escape.constants.ListOrder;
 
 import com.sej.escape.dto.page.PageResDto;
-import com.sej.escape.dto.store.StoreDto;
-import com.sej.escape.dto.store.StoreForListDto;
 import com.sej.escape.dto.store.StorePageReqDto;
-import com.sej.escape.dto.theme.ThemeDto;
-import com.sej.escape.dto.theme.ThemeForListDto;
+import com.sej.escape.dto.theme.*;
 import com.sej.escape.dto.page.PageReqDto;
-import com.sej.escape.dto.theme.ThemePageReqDto;
-import com.sej.escape.dto.theme.ThemeZimListResDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
@@ -23,23 +17,18 @@ import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.ThemeRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.AdviceMode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -51,8 +40,9 @@ public class ThemeService {
     private final EntityManager em;
     private final ThemeMapper mapper;
 
-    public List<ThemeForListDto> getStoresByName(String keyword){
+    public List<ThemeForListDto> getThemeNamesAndStore(String keyword){
         Pageable pageable = PageRequest.of(1, 20);
+
         List<Theme> themes = themeRepository.findAllByIsDeletedFalseAndThemeNameContaining(keyword);
         return mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
     }
@@ -75,17 +65,24 @@ public class ThemeService {
         } catch (NoResultException e){
             throw throwNoSuchResourceException(id);
         }
+
         ThemeDto themeDto = mapper.mapThemeRowToDto(result, ThemeDto.class);
         long storeId = themeDto.getStore().getId();
-        List<ThemeForListDto> relatedThemes = getThemesUnderSameStore(storeId);
+        List<Theme> themes = getThemesUnderSameStore(storeId);
+        List<ThemeForListDto> relatedThemes = mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
+
         themeDto.setRelated(relatedThemes);
         return themeDto;
     }
 
-    public List<ThemeForListDto> getThemesUnderSameStore(long storeId){
+    public List<ThemeNameDto> getThemeNamesByStore(long storeId){
+        List<Theme> themes = getThemesUnderSameStore(storeId);
+        return mapper.mapEntitiesToDtos(themes, ThemeNameDto.class, (Theme theme, ThemeNameDto dto) -> { dto.setName(theme.getThemeName()); return dto; });
+    }
+
+    private List<Theme> getThemesUnderSameStore(long storeId){
         Store store = Store.builder().id(storeId).build();
-        List<Theme> themes = themeRepository.findAllByIsDeletedFalseAndStoreEquals(store);
-        return mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
+        return themeRepository.findAllByIsDeletedFalseAndStoreEquals(store);
     }
 
     private NoSuchResourceException throwNoSuchResourceException(long id){
