@@ -98,20 +98,22 @@ public class CommentService {
         return comment.getId();
     }
 
-    public CommentDto updateComment(long id, CommentModifyReqDto modifyReqDto){
+    public CommentResDto updateComment(long id, CommentModifyReqDto modifyReqDto){
         Comment comment = getCommentByIdIfExist(id);
         comment.setContent(modifyReqDto.getContent());
 
         comment.setStar(modifyReqDto.getStarRate());
         Comment commentUpdated = commentRepository.save(comment);
-        return commentMapper.mapEntityToDto(commentUpdated, CommentDto.class);
+        return commentMapper.mapEntityToDto(commentUpdated, CommentResDto.class);
     }
 
     public CommentResDto toggleHideComment(long id, boolean isHidden){
         Comment comment = getCommentByIdIfExist(id);
         comment.setHidden(isHidden);
-        commentRepository.save(comment);
-        return commentMapper.mapEntityToDto(comment, CommentResDto.class);
+        comment = commentRepository.save(comment);
+
+        CommentResDto resDto = commentMapper.mapEntityToDto(comment, CommentResDto.class);
+        return resDto;
     }
 
     public CommentDto getComment(long id){

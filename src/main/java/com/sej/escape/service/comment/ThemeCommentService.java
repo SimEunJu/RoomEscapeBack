@@ -3,20 +3,25 @@ package com.sej.escape.service.comment;
 import com.sej.escape.dto.comment.*;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.entity.Member;
-import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
-import com.sej.escape.entity.comment.StoreComment;
+import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.ThemeComment;
+import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.comment.ThemeCommentRepository;
+import com.sej.escape.service.file.FileService;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,8 +29,58 @@ import java.util.stream.Collectors;
 public class ThemeCommentService {
 
     private final ThemeCommentRepository themeCommentRepository;
+    private final ModelMapper modelMapper;
+    private final FileService fileService;
     private final AuthenticationUtil authenticationUtil;
     private final CommentMapper commentMapper;
+
+    public ThemeCommentResDto addComment(ThemeCommentDto commentDto){
+        ThemeComment comment = commentMapper.mapDtoToEntity(commentDto, ThemeComment.class);
+        Member member = authenticationUtil.getAuthUserEntity();
+        Theme theme = Theme.builder().id(commentDto.getThemeId()).build();
+        comment.setMember(member);
+        comment.setTheme(theme);
+        comment.setActive(commentDto.isActive());
+        comment.setHorror(commentDto.isHorror());
+        comment = themeCommentRepository.save(comment);
+
+        if(commentDto.getUploadFiles().length > 0){
+            List<Long> ids = Arrays.stream(commentDto.getUploadFiles()).map(file -> file.getId()).collect(Collectors.toList());
+            fileService.updateReferIds(ids, comment.getId());
+        }
+
+        ThemeCommentResDto resDto = commentMapper.mapEntityToDto(comment, ThemeCommentResDto.class);
+        return resDto;
+    }
+
+    public ThemeCommentResDto updateComment(long id, ThemeCommentDto modifyReqDto){
+        ThemeComment comment = getCommentByIdIfExist(id);
+        modelMapper.map(modifyReqDto, comment);
+        ThemeComment commentUpdated = themeCommentRepository.save(comment);
+        return commentMapper.mapEntityToDto(commentUpdated, ThemeCommentResDto.class);
+    }
+
+    public ThemeCommentDto getComment(long id){
+        ThemeComment comment = getCommentByIdIfExist(id);
+        return commentMapper.mapEntityToDto(comment, ThemeCommentDto.class);
+    }
+
+    private ThemeComment getCommentByIdIfExist(long id){
+        Optional<ThemeComment> commentOpt = getCommentById(id);
+        return getCommentIfExist(commentOpt, id);
+    }
+
+    private Optional<ThemeComment> getCommentById(long id){
+        Optional<ThemeComment> commentOpt = themeCommentRepository.findById(id);
+        return commentOpt;
+    }
+
+    private ThemeComment getCommentIfExist(Optional<ThemeComment> commentOpt, long id) {
+        ThemeComment comment = commentOpt.orElseThrow( () ->
+                new NoSuchResourceException(
+                        String.format("%d와 일치하는 댓글이 존재하지 않습니다.", id)));
+        return comment;
+    }
 
     public CommentListResDto getCommentsByMember(CommentListReqDto reqDto){
 
@@ -44,13 +99,13 @@ public class ThemeCommentService {
                 .build();
     }
 
-    private List<ThemeCommentDto> mapStoreCommentsToDtos(List<Object[]> entitis){
+    private List<ThemeCommentForListDto> mapStoreCommentsToDtos(List<Object[]> entitis){
         return entitis.stream().map(e -> {
 
             ThemeComment themeComment = (ThemeComment) e[0];
             Theme theme = (Theme) e[1];
 
-            ThemeCommentDto dto = commentMapper.mapEntityToDto(themeComment, ThemeCommentDto.class);
+            ThemeCommentForListDto dto = commentMapper.mapEntityToDto(themeComment, ThemeCommentForListDto.class);
             dto.setName(theme.getThemeName());
             dto.setThemeId(theme.getId());
 

@@ -1,5 +1,5 @@
 package com.sej.escape.constants;
 
 public enum FileType {
-    BOARD, STORE, THEME
+    BOARD, STORE, THEME, THEMECOMMENT
 }

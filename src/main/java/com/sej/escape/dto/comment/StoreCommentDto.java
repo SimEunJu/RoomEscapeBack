@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -12,13 +13,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class StoreCommentDto {
 
+    private String ancestorType;
+    private long randId;
+
     // store
     private long storeId;
     private String name;
 
     // comment
     private long id;
-    private LocalDateTime regDate;
+    private LocalDate regDate;
     private int star;
     @JsonProperty("isHidden")
     private boolean isHidden;

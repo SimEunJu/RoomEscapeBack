@@ -18,4 +18,7 @@ public interface StoreCommentRepository
 
     @Query("select sc, s from StoreComment sc inner join Store s on sc.referId = s.id where sc.isDeleted = false and sc.member = :member")
     Page<Object[]> findAllByMember(Pageable pageable, @RequestParam("member") Member member);
+
+    @Query("select sc, s from StoreComment sc inner join Store s on sc.referId = s.id where sc.isDeleted = false and sc.member = :member and sc.id = :commentId")
+    Object findByIdAndMember(@RequestParam("member") Member member, @RequestParam("commentId") long commentId);
 }

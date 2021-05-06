@@ -28,6 +28,10 @@ public class CommentMapper {
     private final ModelMapper modelMapper;
     private final AuthenticationUtil authenticationUtil;
 
+    public <D, E> E mapDtoToEntity(D dto, Class<E> entity){
+        return modelMapper.map(dto, entity);
+    }
+
     public <T, D> List<D> mapEntitesToDtos(List<T> entities, Class<D> dest){
         return entities.stream()
                 .map(comment -> modelMapper.map(comment, dest))
@@ -74,6 +78,7 @@ public class CommentMapper {
 
     public StoreComment mapReqDtoToStoreComment(CommentModifyReqDto commentModifyReqDto) {
         StoreComment storeComment = mapReqDtoToComment(StoreComment.class, commentModifyReqDto);
+        storeComment.setReferId(commentModifyReqDto.getAncestor().getId());
         storeComment.setStar(commentModifyReqDto.getStarRate());
         return storeComment;
     }

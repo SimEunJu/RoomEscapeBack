@@ -25,11 +25,6 @@ public class Store extends BaseWithDelete {
     @Column(name = "store_id")
     private Long id;
 
-    @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
-    private List<StoreComment> comments = new ArrayList<>();
-
     @Column
     private Point location;
 

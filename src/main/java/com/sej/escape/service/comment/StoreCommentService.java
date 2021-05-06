@@ -31,9 +31,22 @@ public class StoreCommentService {
     private final ModelMapper modelMapper;
 
     public CommentResDto addComment(CommentModifyReqDto commentModifyReqDto){
-        StoreComment storeComment = commentMapper.mapReqDtoToStoreComment(commentModifyReqDto);
-        stotreCommentRepository.save(storeComment);
+        StoreComment storeComment = saveComment(commentModifyReqDto);
         return commentMapper.mapEntityToDto(storeComment, CommentResDto.class);
+    }
+
+    private StoreComment saveComment(CommentModifyReqDto commentModifyReqDto){
+        StoreComment storeComment = commentMapper.mapReqDtoToStoreComment(commentModifyReqDto);
+        return stotreCommentRepository.save(storeComment);
+    }
+
+    public StoreCommentDto addCommentAndRetDetail(CommentModifyReqDto commentModifyReqDto){
+        StoreComment storeComment = saveComment(commentModifyReqDto);
+
+        Member member = authenticationUtil.getAuthUserEntity();
+        Object[] comment = (Object[]) stotreCommentRepository.findByIdAndMember(member, storeComment.getId());
+        StoreCommentDto commentDto = mapStoreCommentToDto(comment);
+        return commentDto;
     }
 
     public CommentListResDto getCommentsByMember(CommentListReqDto reqDto){
@@ -54,21 +67,22 @@ public class StoreCommentService {
     }
 
     private List<StoreCommentDto> mapStoreCommentsToDtos(List<Object[]> entitis){
-        return entitis.stream().map(e -> {
+        return entitis.stream().map(this::mapStoreCommentToDto).collect(Collectors.toList());
+    }
 
-            StoreComment storeComment = (StoreComment) e[0];
-            Store store = (Store) e[1];
+    private StoreCommentDto mapStoreCommentToDto(Object[] e){
+        StoreComment storeComment = (StoreComment) e[0];
+        Store store = (Store) e[1];
 
-            StoreCommentDto dto = modelMapper.map(storeComment, StoreCommentDto.class);
-            dto.setName(store.getStoreName());
-            dto.setStoreId(store.getId());
+        StoreCommentDto dto = modelMapper.map(storeComment, StoreCommentDto.class);
+        dto.setName(store.getStoreName());
+        dto.setStoreId(store.getId());
 
-            Object[] themeCnt = (Object[]) themeCommentRepository.findThemeCntAndCommentCnt(store);
-            long themeTot = (long) themeCnt[0];
-            long themeVisitedCnt = (long) themeCnt[1];
-            dto.setThemeCnt((int) themeTot);
-            dto.setVisitThemeCnt((int) themeVisitedCnt);
-            return dto;
-        }).collect(Collectors.toList());
+        Object[] themeCnt = (Object[]) themeCommentRepository.findThemeCntAndCommentCnt(store);
+        long themeTot = (long) themeCnt[0];
+        long themeVisitedCnt = (long) themeCnt[1];
+        dto.setThemeCnt((int) themeTot);
+        dto.setVisitThemeCnt((int) themeVisitedCnt);
+        return dto;
     }
 }

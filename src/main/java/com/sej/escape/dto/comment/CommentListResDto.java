@@ -11,6 +11,8 @@ import java.util.List;
 @Setter
 public class CommentListResDto {
 
+    private String type;
+
     private long total;
     private int page;
     private int size;

@@ -1,13 +1,13 @@
 package com.sej.escape.controller.comment;
 
-import com.sej.escape.dto.comment.CommentDto;
-import com.sej.escape.dto.comment.CommentModifyReqDto;
-import com.sej.escape.dto.comment.CommentReqDto;
-import com.sej.escape.dto.comment.CommentResDto;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.sej.escape.dto.comment.*;
 import com.sej.escape.entity.comment.Comment;
+import com.sej.escape.error.exception.validation.InvalidRequestParamter;
 import com.sej.escape.service.comment.BoardCommentService;
 import com.sej.escape.service.comment.CommentService;
 import com.sej.escape.service.comment.StoreCommentService;
+import com.sej.escape.service.comment.ThemeCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,6 +64,7 @@ public class CommentController {
         CommentResDto commentResDto = commentService.addComment(commentModifyReqDto, addFunc);
         commentResDto.setRandId(commentModifyReqDto.getRandId());
         commentResDto.setType("add");
+        commentResDto.setAncestorType(type);
 
         return ResponseEntity.ok(commentResDto);
     }
@@ -84,22 +85,32 @@ public class CommentController {
     }
 
     @PatchMapping("/delete/{id}")
-    public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id){
+    public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id, @RequestBody Map<String, Object> paramMap){
+        String type = (String) paramMap.get("type");
+        if(type == null) throw new InvalidRequestParamter(String.format("[type = %s] 값이 올바르지 않습니다.", type));
+
         long deleteId = commentService.deleteComment(id);
         CommentResDto resDto = getResDto("delete", deleteId);
+        resDto.setAncestorType(type);
         return ResponseEntity.ok(resDto);
     }
 
     @PatchMapping("/update/{id}")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable long id, @RequestBody CommentModifyReqDto modifyReqDto){
-        CommentDto commentDtoUpdated =  commentService.updateComment(id, modifyReqDto);
-        return ResponseEntity.ok(commentDtoUpdated);
+    public ResponseEntity<CommentResDto> updateComment(@PathVariable long id, @RequestBody CommentModifyReqDto modifyReqDto){
+        CommentResDto resDto =  commentService.updateComment(id, modifyReqDto);
+        resDto.setAncestorType(modifyReqDto.getAncestor().getType());
+        return ResponseEntity.ok(resDto);
     }
 
     @PatchMapping("/hide/{id}")
-    public ResponseEntity<CommentResDto> toggleHideComment(@PathVariable long id, @RequestBody Map<String, Boolean> paramMap){
-        CommentResDto resDto = commentService.toggleHideComment(id, paramMap.get("isHidden"));
+    public ResponseEntity<CommentResDto> toggleHideComment(@PathVariable long id, @RequestBody Map<String, Object> paramMap){
+        Boolean isHidden = (Boolean) paramMap.get("isHidden");
+        String type = (String) paramMap.get("type");
+        if(isHidden == null || type == null) throw new InvalidRequestParamter(String.format("[isHidden = %b, type = %s] 값이 올바르지 않습니다.", isHidden, type));
+
+        CommentResDto resDto = commentService.toggleHideComment(id, isHidden);
         resDto.setType("hide");
+        resDto.setAncestorType(type);
         return ResponseEntity.ok(resDto);
     }
 }
