@@ -1,9 +1,6 @@
 package com.sej.escape.service.comment;
 
-import com.sej.escape.dto.comment.CommentDto;
-import com.sej.escape.dto.comment.CommentModifyReqDto;
-import com.sej.escape.dto.comment.CommentReqDto;
-import com.sej.escape.dto.comment.CommentResDto;
+import com.sej.escape.dto.comment.*;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.error.exception.NoSuchResourceException;
@@ -11,10 +8,11 @@ import com.sej.escape.repository.comment.CommentRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import java.awt.print.Pageable;
+import javax.persistence.Query;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,6 +33,11 @@ public class CommentService {
         return commentRepository.updateBelowCommentSeq(parCommentId, parCommentSeq);
     }
 
+    // TODO: 추후 enum으로 매핑 후 get
+    private String getTypeFlag(String type){
+        return type.substring(0, 1).toUpperCase();
+    }
+
     public CommentResDto addComment(CommentModifyReqDto commentModifyReqDto, Function<CommentModifyReqDto, CommentResDto> addFunc){
         CommentDto parComment = commentModifyReqDto.getParComment();
         boolean hasParComment = parComment != null;
@@ -43,8 +46,10 @@ public class CommentService {
         }
         return addFunc.apply(commentModifyReqDto);
     }
+    
+    public CommentListResDto getCommentList(CommentReqDto commentReqDto) {
+        String type = getTypeFlag( commentReqDto.getType() );
 
-    public List<CommentDto> getCommentList(CommentReqDto commentReqDto) {
         PageRequest pageRequest = commentReqDto.getPageable();
 
         String querySelectIsGoodChk = ", (SELECT 0) as is_good_chk ";
@@ -53,19 +58,34 @@ public class CommentService {
             long memberId = authenticationUtil.getAuthUser().getId();
             querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :type AND refer_id = c.comment_id AND is_good = 1) as is_good_chk ";
         }
-        String queryStr =   "SELECT c.*, m.nickname "+
+
+        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :type AND c.comment_id IN ( "+
+                "SELECT comment_id FROM comment ic WHERE ic.refer_id = :referId AND ic.depth = 0 ORDER BY comment_id desc ) ";
+
+        String listQuery =  "SELECT c.*, m.nickname "+
                             ", (SELECT COUNT(*) FROM good WHERE gtype='S' AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
-                            querySelectIsGoodChk+
-                            "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :type AND c.comment_id IN ( "+
-                            "SELECT comment_id FROM comment ic WHERE ic.refer_id = :referId AND ic.depth = 0 ORDER BY comment_id desc ) "+
+                            querySelectIsGoodChk +
+                            queryFromAndWhere +
                             "ORDER BY par_id DESC, seq ASC, comment_id desc";
 
-        List<Object[]> results = em.createNativeQuery(queryStr, "storeCommentResultMap")
-                .setParameter("type", commentReqDto.getType())
+        List<Object[]> results = em.createNativeQuery(listQuery, "storeCommentResultMap")
+                .setParameter("type", type)
                 .setParameter("referId", commentReqDto.getReferId())
                 .setFirstResult(pageRequest.getPageNumber())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
+
+        String pagingQuery = "SELECT count(*) " + queryFromAndWhere;
+
+        BigInteger totalCount = (BigInteger) em.createNativeQuery(pagingQuery)
+                .setParameter("type", type)
+                .setParameter("referId", commentReqDto.getReferId())
+                .getSingleResult();
+
+        int total = totalCount.intValue();
+        int page = commentReqDto.getPage();
+        int size = commentReqDto.getSize();
+        boolean hasNext = total > page * size;
 
         List<CommentDto> commentDtos = results.stream().map(row -> {
             StoreComment comment = (StoreComment) row[0];
@@ -87,7 +107,12 @@ public class CommentService {
             return commentDto;
         }).collect(Collectors.toList());
 
-        return commentDtos;
+        return CommentListResDto.builder().comments(commentDtos)
+                .page(page)
+                .size(size)
+                .total(total)
+                .hasNext(hasNext)
+                .build();
     }
 
     public long deleteComment(long id){

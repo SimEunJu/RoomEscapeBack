@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,7 @@ public class ThemeMapper {
         StoreDto storeDto = modelMapper.map(store, StoreDto.class);
         themeDto.setStore(storeDto);
 
-        double starAvg = row[4] != null ? (double) row[4] : 0.0;
+        double starAvg = row[4] != null ? ((BigDecimal) row[4]).doubleValue() : 0.0;
         themeDto.setStar(starAvg);
 
         String fileRootPath = (String) row[2];

@@ -30,10 +30,9 @@ public class CommentController {
     private final long EMPTY_RAND_ID = 0;
 
     @GetMapping("")
-    public ResponseEntity<List<CommentDto>> getList(@Valid CommentReqDto reqDto){
-        String type = getTypeFlag( reqDto.getType() );
-        reqDto.setType(type);
-        List<CommentDto> commentList = commentService.getCommentList(reqDto);
+    public ResponseEntity<CommentListResDto> getList(@Valid CommentReqDto reqDto){
+        CommentListResDto commentList = commentService.getCommentList(reqDto);
+        commentList.setType(reqDto.getType());
         return ResponseEntity.ok(commentList);
     }
 
@@ -43,10 +42,7 @@ public class CommentController {
         return ResponseEntity.ok(commentDto);
     }
 
-    // TODO: 추후 enum으로 매핑 후 get
-    private String getTypeFlag(String type){
-        return type.substring(0, 1).toUpperCase();
-    }
+
 
     @PostMapping("/new")
     public ResponseEntity<CommentResDto> addComment(@RequestBody CommentModifyReqDto commentModifyReqDto){
