@@ -1,17 +1,17 @@
 package com.sej.escape.controller;
 
-import com.sej.escape.controller.file.FileControllerUtils;
+import com.sej.escape.constants.BoardType;
 import com.sej.escape.dto.ModifyResDto;
 import com.sej.escape.dto.board.BoardDto;
+import com.sej.escape.dto.board.BoardReqDto;
 import com.sej.escape.dto.board.BoardResDto;
-import com.sej.escape.dto.file.FileReqDto;
-import com.sej.escape.dto.file.FileResDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.dto.page.PageResDto;
-import com.sej.escape.service.BoardService;
-import com.sej.escape.service.file.manage.FileManageService;
-import com.sej.escape.service.file.manage.FileManageServiceProvider;
-import com.sej.escape.service.file.FileService;
+import com.sej.escape.error.exception.validation.UnDefinedConstantException;
+import com.sej.escape.service.board.BoardService;
+import com.sej.escape.service.board.IBoardService;
+import com.sej.escape.service.board.NoticeBoardService;
+import com.sej.escape.service.board.ReqBoardService;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +26,21 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final NoticeBoardService noticeBoardService;
+    private final ReqBoardService reqBoardService;
+
+    private IBoardService getServiceByType(BoardType boardType){
+        switch (boardType){
+            case NOTICE: return noticeBoardService;
+            case REQ: return reqBoardService;
+            default: throw new UnDefinedConstantException(String.format("%s는 정의되지 않은 게시판 타입입니다.", boardType.toString()));
+        }
+    }
 
     @GetMapping
-    public ResponseEntity<PageResDto> getBoards(PageReqDto pageReqDto){
-        PageResDto pageResDto = boardService.getBoards(pageReqDto);
+    public ResponseEntity<PageResDto> getBoards(BoardReqDto pageReqDto){
+        PageResDto pageResDto = boardService.getBoards(pageReqDto, getServiceByType(pageReqDto.getType()));
+        pageResDto.setType(pageReqDto.getType().getTypeString());
         return ResponseEntity.ok(pageResDto);
     }
 
@@ -55,7 +66,7 @@ public class BoardController {
 
     @PostMapping("/new")
     public ResponseEntity<BoardResDto> addBoard(@RequestBody BoardDto boardDto, MultipartFile multipartFile) throws FileUploadException {
-        BoardResDto boardResDto = boardService.addBoard(boardDto);
+        BoardResDto boardResDto = boardService.addBoard(boardDto, getServiceByType(boardDto.getType()));
         return ResponseEntity.ok(boardResDto);
     }
 

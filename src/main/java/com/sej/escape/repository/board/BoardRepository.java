@@ -1,9 +1,6 @@
-package com.sej.escape.repository;
+package com.sej.escape.repository.board;
 
-import com.querydsl.core.BooleanBuilder;
-import com.sej.escape.entity.Board;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.sej.escape.entity.board.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

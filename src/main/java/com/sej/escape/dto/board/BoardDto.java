@@ -1,5 +1,6 @@
 package com.sej.escape.dto.board;
 
+import com.sej.escape.constants.BoardType;
 import com.sej.escape.dto.file.FileResDto;
 import lombok.*;
 
@@ -18,5 +19,6 @@ public class BoardDto {
     private LocalDateTime regDate;
     private String content;
     private FileResDto[] uploadFiles;
+    private BoardType type;
 
 }

@@ -1,5 +1,6 @@
-package com.sej.escape.entity;
+package com.sej.escape.entity.board;
 
+import com.sej.escape.entity.Member;
 import com.sej.escape.entity.base.BaseWithDelete;
 import com.sej.escape.entity.comment.BoardComment;
 import com.sej.escape.entity.file.File;
@@ -15,12 +16,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="btype")
 public class Board extends BaseWithDelete {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

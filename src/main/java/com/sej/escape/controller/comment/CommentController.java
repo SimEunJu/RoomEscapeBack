@@ -42,8 +42,6 @@ public class CommentController {
         return ResponseEntity.ok(commentDto);
     }
 
-
-
     @PostMapping("/new")
     public ResponseEntity<CommentResDto> addComment(@RequestBody CommentModifyReqDto commentModifyReqDto){
         String type = commentModifyReqDto.getAncestor().getType();
