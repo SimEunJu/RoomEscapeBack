@@ -1,7 +1,7 @@
 package com.sej.escape.entity.board;
 
 import com.sej.escape.entity.Member;
-import com.sej.escape.entity.comment.BoardComment;
+import com.sej.escape.entity.comment.NoticeBoardComment;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 public class NoticeBoard extends Board{
 
     @Builder(builderMethodName = "noticeBuilder")
-    public NoticeBoard(Long id, Member member, List<BoardComment> comments, String title, String content, int good, int report, int view) {
+    public NoticeBoard(Long id, Member member, List<NoticeBoardComment> comments, String title, String content, int good, int report, int view) {
         super(id, member, comments, title, content, good, report, view);
     }
 }

@@ -43,7 +43,7 @@ public class ThemeCommentController {
     @GetMapping("/member")
     public ResponseEntity<CommentListResDto> getCommentsByMember(CommentListReqDto reqDto){
         CommentListResDto comments = themeCommentService.getCommentsByMember(reqDto);
-        comments.setType("theme");
+        comments.setAncestor(reqDto.getAncestor());
         return ResponseEntity.ok(comments);
     }
 

@@ -3,6 +3,7 @@ package com.sej.escape.controller;
 import com.sej.escape.constants.BoardType;
 import com.sej.escape.dto.ModifyResDto;
 import com.sej.escape.dto.board.BoardDto;
+import com.sej.escape.dto.board.BoardModifyReqDto;
 import com.sej.escape.dto.board.BoardReqDto;
 import com.sej.escape.dto.board.BoardResDto;
 import com.sej.escape.dto.page.PageReqDto;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -37,7 +39,7 @@ public class BoardController {
         }
     }
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<PageResDto> getBoards(BoardReqDto pageReqDto){
         PageResDto pageResDto = boardService.getBoards(pageReqDto, getServiceByType(pageReqDto.getType()));
         pageResDto.setType(pageReqDto.getType().getTypeString());
@@ -50,12 +52,24 @@ public class BoardController {
         return ResponseEntity.ok(boardDto);
     }
 
+    @PatchMapping("/delete/{id}")
+    public ResponseEntity<BoardResDto> deleteBoards(@PathVariable long id, @RequestBody BoardModifyReqDto reqDto){
+        int deleteCnt = boardService.deleteBoards(Arrays.asList(id));
+        BoardResDto resDto = BoardResDto.builder()
+                .id(id)
+                .type(reqDto.getType().getTypeString())
+                .build();
+        return ResponseEntity.ok(resDto);
+    }
 
     @PatchMapping("/delete")
-    public ResponseEntity<ModifyResDto> deleteBoards(@RequestBody List<Long> ids){
-        int deleteCnt = boardService.deleteBoards(ids);
-        int reqCnt = ids.size();
-        return ResponseEntity.ok(new ModifyResDto(reqCnt, deleteCnt, reqCnt == deleteCnt));
+    public ResponseEntity<BoardResDto> deleteBoards(@RequestBody BoardModifyReqDto reqDto){
+        int deleteCnt = boardService.deleteBoards(reqDto.getIds());
+        BoardResDto resDto = BoardResDto.builder()
+                .ids(reqDto.getIds())
+                .type(reqDto.getType().getTypeString())
+                .build();
+        return ResponseEntity.ok(resDto);
     }
 
     @PatchMapping("/update/{id}")

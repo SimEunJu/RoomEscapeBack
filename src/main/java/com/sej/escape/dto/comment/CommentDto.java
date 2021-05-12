@@ -21,6 +21,7 @@ public class CommentDto {
     protected String content;
     protected String writer;
 
+    protected long parId;
     protected int depth;
     protected int seq;
     protected int good;

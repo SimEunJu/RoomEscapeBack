@@ -11,4 +11,5 @@ import lombok.*;
 public class CommentListReqDto extends PageReqDto {
 
     private CommentListOrder order;
+    private Ancestor ancestor;
 }

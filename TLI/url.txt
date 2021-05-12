@@ -42,7 +42,8 @@ https://www.baeldung.com/java-thread-safety
 https://stackoverflow.com/questions/23123251/java-enums-for-hierarchical-tree-like-structure
 https://www.baeldung.com/spring-mvc-custom-data-binder
 https://www.baeldung.com/spring-enum-request-param
-
+https://stackoverflow.com/questions/19417670/using-generics-in-spring-data-jpa-repositories/19443031#19443031
+https://stackoverflow.com/questions/63656497/jpa-repository-with-single-table-inheritance-hibernate
 
 
 

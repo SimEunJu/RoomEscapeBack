@@ -23,7 +23,7 @@ public class FileService {
     private final BoardFileRepository boardFileRepository;
     private final ModelMapper modelMapper;
 
-    public long updateReferIds(List<Long> ids, long referId){
+    public int updateReferIds(List<Long> ids, long referId){
         return fileRepository.updateReferIds(referId, ids);
     }
 

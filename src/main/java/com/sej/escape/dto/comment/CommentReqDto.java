@@ -1,5 +1,6 @@
 package com.sej.escape.dto.comment;
 
+import com.sej.escape.constants.CommentType;
 import com.sej.escape.dto.page.PageReqDto;
 import lombok.*;
 
@@ -14,10 +15,10 @@ public class CommentReqDto extends PageReqDto {
 
     private Long id;
     @NotNull private Long referId;
-    @NotEmpty private String type;
+    @NotNull private CommentType type;
 
     @Builder(builderMethodName = "reqBuilder")
-    public CommentReqDto(int page, int size, String searchKeyword, Long id, @NotNull Long referId, @NotEmpty String type) {
+    public CommentReqDto(int page, int size, String searchKeyword, Long id, @NotNull Long referId, @NotEmpty CommentType type) {
         super(page, size, searchKeyword);
         this.id = id;
         this.referId = referId;

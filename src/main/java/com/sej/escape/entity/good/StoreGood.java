@@ -14,7 +14,6 @@ import javax.persistence.Entity;
 public class StoreGood extends Good {
 
     @Builder(builderMethodName = "storeBuilder")
-
     public StoreGood(Long id, Member member, boolean isGood, Long referId) {
         super(id, member, isGood, referId);
     }

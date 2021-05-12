@@ -12,6 +12,8 @@ import java.util.List;
 public class CommentListResDto {
 
     private String type;
+    private Ancestor ancestor;
+    private boolean hasRecomment;
 
     private long total;
     private int page;

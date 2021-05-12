@@ -17,6 +17,6 @@ public interface CommentRepository
 
     @Modifying
     @Query("update Comment c set c.seq = c.seq+1 where c.parId = :parId and c.seq > :parSeq")
-    long updateBelowCommentSeq(@Param("parId") long parId, @Param("parSeq") int parSeq);
+    int updateBelowCommentSeq(@Param("parId") long parId, @Param("parSeq") int parSeq);
 
 }

@@ -14,6 +14,6 @@ public interface FileRepository
 
     @Modifying
     @Query("update File f set f.referId = :referId where f.id in :ids")
-    long updateReferIds(@Param("referI") long referId, @Param("id") List<Long> ids);
+    int updateReferIds(@Param("referId") long referId, @Param("ids") List<Long> ids);
 
 }

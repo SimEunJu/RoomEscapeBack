@@ -15,6 +15,10 @@ public class CommentModifyReqDto {
     private long id;
     private long randId;
     private boolean isGood;
+    private boolean isHidden;
+
+    private String type;
+
     private CommentDto parComment;
     private Ancestor ancestor;
 }

@@ -20,7 +20,7 @@ public class StoreCommentController {
     @GetMapping("/member")
     public ResponseEntity<CommentListResDto> getCommentsByMember(CommentListReqDto reqDto){
         CommentListResDto comments = storeCommentService.getCommentsByMember(reqDto);
-        comments.setType("store");
+        comments.setAncestor(reqDto.getAncestor());
         return ResponseEntity.ok(comments);
     }
 

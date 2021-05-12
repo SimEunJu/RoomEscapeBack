@@ -2,6 +2,7 @@ package com.sej.escape.controller.good;
 
 import com.sej.escape.dto.good.GoodReqDto;
 import com.sej.escape.dto.good.GoodResDto;
+import com.sej.escape.service.good.GoodService;
 import com.sej.escape.service.good.StoreGoodService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,16 +21,12 @@ import javax.validation.Valid;
 @RequestMapping("/api/good")
 public class GoodController {
 
-    private final StoreGoodService storeGoodService;
+    private final GoodService goodService;
     private final ModelMapper modelMapper;
 
     @PatchMapping("/toggle")
     public ResponseEntity<GoodResDto> toggleGood(@Valid @RequestBody GoodReqDto goodReqDto){
-        String type = goodReqDto.getType();
-        Long goodId = null;
-        switch (type){
-            case "store": goodId = storeGoodService.toggleGood(goodReqDto);
-        }
+        Long goodId = goodService.toggleGood(goodReqDto);
         GoodResDto resDto = this.getResDto(goodId, goodReqDto);
         return ResponseEntity.ok(resDto);
     }

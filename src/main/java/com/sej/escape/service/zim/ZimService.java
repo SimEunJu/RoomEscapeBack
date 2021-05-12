@@ -3,8 +3,10 @@ package com.sej.escape.service.zim;
 import com.sej.escape.constants.ZimType;
 import com.sej.escape.dto.zim.ZimReqDto;
 import com.sej.escape.dto.zim.ZimResDto;
+import com.sej.escape.entity.zim.StoreZim;
 import com.sej.escape.entity.zim.Zim;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
+import com.sej.escape.repository.zim.ZimRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,6 @@ public class ZimService {
 
     private final StoreZimService storeZimService;
     private final ThemeZimService themeZimService;
-    private final AuthenticationUtil authenticationUtil;
 
     public ZimResDto toggleZim(ZimReqDto reqDto){
         IZimService service = getServiceByType(reqDto.getType());

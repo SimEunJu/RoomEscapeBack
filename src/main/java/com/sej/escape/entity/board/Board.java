@@ -2,8 +2,7 @@ package com.sej.escape.entity.board;
 
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.base.BaseWithDelete;
-import com.sej.escape.entity.comment.BoardComment;
-import com.sej.escape.entity.file.File;
+import com.sej.escape.entity.comment.NoticeBoardComment;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,7 +30,7 @@ public class Board extends BaseWithDelete {
 
     @Builder.Default
     @Transient
-    private List<BoardComment> comments = new ArrayList<>();
+    private List<NoticeBoardComment> comments = new ArrayList<>();
 
     @Column(columnDefinition = "text")
     private String title;

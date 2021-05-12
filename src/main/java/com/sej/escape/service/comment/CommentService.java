@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CommentService {
 
@@ -28,15 +30,6 @@ public class CommentService {
     private final CommentMapper commentMapper;
     private final AuthenticationUtil authenticationUtil;
     private final EntityManager em;
-
-    private long updateBelowCommentSeq(long parCommentId, int parCommentSeq){
-        return commentRepository.updateBelowCommentSeq(parCommentId, parCommentSeq);
-    }
-
-    // TODO: 추후 enum으로 매핑 후 get
-    private String getTypeFlag(String type){
-        return type.substring(0, 1).toUpperCase();
-    }
 
     public CommentResDto addComment(CommentModifyReqDto commentModifyReqDto, Function<CommentModifyReqDto, CommentResDto> addFunc){
         CommentDto parComment = commentModifyReqDto.getParComment();
@@ -48,7 +41,8 @@ public class CommentService {
     }
     
     public CommentListResDto getCommentList(CommentReqDto commentReqDto) {
-        String type = getTypeFlag( commentReqDto.getType() );
+        String type = commentReqDto.getType().getDiscriminatorValue();
+        boolean hasRecomment = commentReqDto.getType().hasRecomment();
 
         PageRequest pageRequest = commentReqDto.getPageable();
 
@@ -56,21 +50,26 @@ public class CommentService {
         boolean isAuthenticated = authenticationUtil.isAuthenticated();
         if(isAuthenticated){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :type AND refer_id = c.comment_id AND is_good = 1) as is_good_chk ";
+            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :higherType AND refer_id = c.comment_id AND is_good = 1) as is_good_chk ";
         }
 
-        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :type AND c.comment_id IN ( "+
-                "SELECT comment_id FROM comment ic WHERE ic.refer_id = :referId AND ic.depth = 0 ORDER BY comment_id desc ) ";
+        String quweryWhereExcludeDeleteWhenHasRecomment = "";
+        if(hasRecomment){
+            quweryWhereExcludeDeleteWhenHasRecomment = "ADN c.is_deleted = 0 ";
+        }
+        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :type "
+                +quweryWhereExcludeDeleteWhenHasRecomment;
 
         String listQuery =  "SELECT c.*, m.nickname "+
-                            ", (SELECT COUNT(*) FROM good WHERE gtype='S' AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
+                            ", (SELECT COUNT(*) FROM good WHERE gtype= :higherType AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
                             querySelectIsGoodChk +
                             queryFromAndWhere +
                             "ORDER BY par_id DESC, seq ASC, comment_id desc";
 
         List<Object[]> results = em.createNativeQuery(listQuery, "storeCommentResultMap")
+                .setParameter("higherType", type.substring(0,1))
                 .setParameter("type", type)
-                .setParameter("referId", commentReqDto.getReferId())
+                //.setParameter("referId", commentReqDto.getReferId())
                 .setFirstResult(pageRequest.getPageNumber())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
@@ -79,7 +78,7 @@ public class CommentService {
 
         BigInteger totalCount = (BigInteger) em.createNativeQuery(pagingQuery)
                 .setParameter("type", type)
-                .setParameter("referId", commentReqDto.getReferId())
+                //.setParameter("referId", commentReqDto.getReferId())
                 .getSingleResult();
 
         int total = totalCount.intValue();

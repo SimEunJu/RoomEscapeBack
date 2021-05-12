@@ -2,21 +2,15 @@ package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.CommentDto;
 import com.sej.escape.dto.comment.CommentModifyReqDto;
-import com.sej.escape.dto.comment.StoreCommentDto;
-import com.sej.escape.entity.Store;
-import com.sej.escape.entity.comment.BoardComment;
+import com.sej.escape.entity.comment.NoticeBoardComment;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.StoreComment;
-import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.modelmapper.internal.asm.Type;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,14 +36,14 @@ public class CommentMapper {
         return modelMapper.map(entity, dest);
     }
 
-    private <T extends Comment> T mapReqDtoToComment(Class<T> entityCls, CommentModifyReqDto commentModifyReqDto)  {
+    private <T extends Comment> T mapReqDtoToComment(CommentModifyReqDto commentModifyReqDto, Class<T> entityCls)  {
 
         CommentDto parComment = commentModifyReqDto.getParComment();
         boolean hasParComment = parComment != null;
 
         int depth = hasParComment ? parComment.getDepth()+1 : 0;
         int seq = hasParComment ? parComment.getSeq()+1 : 0;
-        long parId = hasParComment ? parComment.getId() : 0;
+        long parId = hasParComment ? parComment.getParId() : 0;
 
         T entity = null;
         try {
@@ -72,15 +66,12 @@ public class CommentMapper {
         return entity;
     }
 
-    public BoardComment mapReqDtoToBoardComment(CommentModifyReqDto commentModifyReqDto) {
-        return mapReqDtoToComment(BoardComment.class, commentModifyReqDto);
-    }
-
-    public StoreComment mapReqDtoToStoreComment(CommentModifyReqDto commentModifyReqDto) {
-        StoreComment storeComment = mapReqDtoToComment(StoreComment.class, commentModifyReqDto);
-        storeComment.setReferId(commentModifyReqDto.getAncestor().getId());
-        storeComment.setStar(commentModifyReqDto.getStarRate());
-        return storeComment;
+    public <E extends Comment> E mapReqDtoToEntity(CommentModifyReqDto commentModifyReqDto, Class<E> entity) {
+        E comment = mapReqDtoToComment(commentModifyReqDto, entity);
+        comment.setMember(authenticationUtil.getAuthUserEntity());
+        comment.setReferId(commentModifyReqDto.getAncestor().getId());
+        comment.setStar(commentModifyReqDto.getStarRate());
+        return comment;
     }
 
 

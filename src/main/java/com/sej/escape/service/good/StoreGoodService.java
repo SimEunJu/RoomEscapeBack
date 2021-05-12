@@ -21,7 +21,6 @@ public class StoreGoodService {
 
     private final StoreGoodRepository storeGoodRepository;
     private final AuthenticationUtil authenticationUtil;
-    //private final MemberMapper memberMapper;
 
     public Optional<StoreGood> getByReferIdAndMember(long referId, Member member){
         return storeGoodRepository.findByReferIdAndMember(referId, member);
