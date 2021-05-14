@@ -1,7 +1,6 @@
 package com.sej.escape.repository.comment;
 
 import com.sej.escape.entity.comment.Comment;
-import com.sej.escape.entity.comment.NoticeBoardComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 

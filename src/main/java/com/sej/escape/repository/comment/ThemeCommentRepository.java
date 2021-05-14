@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ThemeCommentRepository
         extends JpaRepository<ThemeComment, Long>, QuerydslPredicateExecutor<ThemeComment> {
@@ -29,5 +30,8 @@ public interface ThemeCommentRepository
     Object findThemeCntAndCommentCnt(@Param("store") Store store);
 
     @Query("select tc, tc.theme from ThemeComment tc where tc.isDeleted = false and tc.member = :member")
-    Page<Object[]> findAllByMember(Pageable pageable, @RequestParam("member") Member member);
+    Page<Object[]> findAllByMember(Pageable pageable, @Param("member") Member member);
+
+    @Query("select tc, tcf from ThemeComment tc left outer join ThemeCommentFile tcf on tc.id = tcf.referId and tcf.isDeleted = false where tc.id = :commentId")
+    Optional<Object> findDetailById(@Param("commentId") long commentId);
 }

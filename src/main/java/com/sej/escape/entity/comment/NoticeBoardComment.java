@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 @Getter
 @NoArgsConstructor
 @DiscriminatorValue("BN")
-public class NoticeBoardComment extends Comment {
+public class NoticeBoardComment extends Comment{
 
     @Builder(builderMethodName = "noticeBoardBuilder")
     public NoticeBoardComment(Long id, Member member, Long referId, String content, int good, double star, int depth, int seq, Long parId, boolean isHidden) {

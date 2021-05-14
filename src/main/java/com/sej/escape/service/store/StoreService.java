@@ -42,7 +42,7 @@ public class StoreService {
 
     public List<StoreNameDto> getStoresByName(String keyword){
         Pageable pageable = PageRequest.of(1, 20);
-        List<Store> stores = storeRepository.findAllByIsDeletedFalseAndStoreNameContaining(keyword);
+        List<Store> stores = storeRepository.findAllByIsDeletedFalseAndNameContaining(keyword);
         return mapper.mapStoresToDtos(stores, StoreNameDto.class);
     }
 
@@ -98,7 +98,7 @@ public class StoreService {
                     StoreZimListResDto storeZimListResDto = StoreZimListResDto.builder()
                             .id(store.getId())
                             .zimId(zim.getId())
-                            .name(store.getStoreName())
+                            .name(store.getName())
                             .isZimChecked(true)
                             .build();
                     return storeZimListResDto;
@@ -114,7 +114,7 @@ public class StoreService {
 
         String searchKeyword = storePageReqDto.getSearchKeyword();
         if(!Strings.isNullOrEmpty(searchKeyword)){
-            queryWhere += " AND store.store_name LIKE '%"+searchKeyword+"%'";
+            queryWhere += " AND store.name LIKE '%"+searchKeyword+"%'";
         }
 
         AreaSection[] areaSections = storePageReqDto.getAreaSection();

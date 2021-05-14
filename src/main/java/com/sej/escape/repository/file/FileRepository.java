@@ -1,4 +1,4 @@
-package com.sej.escape.repository;
+package com.sej.escape.repository.file;
 
 import com.sej.escape.entity.file.File;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,11 +9,18 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface FileRepository
-        extends JpaRepository<File, String>, QuerydslPredicateExecutor<File> {
+public interface FileRepository<T extends File>
+        extends JpaRepository<T, Long>, QuerydslPredicateExecutor<T> {
 
     @Modifying
     @Query("update File f set f.referId = :referId where f.id in :ids")
     int updateReferIds(@Param("referId") long referId, @Param("ids") List<Long> ids);
 
+    @Modifying
+    @Query("update #{#entityName} f set f.isDeleted = true, f.deleteDate = CURRENT_TIMESTAMP where f.id in :ids")
+    int deleteFiles(@Param("ids") List<Long> ids);
+
+    @Modifying
+    @Query("update #{#entityName} f set f.isDeleted = true, f.deleteDate = CURRENT_TIMESTAMP where f.referId = :referId")
+    int deleteFilesByReferId(@Param("referId") long referId);
 }

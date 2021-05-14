@@ -13,10 +13,11 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ThemeCommentDto {
+public class ThemeCommentDetailDto {
 
     private long id;
-    private long themeId;
+    private Ancestor theme;
+    private Ancestor store;
 
     private int difficulty;
     private int flowerRoad;
@@ -31,12 +32,13 @@ public class ThemeCommentDto {
     private int quizType;
     private int hints;
 
-    private String imgUrl;
-
     private FileResDto[] uploadFiles;
 
     public void setVisitDate(LocalDate visitDate){
         this.visitDate = LocalDateTime.of(visitDate, LocalTime.MIDNIGHT);
+    }
+    public void setVisitDate(LocalDateTime visitDate){
+        this.visitDate = visitDate;
     }
 
     public boolean isHorror(){

@@ -87,7 +87,7 @@ public class StoreCommentService {
         Store store = (Store) e[1];
 
         StoreCommentDto dto = modelMapper.map(storeComment, StoreCommentDto.class);
-        dto.setName(store.getStoreName());
+        dto.setName(store.getName());
         dto.setStoreId(store.getId());
 
         Object[] themeCnt = (Object[]) themeCommentRepository.findThemeCntAndCommentCnt(store);

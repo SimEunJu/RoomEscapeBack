@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,14 +30,16 @@ public class ThemeCommentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ThemeForListDto>> getComments(){
-        List<ThemeForListDto> CommentDto = new ArrayList<>();
-        return ResponseEntity.ok(CommentDto);
+    public ResponseEntity<CommentListResDto> getCommentList(@Valid CommentReqDto reqDto){
+        CommentListResDto commentList = themeCommentService.getCommentList(reqDto);
+        commentList.setAncestor(reqDto.getType().getAncestor());
+        commentList.setHasRecomment(reqDto.getType().hasRecomment());
+        return ResponseEntity.ok(commentList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ThemeCommentDto> getComment(@PathVariable long id){
-        ThemeCommentDto dto = themeCommentService.getComment(id);
+    public ResponseEntity<ThemeCommentDetailDto> getComment(@PathVariable long id){
+        ThemeCommentDetailDto dto = themeCommentService.getComment(id);
         return ResponseEntity.ok(dto);
     }
 

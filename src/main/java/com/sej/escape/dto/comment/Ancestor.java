@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 public class Ancestor {
 
+    private String name;
     private String type;
     private List<String> subTypes;
     private long id;

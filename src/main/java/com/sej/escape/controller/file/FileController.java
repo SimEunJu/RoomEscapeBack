@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/file/upload")
+@RequestMapping("/api/file/")
 @RequiredArgsConstructor
 @Log4j2
 public class FileController {
@@ -24,8 +25,13 @@ public class FileController {
     private final FileManageServiceProvider fileManagerServiceProvider;
     private final FileService fileService;
 
+    @DeleteMapping("/cloud")
+    public void deleteFiles(@RequestBody List<Long> ids){
+        fileService.deleteFiles(ids);
+    }
+
     @PostMapping(value="/cloud", consumes = { "multipart/form-data" })
-    public ResponseEntity<FileResDto> uploadFileToCloud(@Valid FileReqDto reqDto) throws FileUploadException {
+    public ResponseEntity<FileResDto> updateFileToCloud(@Valid FileReqDto reqDto) throws FileUploadException {
 
         FileReqDto fileReqDto = FileControllerUtils.getFileReqDto(reqDto);
         FileManageService fileManageService = fileManagerServiceProvider.get(FileManage.S3);

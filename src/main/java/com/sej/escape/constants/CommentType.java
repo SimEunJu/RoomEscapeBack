@@ -13,6 +13,7 @@ public enum CommentType {
     STORE("S", false),
     BOARD_REQ("BR", true), BOARD_NOTICE("BN", true);
 
+    // to: 외부 json
     public Ancestor getAncestor(){
         String [] splitedTypes = this.toString().toLowerCase().split("_");
         List<String> types = Arrays.asList(splitedTypes);
@@ -21,14 +22,15 @@ public enum CommentType {
                 .subTypes(types.subList(1, types.size()))
                 .build();
     }
-    private String discriminatorValue;
+
+    // to: 내부 entity
+    private String entityDiscriminatorValue;
+
     // 대댓글 여부
     private boolean hasRecomment;
-
     public boolean hasRecomment() {
         return hasRecomment;
     }
-
     public void setRecomment(boolean hasRecomment) {
         this.hasRecomment = hasRecomment;
     }

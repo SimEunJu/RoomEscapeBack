@@ -31,14 +31,9 @@ public class ThemeMapper {
 
     @PostConstruct
     public void postConstruct(){
-        this.modelMapper.createTypeMap(Theme.class, ThemeForListDto.class)
-                .addMappings(mapper -> {
-                    mapper.map(Theme::getThemeName, ThemeForListDto::setName);
-                });
 
         this.modelMapper.createTypeMap(Theme.class, ThemeDto.class)
                 .addMappings(mapper -> {
-                    mapper.map(Theme::getThemeName, ThemeDto::setName);
                     mapper.map(Theme::getGenreByList, ThemeDto::setGenre);
                     mapper.map(Theme::getQuizTypeByList, ThemeDto::setQuizType);
                     mapper.map(src -> areaSectionComponent.getTitleFromAreaCode(src.getStore().getAreaCode(), new ArrayList<>()),

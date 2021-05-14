@@ -43,7 +43,7 @@ public class ThemeService {
     public List<ThemeForListDto> getThemeNamesAndStore(String keyword){
         Pageable pageable = PageRequest.of(1, 20);
 
-        List<Theme> themes = themeRepository.findAllByIsDeletedFalseAndThemeNameContaining(keyword);
+        List<Theme> themes = themeRepository.findAllByIsDeletedFalseAndNameContaining(keyword);
         return mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
     }
 
@@ -77,7 +77,7 @@ public class ThemeService {
 
     public List<ThemeNameDto> getThemeNamesByStore(long storeId){
         List<Theme> themes = getThemesUnderSameStore(storeId);
-        return mapper.mapEntitiesToDtos(themes, ThemeNameDto.class, (Theme theme, ThemeNameDto dto) -> { dto.setName(theme.getThemeName()); return dto; });
+        return mapper.mapEntitiesToDtos(themes, ThemeNameDto.class, (Theme theme, ThemeNameDto dto) -> { dto.setName(theme.getName()); return dto; });
     }
 
     private List<Theme> getThemesUnderSameStore(long storeId){
@@ -107,9 +107,9 @@ public class ThemeService {
                     ThemeZimListResDto themeZimListResDto = ThemeZimListResDto.builder()
                             .id(theme.getId())
                             .zimId(zim.getId())
-                            .name(theme.getThemeName())
+                            .name(theme.getName())
                             .isZimChecked(true)
-                            .storeName(store.getStoreName())
+                            .storeName(store.getName())
                             .build();
                     return themeZimListResDto;
                 });
@@ -122,7 +122,7 @@ public class ThemeService {
 
         String searchKeyword = themePageReqDto.getSearchKeyword();
         if(!Strings.isNullOrEmpty(searchKeyword)){
-            queryWhere += " AND theme.theme_name LIKE '%"+searchKeyword+"%'";
+            queryWhere += " AND theme.name LIKE '%"+searchKeyword+"%'";
         }
 
         AreaSection[] areaSections = themePageReqDto.getAreaSection();

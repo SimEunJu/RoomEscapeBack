@@ -41,35 +41,33 @@ public class CommentService {
     }
     
     public CommentListResDto getCommentList(CommentReqDto commentReqDto) {
-        String type = commentReqDto.getType().getDiscriminatorValue();
-        boolean hasRecomment = commentReqDto.getType().hasRecomment();
 
-        PageRequest pageRequest = commentReqDto.getPageable();
-
+        // 로그인한 경우 유저가 해당 comment를 좋아요 했는지 여부 확인한다.
         String querySelectIsGoodChk = ", (SELECT 0) as is_good_chk ";
-        boolean isAuthenticated = authenticationUtil.isAuthenticated();
-        if(isAuthenticated){
+        if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :higherType AND refer_id = c.comment_id AND is_good = 1) as is_good_chk ";
+            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :type AND refer_id = c.comment_id AND is_good = 1) as is_good_chk ";
         }
 
+        // 대댓글이 달릴 수 있는 comment의 경우 삭제된 댓글을 배제하지 않고 가져온다.
         String quweryWhereExcludeDeleteWhenHasRecomment = "";
-        if(hasRecomment){
+        if(commentReqDto.getType().hasRecomment()){
             quweryWhereExcludeDeleteWhenHasRecomment = "ADN c.is_deleted = 0 ";
         }
-        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :type "
+
+        // from, where절
+        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :type"
                 +quweryWhereExcludeDeleteWhenHasRecomment;
 
         String listQuery =  "SELECT c.*, m.nickname "+
-                            ", (SELECT COUNT(*) FROM good WHERE gtype= :higherType AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
+                            ", (SELECT COUNT(*) FROM good WHERE gtype= :type AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
                             querySelectIsGoodChk +
                             queryFromAndWhere +
                             "ORDER BY par_id DESC, seq ASC, comment_id desc";
 
-        List<Object[]> results = em.createNativeQuery(listQuery, "storeCommentResultMap")
-                .setParameter("higherType", type.substring(0,1))
-                .setParameter("type", type)
-                //.setParameter("referId", commentReqDto.getReferId())
+        PageRequest pageRequest = commentReqDto.getPageable();
+        List<Object[]> results = em.createNativeQuery(listQuery, "commentResultMap")
+                .setParameter("type", commentReqDto.getType().getChildEntityDiscriminatorValue())
                 .setFirstResult(pageRequest.getPageNumber())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
@@ -77,8 +75,7 @@ public class CommentService {
         String pagingQuery = "SELECT count(*) " + queryFromAndWhere;
 
         BigInteger totalCount = (BigInteger) em.createNativeQuery(pagingQuery)
-                .setParameter("type", type)
-                //.setParameter("referId", commentReqDto.getReferId())
+                .setParameter("type", commentReqDto.getType().getChildEntityDiscriminatorValue())
                 .getSingleResult();
 
         int total = totalCount.intValue();
@@ -98,7 +95,7 @@ public class CommentService {
 
             boolean isGoodChk = row[3] != null && ((BigInteger) row[3]).intValue() > 0;
             commentDto.setGoodChecked(isGoodChk);
-            if(isAuthenticated){
+            if(authenticationUtil.isAuthenticated()){
                 goodCnt = isGoodChk ? goodCnt - 1 : goodCnt;
             }
             commentDto.setGood(goodCnt);

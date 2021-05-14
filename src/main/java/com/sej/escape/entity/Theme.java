@@ -37,7 +37,7 @@ public class Theme extends BaseWithDelete {
     private List<ThemeComment> comments = new ArrayList<>();
 
     @Column(length = 2000)
-    private String themeName;
+    private String name;
 
     @Column(length = 3000)
     private String link;

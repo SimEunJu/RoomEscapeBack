@@ -20,7 +20,7 @@ public interface StoreRepository
 
     Optional<Store> findByIdAndIsDeletedFalse(long id);
 
-    List<Store> findAllByIsDeletedFalseAndStoreNameContaining(String storeName);
+    List<Store> findAllByIsDeletedFalseAndNameContaining(String name);
 
     @Query("select s, sz from Store s inner join StoreZim sz on sz.referId = s.id and sz.isZim = true and sz.member = :member where s.isDeleted = false")
     Page<Object[]> findallByZim(@Param("member") Member memer, Pageable pageable);

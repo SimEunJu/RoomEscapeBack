@@ -35,7 +35,7 @@ public class Store extends BaseWithDelete {
     private double areaCode;
 
     @Column(length = 2000)
-    private String storeName;
+    private String name;
 
     @Column(length = 3000)
     private String link;

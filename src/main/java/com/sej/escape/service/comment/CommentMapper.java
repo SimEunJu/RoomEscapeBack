@@ -2,9 +2,7 @@ package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.CommentDto;
 import com.sej.escape.dto.comment.CommentModifyReqDto;
-import com.sej.escape.entity.comment.NoticeBoardComment;
 import com.sej.escape.entity.comment.Comment;
-import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -12,7 +12,8 @@ import javax.persistence.Entity;
 @Getter
 @NoArgsConstructor
 @DiscriminatorValue("BR")
-public class ReqBoardComment extends Comment {
+public class ReqBoardComment extends Comment{
+
     @Builder(builderMethodName = "reqBoardBuilder")
     public ReqBoardComment(Long id, Member member, Long referId, String content, int good, double star, int depth, int seq, Long parId, boolean isHidden) {
         super(id, member, referId, content, good, star, depth, seq, parId, isHidden);

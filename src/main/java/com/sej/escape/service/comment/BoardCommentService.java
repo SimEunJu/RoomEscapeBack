@@ -2,11 +2,9 @@ package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.CommentModifyReqDto;
 import com.sej.escape.dto.comment.CommentResDto;
-import com.sej.escape.entity.board.ReqBoard;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.NoticeBoardComment;
 import com.sej.escape.entity.comment.ReqBoardComment;
-import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
 import com.sej.escape.repository.comment.BoardCommentRepository;

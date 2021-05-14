@@ -29,15 +29,9 @@ public class StoreMapper {
     public void postConstruct(){
         this.modelMapper.createTypeMap(Store.class, StoreDto.class)
                 .addMappings(mapper -> {
-                    mapper.map(Store::getStoreName, StoreDto::setName);
                     mapper.map(src ->
                                     areaSectionComponent.getTitleFromAreaCode(src.getAreaCode(), new ArrayList<>()),
                             StoreDto::setArea);
-                });
-        // TODO: setName을 자동화할 수 없을까? -> interface?
-        this.modelMapper.createTypeMap(Store.class, StoreNameDto.class)
-                .addMappings(mapper -> {
-                    mapper.map(Store::getStoreName, StoreNameDto::setName);
                 });
     }
 

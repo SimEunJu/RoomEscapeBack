@@ -1,27 +1,36 @@
 package com.sej.escape.dto.file;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sej.escape.constants.FileType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Locale;
+import java.util.Objects;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class FileResDto {
 
-    private String url;
-    private int seq;
-    private FileType type;
     private long id;
     private long randomId;
-    
+    private FileType type;
+    private String originalName;
+    private int seq;
+
+    @JsonIgnore private String rootPath;
+    @JsonIgnore private String subPath;
+    @JsonIgnore private String name;
+
+    public String getImgUrl() {
+        return rootPath+"/"+subPath+"/"+name;
+    }
+
     // TODO: mapping configure 설정
     public String getType(){
-        return this.type.toString().toLowerCase();
+        if(type == null) return null;
+        return type.toString().toLowerCase();
     }
 }

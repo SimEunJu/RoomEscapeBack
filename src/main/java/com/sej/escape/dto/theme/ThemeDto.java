@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ThemeDto extends ThemeForListDto{
 
+    private String name;
     private String link;
     private int minutes;
     private int personnel;

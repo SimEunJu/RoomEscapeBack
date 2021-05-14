@@ -1,18 +1,11 @@
 package com.sej.escape.service.good;
 
+import com.sej.escape.constants.GoodType;
 import com.sej.escape.dto.good.GoodReqDto;
 import com.sej.escape.entity.Member;
-import com.sej.escape.entity.Store;
-import com.sej.escape.entity.board.Board;
-import com.sej.escape.entity.good.BoardGood;
-import com.sej.escape.entity.good.Good;
-import com.sej.escape.entity.good.StoreGood;
-import com.sej.escape.entity.good.ThemeGood;
+import com.sej.escape.entity.good.*;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
 import com.sej.escape.repository.good.GoodRepository;
-import com.sej.escape.repository.good.StoreGoodRepository;
-import com.sej.escape.repository.zim.StoreZimRepository;
-import com.sej.escape.service.member.MemberMapper;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -28,23 +21,33 @@ public class GoodService {
 
     private final GoodRepository<StoreGood> storeGoodRepository;
     private final GoodRepository<ThemeGood> themeGoodRepository;
-    private final GoodRepository<BoardGood> boardGoodRepository;
+    private final GoodRepository<StoreCommentGood> storeCommentGoodRepository;
+    private final GoodRepository<ThemeCommentGood> themeCommentGoodRepository;
+    private final GoodRepository<NoticeBoardCommentGood> noticeBoardCommentGoodRepository;
+    private final GoodRepository<ReqBoardCommentGood> reqBoardCommentGoodRepository;
+
     private final AuthenticationUtil authenticationUtil;
 
-    private GoodRepository<? extends Good> getRepoByType(String type){
+    private GoodRepository<? extends Good> getRepoByType(GoodType type){
         switch (type){
-            case "store": return storeGoodRepository;
-            case "theme": return themeGoodRepository;
-            case "board": return boardGoodRepository;
+            case STORE: return storeGoodRepository;
+            case THEME: return themeGoodRepository;
+            case COMMENT_STORE: return storeCommentGoodRepository;
+            case COMMENT_THEME: return themeCommentGoodRepository;
+            case COMMENT_BOARD_NOTICE: return noticeBoardCommentGoodRepository;
+            case COMMENT_BOARD_REQ: return reqBoardCommentGoodRepository;
             default: throw new UnDefinedConstantException("");
         }
     }
 
-    private Class<? extends Good> getEntityByType(String type){
+    private Class<? extends Good> getEntityByType(GoodType type){
         switch (type){
-            case "store": return StoreGood.class;
-            case "theme": return ThemeGood.class;
-            case "board": return BoardGood.class;
+            case STORE: return StoreGood.class;
+            case THEME: return ThemeGood.class;
+            case COMMENT_STORE: return StoreCommentGood.class;
+            case COMMENT_THEME: return ThemeCommentGood.class;
+            case COMMENT_BOARD_NOTICE: return NoticeBoardCommentGood.class;
+            case COMMENT_BOARD_REQ: return ReqBoardCommentGood.class;
             default: throw new UnDefinedConstantException("");
         }
     }

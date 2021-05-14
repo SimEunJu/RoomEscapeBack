@@ -9,12 +9,10 @@ import javax.persistence.Entity;
 
 @Entity
 @NoArgsConstructor
-@DiscriminatorValue("B")
-public class BoardGood extends Good{
-
-    @Builder(builderMethodName = "boardBuilder")
-    public BoardGood(Long id, Member member, boolean isGood, Long referId) {
+@DiscriminatorValue("CT")
+public class ThemeCommentGood extends Good{
+    @Builder(builderMethodName = "themeCommentBuilder")
+    public ThemeCommentGood(Long id, Member member, boolean isGood, Long referId) {
         super(id, member, isGood, referId);
     }
-
 }
