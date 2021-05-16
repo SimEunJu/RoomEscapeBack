@@ -27,6 +27,7 @@ public class FileControllerUtils {
 
         String name = getRandomName();
 
+        reqDto.setContentType(contentType);
         reqDto.setOriginalName(fileName);
         reqDto.setName(name+"."+contentType);
         reqDto.setSubPath(subPath);

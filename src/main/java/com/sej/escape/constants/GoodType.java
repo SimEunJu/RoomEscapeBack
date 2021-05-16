@@ -8,8 +8,8 @@ import lombok.Getter;
 public enum GoodType {
     STORE("S"),
     THEME("T"),
-    COMMENT_THEME("CT"), COMMENT_STORE("CS"),
-    COMMENT_BOARD_REQ("CBR"), COMMENT_BOARD_NOTICE("CBR");
+    THEME_COMMENT("CT"), STORE_COMMENT("CS"),
+    BOARD_REQ_COMMENT("CBR"), BOARD_NOTICE_COMMENT("CBR");
 
     // to: 내부 entity
     private String entityDiscriminatorValue;

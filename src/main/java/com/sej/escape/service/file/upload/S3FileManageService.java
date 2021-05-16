@@ -6,6 +6,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
@@ -68,6 +69,9 @@ public class S3FileManageService implements FileManageService {
             fileReqDto.setRootPath(getRootUrl());
 
             String uploadName = fileReqDto.getSubPath() + "/" + fileReqDto.getName();
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType("image/"+fileReqDto.getContentType());
             Upload upload = transferManager.upload(bucketName, uploadName, fileTo);
             upload.waitForUploadResult();
 

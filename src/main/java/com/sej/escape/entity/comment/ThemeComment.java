@@ -48,7 +48,7 @@ public class ThemeComment extends BaseWithDelete {
     private boolean isEscape;
 
     @Column(columnDefinition = "int(2) default 0", nullable = false)
-    private int diffculty;
+    private int difficulty;
 
     @Column(nullable = false)
     private boolean isSecret;

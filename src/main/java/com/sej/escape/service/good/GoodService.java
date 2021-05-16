@@ -32,10 +32,10 @@ public class GoodService {
         switch (type){
             case STORE: return storeGoodRepository;
             case THEME: return themeGoodRepository;
-            case COMMENT_STORE: return storeCommentGoodRepository;
-            case COMMENT_THEME: return themeCommentGoodRepository;
-            case COMMENT_BOARD_NOTICE: return noticeBoardCommentGoodRepository;
-            case COMMENT_BOARD_REQ: return reqBoardCommentGoodRepository;
+            case STORE_COMMENT: return storeCommentGoodRepository;
+            case THEME_COMMENT: return themeCommentGoodRepository;
+            case BOARD_NOTICE_COMMENT: return noticeBoardCommentGoodRepository;
+            case BOARD_REQ_COMMENT: return reqBoardCommentGoodRepository;
             default: throw new UnDefinedConstantException("");
         }
     }
@@ -44,10 +44,10 @@ public class GoodService {
         switch (type){
             case STORE: return StoreGood.class;
             case THEME: return ThemeGood.class;
-            case COMMENT_STORE: return StoreCommentGood.class;
-            case COMMENT_THEME: return ThemeCommentGood.class;
-            case COMMENT_BOARD_NOTICE: return NoticeBoardCommentGood.class;
-            case COMMENT_BOARD_REQ: return ReqBoardCommentGood.class;
+            case STORE_COMMENT: return StoreCommentGood.class;
+            case THEME_COMMENT: return ThemeCommentGood.class;
+            case BOARD_NOTICE_COMMENT: return NoticeBoardCommentGood.class;
+            case BOARD_REQ_COMMENT: return ReqBoardCommentGood.class;
             default: throw new UnDefinedConstantException("");
         }
     }
@@ -57,7 +57,7 @@ public class GoodService {
         Member member = authenticationUtil.getAuthUserEntity();
         GoodRepository goodRepository = getRepoByType(reqDto.getType());
         Class<? extends Good> goodClass = getEntityByType(reqDto.getType());
-        Optional<Good> goodOpt = goodRepository.findByReferIdAndMember(reqDto.getReferId(), member);
+        Optional<? extends Good> goodOpt = goodRepository.findByReferIdAndMember(reqDto.getReferId(), member);
 
         Good good = null;
         if(goodOpt.isPresent()){

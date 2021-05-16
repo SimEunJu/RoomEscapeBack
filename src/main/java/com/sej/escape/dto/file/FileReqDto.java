@@ -18,6 +18,7 @@ public class FileReqDto {
     private String subPath;
     private MultipartFile uploadFile;
     private int seq;
+    private String contentType;
 
     private long randomId;
     private long id;

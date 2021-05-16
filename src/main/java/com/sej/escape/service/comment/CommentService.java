@@ -56,7 +56,7 @@ public class CommentService {
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :type"
+        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :type "
                 +quweryWhereExcludeDeleteWhenHasRecomment;
 
         String listQuery =  "SELECT c.*, m.nickname "+
@@ -67,7 +67,7 @@ public class CommentService {
 
         PageRequest pageRequest = commentReqDto.getPageable();
         List<Object[]> results = em.createNativeQuery(listQuery, "commentResultMap")
-                .setParameter("type", commentReqDto.getType().getChildEntityDiscriminatorValue())
+                .setParameter("type", commentReqDto.getType().getEntityDiscriminatorValue())
                 .setFirstResult(pageRequest.getPageNumber())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
@@ -75,7 +75,7 @@ public class CommentService {
         String pagingQuery = "SELECT count(*) " + queryFromAndWhere;
 
         BigInteger totalCount = (BigInteger) em.createNativeQuery(pagingQuery)
-                .setParameter("type", commentReqDto.getType().getChildEntityDiscriminatorValue())
+                .setParameter("type", commentReqDto.getType().getEntityDiscriminatorValue())
                 .getSingleResult();
 
         int total = totalCount.intValue();
