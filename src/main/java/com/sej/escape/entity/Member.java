@@ -13,6 +13,7 @@ import java.util.Set;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member extends Base {
@@ -52,6 +53,7 @@ public class Member extends Base {
 
     private LocalDateTime unableDate;
 
-    private LocalDateTime leaveDate;
+    private LocalDateTime withdrawalDate;
+    private boolean isWithdrawal;
 
 }
