@@ -20,5 +20,5 @@ public class ThemeCommentForListDto {
     protected int themeCnt;
     protected int visitThemeCnt;
     protected boolean isHidden;
-
+    protected String writer;
 }

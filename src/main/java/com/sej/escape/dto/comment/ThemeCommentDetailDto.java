@@ -1,5 +1,6 @@
 package com.sej.escape.dto.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sej.escape.dto.file.FileResDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,25 +29,30 @@ public class ThemeCommentDetailDto {
     private int takenTime;
     private LocalDateTime visitDate;
     private int visitorNum;
+
     private List<String> etc;
+    private boolean isActive;
+    private boolean isHorror;
+
     private int quizType;
     private int hints;
 
     private FileResDto[] uploadFiles;
 
-    public void setVisitDate(LocalDate visitDate){
-        this.visitDate = LocalDateTime.of(visitDate, LocalTime.MIDNIGHT);
-    }
-    public void setVisitDate(LocalDateTime visitDate){
+    public void setVisitDate(LocalDateTime visitDate) {
         this.visitDate = visitDate;
     }
 
-    public boolean isHorror(){
+    // req -> entity 관계에서만 사용
+    @JsonIgnore
+    public boolean isHorrorSet(){
         if(etc == null) return false;
         return etc.contains("horror");
     }
 
-    public boolean isActive(){
+    // req -> entity 관계에서만 사용
+    @JsonIgnore
+    public boolean isActiveSet(){
         if(etc == null) return false;
         return etc.contains("active");
     }

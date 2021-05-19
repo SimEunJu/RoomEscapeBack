@@ -21,9 +21,9 @@ public interface ThemeRepository
     Page<Theme> findLatestThemes(@Param("aMonthAgo") LocalDateTime aMonthAgo, Pageable pageable);
 
     // TODO: 인기글은 나중에 통계처리
-    // THINK: select에서 count 버리고 t만 가져올 수 있을까
-    @Query("select t, t.comments.size as reviewCnt from Theme t where t.isDeleted = false group by t.id")
+    @Query("select t from Theme t where t.isDeleted = false")
     Page<Theme> findTopThemes(Pageable pageable);
+
     List<Theme> findAllByIsDeletedFalseAndStoreEquals(Store store);
 
     @Query("select t, tz, s from Theme t inner join ThemeZim tz on tz.referId = t.id and tz.isZim = true and tz.member = :member inner join Store s on t.store = s where t.isDeleted = false")

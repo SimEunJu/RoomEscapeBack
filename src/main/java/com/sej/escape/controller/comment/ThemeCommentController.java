@@ -52,7 +52,7 @@ public class ThemeCommentController {
 
     @GetMapping("/by/{type}")
     public ResponseEntity<Map<String, Object>> getCommentsByType(@PathVariable String type){
-        List<CommentDto> commentDtos = null;
+        List<ThemeCommentForListDto> commentDtos = null;
         PageReqDto pageReqDto = new PageReqDto();
         switch (type){
             case "latest":

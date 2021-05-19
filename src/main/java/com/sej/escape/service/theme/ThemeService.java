@@ -203,7 +203,7 @@ public class ThemeService {
         메인페이지 최대 10개
         좋아요 + 리뷰수 + 최신순
         */
-        Sort sort = Sort.by(Sort.Direction.DESC,"reviewCnt", "regDate");
+        Sort sort = Sort.by(Sort.Direction.DESC, "regDate");
         Pageable pageable = pageReqDto.getPageable(sort);
         Page<Theme> themes = themeRepository.findTopThemes(pageable);
 
