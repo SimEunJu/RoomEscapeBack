@@ -46,7 +46,7 @@ public class CommentService {
         String querySelectIsGoodChk = ", (SELECT 0) as is_good_chk ";
         if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :type AND refer_id = c.comment_id AND is_good = 1) as is_good_chk ";
+            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :gtype AND refer_id = c.comment_id AND is_good = 1) as is_good_chk ";
         }
 
         // 대댓글이 달릴 수 있는 comment의 경우 삭제된 댓글을 배제하지 않고 가져온다.
@@ -56,18 +56,19 @@ public class CommentService {
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :type "
+        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :ctype "
                 +quweryWhereExcludeDeleteWhenHasRecomment;
 
         String listQuery =  "SELECT c.*, m.nickname "+
-                            ", (SELECT COUNT(*) FROM good WHERE gtype= :type AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
+                            ", (SELECT COUNT(*) FROM good WHERE gtype= :gtype AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
                             querySelectIsGoodChk +
                             queryFromAndWhere +
                             "ORDER BY par_id DESC, seq ASC, comment_id desc";
 
         PageRequest pageRequest = commentReqDto.getPageable();
         List<Object[]> results = em.createNativeQuery(listQuery, "commentResultMap")
-                .setParameter("type", commentReqDto.getType().getEntityDiscriminatorValue())
+                .setParameter("ctype", commentReqDto.getType().getCommentEntityDiscVal())
+                .setParameter("gtype", commentReqDto.getType().getGoodEntityDiscVal())
                 .setFirstResult(pageRequest.getPageNumber())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
@@ -75,7 +76,7 @@ public class CommentService {
         String pagingQuery = "SELECT count(*) " + queryFromAndWhere;
 
         BigInteger totalCount = (BigInteger) em.createNativeQuery(pagingQuery)
-                .setParameter("type", commentReqDto.getType().getEntityDiscriminatorValue())
+                .setParameter("ctype", commentReqDto.getType().getCommentEntityDiscVal())
                 .getSingleResult();
 
         int total = totalCount.intValue();

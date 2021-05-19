@@ -4,10 +4,7 @@ import com.sej.escape.dto.comment.*;
 import com.sej.escape.dto.file.FileResDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.entity.Member;
-import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
-import com.sej.escape.entity.comment.Comment;
-import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.entity.file.ThemeCommentFile;
 import com.sej.escape.error.exception.NoSuchResourceException;
@@ -47,28 +44,21 @@ public class ThemeCommentService {
         String querySelectIsGoodChk = ", (SELECT 0) as is_good_chk ";
         if(authenticationUtil.isAuthenticated()){
             long memberId = authenticationUtil.getAuthUser().getId();
-            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :type AND refer_id = c.theme_comment_id AND is_good = 1) as is_good_chk ";
-        }
-
-        // 대댓글이 달릴 수 있는 comment의 경우 삭제된 댓글을 배제하지 않고 가져온다.
-        String quweryWhereExcludeDeleteWhenHasRecomment = "";
-        if(commentReqDto.getType().hasRecomment()){
-            quweryWhereExcludeDeleteWhenHasRecomment = "ADN c.is_deleted = 0 ";
+            querySelectIsGoodChk = ", (SELECT COUNT(IF(member_id = "+memberId+", 1, 0)) FROM good WHERE gtype= :gtype AND refer_id = c.theme_comment_id AND is_good = 1) as is_good_chk ";
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id "
-                +quweryWhereExcludeDeleteWhenHasRecomment;
+        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id ";
 
         String listQuery =  "SELECT c.*, m.nickname "+
-                ", (SELECT COUNT(*) FROM good WHERE gtype= :type AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
+                ", (SELECT COUNT(*) FROM good WHERE gtype= :gtype AND refer_id = c.theme_comment_id AND is_good = 1) as good_cnt " +
                 querySelectIsGoodChk +
                 queryFromAndWhere +
-                "ORDER BY par_id DESC, seq ASC, comment_id desc";
+                "ORDER BY c.theme_comment_id desc";
 
         PageRequest pageRequest = commentReqDto.getPageable();
-        List<Object[]> results = em.createNativeQuery(listQuery, "commentResultMap")
-                .setParameter("type", commentReqDto.getType().getEntityDiscriminatorValue())
+        List<Object[]> results = em.createNativeQuery(listQuery, "themeCommentResultMap")
+                .setParameter("gtype", commentReqDto.getType().getGoodEntityDiscVal())
                 .setFirstResult(pageRequest.getPageNumber())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
@@ -83,10 +73,10 @@ public class ThemeCommentService {
         int size = commentReqDto.getSize();
         boolean hasNext = total > page * size;
 
-        List<CommentDto> commentDtos = results.stream().map(row -> {
-            StoreComment comment = (StoreComment) row[0];
-            CommentDto commentDto = commentMapper.mapEntityToDto(comment, CommentDto.class);
-            if(comment.isDeleted()) commentDto.setContent("삭제된 댓글입니다.");
+        List<ThemeCommentForListDto> commentDtos = results.stream().map(row -> {
+            ThemeComment comment = (ThemeComment) row[0];
+            ThemeCommentForListDto commentDto = commentMapper.mapEntityToDto(comment, ThemeCommentForListDto.class);
+            commentDto.setContent(comment.getReview());
 
             String nickname = (String) row[1];
             commentDto.setWriter(nickname);
@@ -193,12 +183,12 @@ public class ThemeCommentService {
                 .build();
     }
 
-    private List<ThemeCommentForListDto> mapStoreCommentsToDtos(List<ThemeComment> entitis){
+    private List<ThemeCommentForListByMemberDto> mapStoreCommentsToDtos(List<ThemeComment> entitis){
         return entitis.stream().map(themeComment -> {
 
             Theme theme = themeComment.getTheme();
 
-            ThemeCommentForListDto dto = commentMapper.mapEntityToDto(themeComment, ThemeCommentForListDto.class);
+            ThemeCommentForListByMemberDto dto = commentMapper.mapEntityToDto(themeComment, ThemeCommentForListByMemberDto.class);
             dto.setName(theme.getName());
             dto.setThemeId(theme.getId());
 
@@ -209,7 +199,24 @@ public class ThemeCommentService {
         }).collect(Collectors.toList());
     }
 
-    public List<ThemeCommentForListDto> readTopComments(PageReqDto pageReqDto){
+    public long deleteComment(long id){
+        ThemeComment comment = getCommentByIdIfExist(id);
+        comment.setDeleted(true);
+        comment.setDeleteDate(LocalDateTime.now());
+        themeCommentRepository.save(comment);
+        return comment.getId();
+    }
+
+    public ThemeCommentResDto toggleHideComment(long id, boolean isHidden){
+        ThemeComment comment = getCommentByIdIfExist(id);
+        comment.setHidden(isHidden);
+        comment = themeCommentRepository.save(comment);
+
+        ThemeCommentResDto resDto = commentMapper.mapEntityToDto(comment, ThemeCommentResDto.class);
+        return resDto;
+    }
+
+    public List<ThemeCommentForListByMemberDto> readTopComments(PageReqDto pageReqDto){
         /*
         메인페이지 최대 10개
         좋아요 + 최신순
@@ -221,18 +228,18 @@ public class ThemeCommentService {
 
         Page<ThemeComment> comments = themeCommentRepository.findTopComments(aWeekAgo, pageable);
 
-        List<ThemeCommentForListDto> commentDtos = mapStoreCommentsToDtos(comments.getContent());
+        List<ThemeCommentForListByMemberDto> commentDtos = mapStoreCommentsToDtos(comments.getContent());
 
         return commentDtos;
     }
 
-    public List<ThemeCommentForListDto> readLatestComments(PageReqDto pageReqDto){
+    public List<ThemeCommentForListByMemberDto> readLatestComments(PageReqDto pageReqDto){
 
         Pageable pageable = pageReqDto.getPageable(Sort.by("regDate").descending());
 
         Page<ThemeComment> comments = themeCommentRepository.findLatestComments(pageable);
 
-        List<ThemeCommentForListDto> commentDtos = mapStoreCommentsToDtos(comments.getContent());
+        List<ThemeCommentForListByMemberDto> commentDtos = mapStoreCommentsToDtos(comments.getContent());
 
         return commentDtos;
     }

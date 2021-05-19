@@ -25,6 +25,7 @@ public interface ThemeRepository
     Page<Theme> findTopThemes(Pageable pageable);
 
     List<Theme> findAllByIsDeletedFalseAndStoreEquals(Store store);
+    List<Theme> findAllByIsDeletedFalseAndStoreEqualsAndIdIsNot(Store store, long selfId);
 
     @Query("select t, tz, s from Theme t inner join ThemeZim tz on tz.referId = t.id and tz.isZim = true and tz.member = :member inner join Store s on t.store = s where t.isDeleted = false")
     Page<Object[]> findallByZim(@Param("member") Member memer, Pageable pageable);

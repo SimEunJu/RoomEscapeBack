@@ -68,7 +68,7 @@ public class ThemeService {
 
         ThemeDto themeDto = mapper.mapThemeRowToDto(result, ThemeDto.class);
         long storeId = themeDto.getStore().getId();
-        List<Theme> themes = getThemesUnderSameStore(storeId);
+        List<Theme> themes = getThemesUnderSameStoreNotContainSelf(storeId, id);
         List<ThemeForListDto> relatedThemes = mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
 
         themeDto.setRelated(relatedThemes);
@@ -83,6 +83,11 @@ public class ThemeService {
     private List<Theme> getThemesUnderSameStore(long storeId){
         Store store = Store.builder().id(storeId).build();
         return themeRepository.findAllByIsDeletedFalseAndStoreEquals(store);
+    }
+
+    private List<Theme> getThemesUnderSameStoreNotContainSelf(long storeId, long selfId){
+        Store store = Store.builder().id(storeId).build();
+        return themeRepository.findAllByIsDeletedFalseAndStoreEqualsAndIdIsNot(store, selfId);
     }
 
     private NoSuchResourceException throwNoSuchResourceException(long id){

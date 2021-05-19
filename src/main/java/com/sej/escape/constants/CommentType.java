@@ -10,8 +10,10 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public enum CommentType {
-    STORE("S", false),
-    BOARD_REQ("BR", true), BOARD_NOTICE("BN", true);
+    STORE("S", "CS",false),
+    THEME(null, "CT",false),
+    BOARD_REQ("BR", "CBR",true),
+    BOARD_NOTICE("BN", "CBN",true);
 
     // to: 외부 json
     public Ancestor getAncestor(){
@@ -23,8 +25,11 @@ public enum CommentType {
                 .build();
     }
 
-    // to: 내부 entity
-    private String entityDiscriminatorValue;
+    // to: 내부 comment entity
+    private String commentEntityDiscVal;
+
+    // to: 내부 good entity
+    private String goodEntityDiscVal;
 
     // 대댓글 여부
     private boolean hasRecomment;

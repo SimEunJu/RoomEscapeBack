@@ -5,8 +5,15 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
         version="2.0">
 
+    <sql-result-set-mapping name="themeCommentResultMap">
+        <entity-result entity-class="com.sej.escape.entity.comment.ThemeComment" />
+        <column-result name="nickname"/>
+        <column-result name="good_cnt"/>
+        <column-result name="is_good_chk"/>
+    </sql-result-set-mapping>
+
     <sql-result-set-mapping name="commentResultMap">
-        <entity-result entity-class="com.sej.escape.entity.comment.StoreComment" />
+        <entity-result entity-class="com.sej.escape.entity.comment.Comment" />
         <column-result name="nickname"/>
         <column-result name="good_cnt"/>
         <column-result name="is_good_chk"/>

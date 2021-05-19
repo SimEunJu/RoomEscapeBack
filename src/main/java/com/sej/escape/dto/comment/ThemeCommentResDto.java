@@ -18,7 +18,6 @@ public class ThemeCommentResDto extends CommentDto{
     private ErrorRes error;
 
     @Builder(builderMethodName = "resBuilder")
-
     public ThemeCommentResDto(long id, String content, String writer, long parId, int depth, int seq, int good, boolean isGoodChecked, boolean isDeleted, double star, boolean isHidden, LocalDateTime regDate, LocalDateTime updateDate, LocalDateTime deleteDate, String type, long randId, boolean hasError, ErrorRes error) {
         super(id, content, writer, parId, depth, seq, good, isGoodChecked, isDeleted, star, isHidden, regDate, updateDate, deleteDate);
         this.type = type;
