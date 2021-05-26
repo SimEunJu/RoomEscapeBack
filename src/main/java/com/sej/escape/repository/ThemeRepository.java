@@ -20,9 +20,8 @@ public interface ThemeRepository
     @Query("select t from Theme t where t.isDeleted = false and t.regDate > :aMonthAgo")
     Page<Theme> findLatestThemes(@Param("aMonthAgo") LocalDateTime aMonthAgo, Pageable pageable);
 
-    // TODO: 인기글은 나중에 통계처리
-    @Query("select t from Theme t where t.isDeleted = false")
-    Page<Theme> findTopThemes(Pageable pageable);
+    @Query("select t from Theme t join TopTrendingTheme tt on t.id = tt.referId and tt.isActive = true")
+    List<Theme> findTopThemes();
 
     List<Theme> findAllByIsDeletedFalseAndStoreEquals(Store store);
     List<Theme> findAllByIsDeletedFalseAndStoreEqualsAndIdIsNot(Store store, long selfId);

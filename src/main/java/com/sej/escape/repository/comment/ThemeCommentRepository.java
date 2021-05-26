@@ -24,9 +24,8 @@ public interface ThemeCommentRepository
     @Query("select tc from ThemeComment tc where tc.isDeleted = false")
     Page<ThemeComment> findLatestComments(Pageable pageable);
 
-    // TODO: 통계처리
-    @Query("select tc from ThemeComment tc where tc.isDeleted = false and tc.regDate > :aWeekAgo")
-    Page<ThemeComment> findTopComments(@Param("aWeekAgo") LocalDateTime aWeekAgo, Pageable pageable);
+    @Query("select tc from ThemeComment tc join TopTrendingThemeComment ttc on tc.id = ttc.referId and ttc.isActive = true")
+    List<ThemeComment> findTopComments();
 
     @Query("select count(t.id), sum(case when (tc.id is not null) then 1 else 0 end) from Theme t left outer join ThemeComment tc on tc.isDeleted = false where t.store = :store")
     Object findThemeCntAndCommentCnt(@Param("store") Store store);

@@ -57,7 +57,7 @@ public class ThemeCommentController {
                 commentDtos = themeCommentService.readLatestComments(pageReqDto);
                 break;
             case "top":
-                commentDtos = themeCommentService.readTopComments(pageReqDto);
+                commentDtos = themeCommentService.readTopComments();
                 break;
             default:
                 commentDtos = new ArrayList<>();

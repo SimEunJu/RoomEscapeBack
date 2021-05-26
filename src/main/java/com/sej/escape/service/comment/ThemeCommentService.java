@@ -216,19 +216,10 @@ public class ThemeCommentService {
         return resDto;
     }
 
-    public List<ThemeCommentForListByMemberDto> readTopComments(PageReqDto pageReqDto){
-        /*
-        메인페이지 최대 10개
-        좋아요 + 최신순
-        */
-        Sort sort = Sort.by(Sort.Direction.DESC, "good", "regDate");
-        Pageable pageable = pageReqDto.getPageable(sort);
+    public List<ThemeCommentForListByMemberDto> readTopComments(){
 
-        LocalDateTime aWeekAgo = LocalDateTime.now().minusWeeks(1);
-
-        Page<ThemeComment> comments = themeCommentRepository.findTopComments(aWeekAgo, pageable);
-
-        List<ThemeCommentForListByMemberDto> commentDtos = mapStoreCommentsToDtos(comments.getContent());
+        List<ThemeComment> comments = themeCommentRepository.findTopComments();
+        List<ThemeCommentForListByMemberDto> commentDtos = mapStoreCommentsToDtos(comments);
 
         return commentDtos;
     }

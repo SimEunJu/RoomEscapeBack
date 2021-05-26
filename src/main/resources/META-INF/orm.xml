@@ -4,6 +4,36 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
         version="2.0">
+    
+    <named-native-query name="ThemeComment.findTopThemeComments">
+        <query>
+            select theme_comment.theme_comment_id, @temp := (count(good.good_id) + datediff(now(), theme_comment.reg_date) * -0.05), if(@temp < 0, 0, @temp) as weighted
+            from theme_comment left join good on good.refer_id = theme_comment.theme_comment_id and good.is_good = 1 and good.gtype = "CT"
+            group by theme_comment.theme_comment_id
+            order by weighted desc, theme_comment.theme_comment_id desc
+            limit 10
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Theme.findTopThemes">
+        <query>
+            select theme_with_comment.theme_id, (comment_cnt+zim_cnt)*comment_star_avg as weighted
+            from (
+                     select theme.theme_id, count(theme_comment.theme_comment_id) as comment_cnt, ifnull(avg(theme_comment.star), 0) as comment_star_avg
+                     from theme
+                              left join theme_comment on theme_comment.theme_id = theme.theme_id and theme_comment.is_deleted = 0
+                     group by theme.theme_id
+                 ) as theme_with_comment join
+                 (
+                     select theme.theme_id, count(zim.zim_id) as zim_cnt
+                     from theme
+                              left join zim on zim.refer_id = theme.theme_id and zim.is_zim = 1 and zim.ztype = "T"
+                     group by theme.theme_id
+                 ) as theme_with_zim on theme_with_zim.theme_id = theme_with_comment.theme_id
+            order by weighted desc, theme_with_comment.theme_id desc
+            limit 10
+        </query>
+    </named-native-query>
 
     <sql-result-set-mapping name="themeCommentResultMap">
         <entity-result entity-class="com.sej.escape.entity.comment.ThemeComment" />

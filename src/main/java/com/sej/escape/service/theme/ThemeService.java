@@ -203,16 +203,11 @@ public class ThemeService {
         return queryStr;
     }
 
-    public List<ThemeForListDto> readTopThemes(PageReqDto pageReqDto){
-        /*
-        메인페이지 최대 10개
-        좋아요 + 리뷰수 + 최신순
-        */
-        Sort sort = Sort.by(Sort.Direction.DESC, "regDate");
-        Pageable pageable = pageReqDto.getPageable(sort);
-        Page<Theme> themes = themeRepository.findTopThemes(pageable);
+    public List<ThemeForListDto> readTopThemes(){
 
-        List<ThemeForListDto> themeForListDtos = mapper.mapEntitiesToDtos(themes.getContent(), ThemeForListDto.class);
+        List<Theme> themes = themeRepository.findTopThemes();
+        List<ThemeForListDto> themeForListDtos = mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
+
         return themeForListDtos;
     }
 

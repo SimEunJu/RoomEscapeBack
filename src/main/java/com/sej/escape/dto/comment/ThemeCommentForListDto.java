@@ -1,24 +1,29 @@
 package com.sej.escape.dto.comment;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class ThemeCommentForListDto {
 
-    protected long id;
-    protected long themeId;
+    private long id;
+    private String content;
+    private String writer;
 
-    protected String name;
-    protected LocalDateTime visitDate;
-    protected int star;
-    protected int themeCnt;
-    protected int visitThemeCnt;
-    protected boolean isHidden;
-    protected String writer;
+    private int good;
+    @JsonProperty("isGoodChecked")
+    private boolean isGoodChecked;
+    private double star;
+
+    private LocalDateTime regDate;
+    private LocalDateTime updateDate;
+    private LocalDateTime deleteDate;
+
 }
