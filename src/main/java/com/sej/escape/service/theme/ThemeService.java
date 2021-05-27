@@ -6,6 +6,7 @@ import com.sej.escape.constants.AreaSection;
 import com.sej.escape.constants.ListOrder;
 
 import com.sej.escape.dto.page.PageResDto;
+import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.store.StorePageReqDto;
 import com.sej.escape.dto.theme.*;
 import com.sej.escape.dto.page.PageReqDto;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +123,7 @@ public class ThemeService {
         return resDto;
     }
 
-    public List<ThemeForListDto> getThemes(ThemePageReqDto themePageReqDto){
+    public PageResDto getThemes(ThemePageReqDto themePageReqDto){
         String queryWhere = "";
         String queryOrder = "";
 
@@ -184,12 +186,34 @@ public class ThemeService {
         for(Object[] row : results){
             themeForListDtos.add(mapper.mapThemeRowToDto(row, ThemeForListDto.class));
         }
-        return themeForListDtos;
+
+        // count 쿼리
+        String countQueryStr = getThemesCountQuery(queryWhere);
+        BigInteger totalCnt = (BigInteger) em.createNativeQuery(countQueryStr)
+                .getSingleResult();
+
+        boolean hasNext = totalCnt.intValue() > themePageReqDto.getPage() * themePageReqDto.getSize();
+
+        PageResDto pageResDto = new PageResDto<Store, StoreDto>();
+        pageResDto.setTargetList(themeForListDtos);
+        pageResDto.setTotal(totalCnt.intValue());
+        pageResDto.setSize(themePageReqDto.getSize());
+        pageResDto.setPage(themePageReqDto.getPage());
+        pageResDto.setHasNext(hasNext);
+
+        return pageResDto;
     }
 
     private String getThemesQuery(String querySelectIsZimChk, String queryWhere, String queryOrder){
         return getThemeQuery(querySelectIsZimChk, queryWhere) +
                 "ORDER BY"+queryOrder;
+    }
+
+    private String getThemesCountQuery(String queryWhere){
+        String queryStr = "SELECT count(theme.theme_id) " +
+                "FROM theme WHERE theme.is_deleted = 0 " +
+                queryWhere;
+        return queryStr;
     }
 
     private String getThemeQuery(String querySelectIsZimChk, String queryWhere){

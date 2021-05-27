@@ -22,7 +22,7 @@ public class TopThemeAndCommentTask {
     @Scheduled(cron="0 15 0/2 * * *")
     public void gatherTopThemes(){
         // ( comment_cnt + zim_cnt ) * comment_star_avg -> 별점 높을수록 높게
-        List<Object[]> results = em.createNativeQuery("Theme.findTopThemes").getResultList();
+        List<Object[]> results = em.createNamedQuery("Theme.findTopThemes").getResultList();
         topTrendingRepository.updatePrevThemeTrendingInactive();
         List<TopTrendingTheme> topTrendingThemes = results.stream().map(result -> {
             return TopTrendingTheme.themeBuilder()
@@ -38,7 +38,7 @@ public class TopThemeAndCommentTask {
     public void gatherTopThemeComments(){
         // count(good.good_id) + datediff(now(), theme_comment.reg_date) * -0.05
         // 좋아요 수가 많을수록 + 등록된지 오래될 수록 순위 밀려나도록
-        List<Object[]> results = em.createNativeQuery("ThemeComment.findTopThemeComments").getResultList();
+        List<Object[]> results = em.createNamedQuery("ThemeComment.findTopThemeComments").getResultList();
         topTrendingRepository.updatePrevThemeTrendingInactive();
         List<TopTrendingThemeComment> topTrendingThemes = results.stream().map(result -> {
             return TopTrendingThemeComment.themeCommentBuilder()

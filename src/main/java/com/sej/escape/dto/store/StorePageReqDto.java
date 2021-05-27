@@ -24,4 +24,5 @@ public class StorePageReqDto extends PageReqDto {
 
     private double latitude;
     private double longitude;
+
 }

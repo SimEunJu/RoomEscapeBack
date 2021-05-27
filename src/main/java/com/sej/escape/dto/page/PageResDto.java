@@ -1,6 +1,8 @@
 package com.sej.escape.dto.page;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class PageResDto<En, Dto> {
 
     private List<Dto> targetList;
@@ -22,7 +25,7 @@ public class PageResDto<En, Dto> {
     private int size;
     private boolean hasNext;
 
-    private void setPageResult(Page<En> result){
+    private void setPageResult(Page<En> result) {
         this.total = result.getTotalPages();
         this.page = result.getNumber() + 1;
         this.size = result.getSize();

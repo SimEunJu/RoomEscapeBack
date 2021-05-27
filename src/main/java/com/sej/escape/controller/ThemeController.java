@@ -32,9 +32,9 @@ public class ThemeController {
     }
 
     @PostMapping
-    public ResponseEntity<List<ThemeForListDto>> getThemes(@Valid @RequestBody ThemePageReqDto pageReqDto){
-        List<ThemeForListDto> themeDtos = themeService.getThemes(pageReqDto);
-        return ResponseEntity.ok(themeDtos);
+    public ResponseEntity<PageResDto> getThemes(@Valid @RequestBody ThemePageReqDto pageReqDto){
+        PageResDto resDto =  themeService.getThemes(pageReqDto);
+        return ResponseEntity.ok(resDto);
     }
 
     @GetMapping("/zim")
@@ -52,7 +52,7 @@ public class ThemeController {
                 themeForListDtos = themeService.readLatestThemes(pageReqDto);
                 break;
             case "top":
-                themeForListDtos = themeService.readTopThemes(pageReqDto);
+                themeForListDtos = themeService.readTopThemes();
                 break;
             default:
                 themeForListDtos = new ArrayList<>();

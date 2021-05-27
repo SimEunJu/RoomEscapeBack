@@ -27,7 +27,9 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.swing.text.html.Option;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,7 +109,7 @@ public class StoreService {
     }
 
     // TODO: 서비스 계층에서 쿼리 생성하는 게 맞나... ->  repositoryImpl로 이동
-    public List<StoreDto> getStores(StorePageReqDto storePageReqDto){
+    public PageResDto getStores(StorePageReqDto storePageReqDto){
 
         String queryWhere = "";
         String queryOrder = "";
@@ -171,12 +173,34 @@ public class StoreService {
         for(Object[] row : results){
             storeDtos.add(mapper.mapStoreRowToDto(row));
         }
-        return storeDtos;
+
+        // count 쿼리
+        String countQueryStr = getStoresCountQuery(queryWhere);
+        BigInteger totalCnt = (BigInteger) em.createNativeQuery(countQueryStr)
+                .getSingleResult();
+
+        boolean hasNext = totalCnt.intValue() > storePageReqDto.getPage() * storePageReqDto.getSize();
+
+        PageResDto pageResDto = new PageResDto<Store, StoreDto>();
+        pageResDto.setTargetList(storeDtos);
+        pageResDto.setTotal(totalCnt.intValue());
+        pageResDto.setSize(storePageReqDto.getSize());
+        pageResDto.setPage(storePageReqDto.getPage());
+        pageResDto.setHasNext(hasNext);
+
+        return pageResDto;
     }
 
     private String getStoresQuery(String querySelectIsZimChk, String queryWhere, String queryOrder){
         return getStoreQuery(querySelectIsZimChk, queryWhere) +
                 "ORDER BY"+queryOrder;
+    }
+
+    private String getStoresCountQuery(String queryWhere){
+        String queryStr = "SELECT count(store.store_id) " +
+                "FROM store WHERE store.is_deleted = 0 " +
+                queryWhere;
+        return queryStr;
     }
 
     private String getStoreQuery(String querySelectIsZimChk, String queryWhere){

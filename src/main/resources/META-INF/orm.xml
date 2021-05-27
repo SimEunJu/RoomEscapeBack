@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entity-mappings
-        xmlns="http://java.sun.com/xml/ns/persistence/orm"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
-        version="2.0">
+<entity-mappings version="2.1"
+                 xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
     
     <named-native-query name="ThemeComment.findTopThemeComments">
         <query>
-            select theme_comment.theme_comment_id, @temp := (count(good.good_id) + datediff(now(), theme_comment.reg_date) * -0.05), if(@temp < 0, 0, @temp) as weighted
+            <![CDATA[
+            select theme_comment.theme_comment_id,
+                   @temp \:= (count(good.good_id) + datediff(now(), theme_comment.reg_date) * -0.05),
+                   if(@temp < 0, 0, @temp) as weighted
             from theme_comment left join good on good.refer_id = theme_comment.theme_comment_id and good.is_good = 1 and good.gtype = "CT"
             group by theme_comment.theme_comment_id
             order by weighted desc, theme_comment.theme_comment_id desc
             limit 10
-        </query>
+            ]]>
+          </query>
     </named-native-query>
     
     <named-native-query name="Theme.findTopThemes">

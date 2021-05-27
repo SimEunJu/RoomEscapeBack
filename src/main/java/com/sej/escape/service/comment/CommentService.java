@@ -51,8 +51,8 @@ public class CommentService {
 
         // 대댓글이 달릴 수 있는 comment의 경우 삭제된 댓글을 배제하지 않고 가져온다.
         String quweryWhereExcludeDeleteWhenHasRecomment = "";
-        if(commentReqDto.getType().hasRecomment()){
-            quweryWhereExcludeDeleteWhenHasRecomment = "ADN c.is_deleted = 0 ";
+        if(!commentReqDto.getType().hasRecomment()){
+            quweryWhereExcludeDeleteWhenHasRecomment = "AND c.is_deleted = 0 ";
         }
 
         // from, where절

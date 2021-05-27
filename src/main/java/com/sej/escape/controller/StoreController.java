@@ -10,6 +10,7 @@ import com.sej.escape.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,9 +24,9 @@ public class StoreController {
     private final StoreService storeService;
 
     @PostMapping
-    public ResponseEntity<List<StoreDto>> getStores(@RequestBody StorePageReqDto storePageReqDto){
-        List<StoreDto> stores = storeService.getStores(storePageReqDto);
-        return ResponseEntity.ok(stores);
+    public ResponseEntity<PageResDto> getStores(@RequestBody StorePageReqDto storePageReqDto){
+        PageResDto resDto = storeService.getStores(storePageReqDto);
+        return ResponseEntity.ok(resDto);
     }
 
     @GetMapping("/zim")
