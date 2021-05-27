@@ -17,8 +17,8 @@ import java.util.List;
 public interface ThemeRepository
         extends JpaRepository<Theme, Long>, QuerydslPredicateExecutor<Theme> {
 
-    @Query("select t from Theme t where t.isDeleted = false and t.regDate > :aMonthAgo")
-    Page<Theme> findLatestThemes(@Param("aMonthAgo") LocalDateTime aMonthAgo, Pageable pageable);
+    @Query("select t from Theme t where t.isDeleted = false and t.regDate > :monthsAgo")
+    Page<Theme> findLatestThemes(Pageable pageable, @Param("monthsAgo") LocalDateTime aMonthAgo);
 
     @Query("select t from Theme t join TopTrendingTheme tt on t.id = tt.referId and tt.isActive = true")
     List<Theme> findTopThemes();

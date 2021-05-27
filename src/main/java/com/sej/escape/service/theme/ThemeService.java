@@ -237,12 +237,12 @@ public class ThemeService {
 
     public List<ThemeForListDto> readLatestThemes(PageReqDto pageReqDto){
 
-        LocalDateTime aMonthAgo = LocalDateTime.now().minusMonths(1);
+        LocalDateTime aMonthAgo = LocalDateTime.now().minusMonths(2);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "regDate");
         Pageable pageable = pageReqDto.getPageable(sort);
 
-        Page<Theme> themes = themeRepository.findLatestThemes(aMonthAgo, pageable);
+        Page<Theme> themes = themeRepository.findLatestThemes(pageable, aMonthAgo);
 
         List<ThemeForListDto> themeForListDtos = mapper.mapEntitiesToDtos(themes.getContent(), ThemeForListDto.class);
         return themeForListDtos;

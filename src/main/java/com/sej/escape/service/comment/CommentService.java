@@ -85,7 +85,7 @@ public class CommentService {
         boolean hasNext = total > page * size;
 
         List<CommentDto> commentDtos = results.stream().map(row -> {
-            StoreComment comment = (StoreComment) row[0];
+            Comment comment = (Comment) row[0];
             CommentDto commentDto = commentMapper.mapEntityToDto(comment, CommentDto.class);
             if(comment.isDeleted()) commentDto.setContent("삭제된 댓글입니다.");
 
