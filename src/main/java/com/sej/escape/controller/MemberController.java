@@ -1,14 +1,19 @@
 package com.sej.escape.controller;
 
 import com.sej.escape.dto.member.MemberDto;
+import com.sej.escape.dto.member.MemberRes;
 import com.sej.escape.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
-@RequestMapping("/api/store/member")
+@RequestMapping("/api/member")
 @RequiredArgsConstructor
 @Slf4j
 public class MemberController {
@@ -16,9 +21,23 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public ResponseEntity<MemberDto> getMemberInfo(){
-        MemberDto memberDto = memberService.getMemberInfo();
-        return ResponseEntity.ok(memberDto);
+    public ResponseEntity<MemberRes> getMemberInfo(Authentication authentication){
+        MemberRes payload = null;
+
+        if(authentication != null) {
+            MemberDto memberDto = (MemberDto) authentication.getPrincipal();
+            // role 1개만 가정
+            List<String> roles = memberDto.getAuthorities().stream().map(auth -> auth.getAuthority().substring(5)).collect(Collectors.toList());
+
+            payload = MemberRes.builder()
+                    .id(memberDto.getId())
+                    .nickname(memberDto.getNickname())
+                    .email(memberDto.getEmail())
+                    .role(roles.get(0))
+                    .build();
+        }
+
+        return ResponseEntity.ok(payload);
     }
 
     @PatchMapping

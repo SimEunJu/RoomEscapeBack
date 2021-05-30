@@ -19,7 +19,9 @@ public class CommentDto {
 
     protected long id;
     protected String content;
+
     protected String writer;
+    protected long writerId;
 
     protected long parId;
     protected int depth;

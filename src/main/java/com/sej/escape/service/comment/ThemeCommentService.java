@@ -50,7 +50,7 @@ public class ThemeCommentService {
         // from, where절
         String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id ";
 
-        String listQuery =  "SELECT c.*, m.nickname "+
+        String listQuery =  "SELECT c.*, m.nickname, m.member_id "+
                 ", (SELECT COUNT(*) FROM good WHERE gtype= :gtype AND refer_id = c.theme_comment_id AND is_good = 1) as good_cnt " +
                 querySelectIsGoodChk +
                 queryFromAndWhere +
@@ -78,12 +78,14 @@ public class ThemeCommentService {
             ThemeCommentForListDto commentDto = commentMapper.mapEntityToDto(comment, ThemeCommentForListDto.class);
             commentDto.setContent(comment.getReview());
 
-            String nickname = (String) row[1];
-            commentDto.setWriter(nickname);
+            String writerNickname = (String) row[1];
+            long writerId = ((BigInteger) row[2]).longValue();
+            commentDto.setWriter(writerNickname);
+            commentDto.setWriterId(writerId);
 
-            int goodCnt = ((BigInteger) row[2]).intValue();
+            int goodCnt = ((BigInteger) row[3]).intValue();
 
-            boolean isGoodChk = row[3] != null && ((BigInteger) row[3]).intValue() > 0;
+            boolean isGoodChk = row[4] != null && ((BigInteger) row[4]).intValue() > 0;
             commentDto.setGoodChecked(isGoodChk);
             if(authenticationUtil.isAuthenticated()){
                 goodCnt = isGoodChk ? goodCnt - 1 : goodCnt;

@@ -15,7 +15,9 @@ public class ThemeCommentForListDto {
 
     private long id;
     private String content;
+
     private String writer;
+    private long writerId;
 
     private int good;
     @JsonProperty("isGoodChecked")

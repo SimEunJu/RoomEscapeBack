@@ -1,6 +1,7 @@
 package com.sej.escape.config;
 
 import com.sej.escape.config.security.oauth2.GoogleRegistration;
+import com.sej.escape.security.OauthAuthenticationSuccessHandler;
 import com.sej.escape.service.security.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${front.url.base}")
     private String FRONT_BASE_URL;
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler(){
+        return new OauthAuthenticationSuccessHandler();
+    }
 
     @Bean
     public ExceptionMappingAuthenticationFailureHandler exceptionMappingAuthenticationFailureHandler(){
@@ -94,10 +100,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .baseUri("/auth/oauth2/code/*")
                         .and()
                     .defaultSuccessUrl(FRONT_BASE_URL)
+                    //.successHandler(authenticationSuccessHandler())
                     .failureHandler(exceptionMappingAuthenticationFailureHandler())
                 .and()
 
                 .logout()
+                    .logoutUrl("/auth/logout")
+                    .logoutSuccessUrl(FRONT_BASE_URL)
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")
         ;

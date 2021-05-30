@@ -41,6 +41,7 @@
     <sql-result-set-mapping name="themeCommentResultMap">
         <entity-result entity-class="com.sej.escape.entity.comment.ThemeComment" />
         <column-result name="nickname"/>
+        <column-result name="member_id"/>
         <column-result name="good_cnt"/>
         <column-result name="is_good_chk"/>
     </sql-result-set-mapping>
@@ -48,6 +49,7 @@
     <sql-result-set-mapping name="commentResultMap">
         <entity-result entity-class="com.sej.escape.entity.comment.Comment" />
         <column-result name="nickname"/>
+        <column-result name="member_id"/>
         <column-result name="good_cnt"/>
         <column-result name="is_good_chk"/>
     </sql-result-set-mapping>
