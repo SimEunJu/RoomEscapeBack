@@ -23,20 +23,18 @@ public class MemberController {
     @GetMapping
     public ResponseEntity<MemberRes> getMemberInfo(Authentication authentication){
         MemberRes payload = null;
+        if(authentication == null) return ResponseEntity.ok(payload);
 
-        if(authentication != null) {
-            MemberDto memberDto = (MemberDto) authentication.getPrincipal();
-            // role 1개만 가정
-            List<String> roles = memberDto.getAuthorities().stream().map(auth -> auth.getAuthority().substring(5)).collect(Collectors.toList());
+        MemberDto memberDto = (MemberDto) authentication.getPrincipal();
+        // role 1개만 가정
+        List<String> roles = memberDto.getAuthorities().stream().map(auth -> auth.getAuthority().substring(5)).collect(Collectors.toList());
 
-            payload = MemberRes.builder()
-                    .id(memberDto.getId())
-                    .nickname(memberDto.getNickname())
-                    .email(memberDto.getEmail())
-                    .role(roles.get(0))
-                    .build();
-        }
-
+        payload = MemberRes.builder()
+                .id(memberDto.getId())
+                .nickname(memberDto.getNickname())
+                .email(memberDto.getEmail())
+                .role(roles.get(0))
+                .build();
         return ResponseEntity.ok(payload);
     }
 
