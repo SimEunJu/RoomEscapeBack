@@ -35,4 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/*.properties
+/src/main/resources/application-credentials.properties
+/src/main/resources/application-security.properties
