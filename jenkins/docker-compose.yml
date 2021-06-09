@@ -1,0 +1,14 @@
+version: "3" # 파일 규격 버전
+services: # 이 항목 밑에 실행하려는 컨테이너들을 정의
+  db: # 서비스 명
+    image: jenkins:jdk11 # 사용할 이미지
+    container_name: roomescape-jenkins # 컨테이너 이름 설정
+    ports:
+      - "9090:9090" # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
+      - "8080:8080"
+    environment: # -e 옵션
+      JAVA_OPTS: "-Dspring.profiles.active=prod"  # active profile
+    command: # 명령어 실행
+    volumes:
+      - /home/ubuntu/jenkins/jenkins_home:/var/jenkins_home # -v 옵션 (다렉토리 마운트 설정)
+      - /home/ubuntu/jenkins/info:/info
