@@ -5,9 +5,9 @@ services: # 이 항목 밑에 실행하려는 컨테이너들을 정의
     container_name: roomescape-jenkins # 컨테이너 이름 설정
     ports:
       - "9090:9090" # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
-      - "8080:8080"
+      - "80:80"
     environment: # -e 옵션
-      JAVA_OPTS: "-Dspring.profiles.active=prod"  # active profile
+      JENKINS_OPTS: "--httpPort=9090"
     command: # 명령어 실행
     volumes:
       - /home/ubuntu/jenkins/jenkins_home:/var/jenkins_home # -v 옵션 (다렉토리 마운트 설정)
