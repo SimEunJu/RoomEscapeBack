@@ -6,8 +6,8 @@ plugins {
 }
 
 versionName = '0.0.1-SNAPSHOT'
+version = '0.0.1-SNAPSHOT'
 group = 'com.sej'
-version = versionName
 sourceCompatibility = '11'
 
 configurations {
