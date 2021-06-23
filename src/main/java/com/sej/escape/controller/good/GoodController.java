@@ -17,13 +17,13 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('USER')")
-@RequestMapping("/api/good")
+@RequestMapping("/api/goods")
 public class GoodController {
 
     private final GoodService goodService;
     private final ModelMapper modelMapper;
 
-    @PatchMapping("/toggle")
+    @PatchMapping("/toggle/{id}")
     public ResponseEntity<GoodResDto> toggleGood(@Valid @RequestBody GoodReqDto goodReqDto){
         Long goodId = goodService.toggleGood(goodReqDto);
         GoodResDto resDto = this.getResDto(goodId, goodReqDto);

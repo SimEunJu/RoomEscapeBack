@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/store")
+@RequestMapping("/api/stores")
 @RequiredArgsConstructor
 @Slf4j
 public class StoreController {
@@ -41,8 +41,8 @@ public class StoreController {
         return ResponseEntity.ok(storeDto);
     }
 
-    @GetMapping("/name/theme")
-    public ResponseEntity<StoreNameDto> getTheme(@RequestParam long themeId) {
+    @GetMapping("/theme/{themeId}/name")
+    public ResponseEntity<StoreNameDto> getStoreNameOfTheme(@PathVariable long themeId) {
         StoreNameDto nameDto = storeService.getStoreByTheme(themeId);
         return ResponseEntity.ok(nameDto);
     }

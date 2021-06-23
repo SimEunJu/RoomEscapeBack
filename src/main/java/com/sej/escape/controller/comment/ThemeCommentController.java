@@ -15,12 +15,12 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/comment/theme")
+@RequestMapping("/api/comments/theme")
 public class ThemeCommentController {
 
     private final ThemeCommentService themeCommentService;
 
-    @PostMapping("/new")
+    @PostMapping
     public ResponseEntity<ThemeCommentResDto> addComment(@RequestBody ThemeCommentDto reqDto){
         ThemeCommentResDto commentDto = themeCommentService.addComment(reqDto);
         commentDto.setRandId(commentDto.getRandId());
@@ -28,24 +28,11 @@ public class ThemeCommentController {
     }
 
     @GetMapping
-    public ResponseEntity<CommentListResDto> getCommentList(@Valid CommentReqDto reqDto){
+    public ResponseEntity<CommentListResDto> getComments(@Valid CommentReqDto reqDto){
         CommentListResDto commentList = themeCommentService.getCommentList(reqDto);
         commentList.setAncestor(Ancestor.builder().type("theme").build());
         commentList.setHasRecomment(false);
         return ResponseEntity.ok(commentList);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ThemeCommentDetailDto> getComment(@PathVariable long id){
-        ThemeCommentDetailDto dto = themeCommentService.getComment(id);
-        return ResponseEntity.ok(dto);
-    }
-
-    @GetMapping("/member")
-    public ResponseEntity<CommentListResDto> getCommentsByMember(CommentListReqDto reqDto){
-        CommentListResDto comments = themeCommentService.getCommentsByMember(reqDto);
-        comments.setAncestor(reqDto.getAncestor());
-        return ResponseEntity.ok(comments);
     }
 
     @GetMapping("/by/{type}")
@@ -69,14 +56,27 @@ public class ThemeCommentController {
         return ResponseEntity.ok(map);
     }
 
-    @PatchMapping("/update/{id}")
+    @GetMapping("/{id}")
+    public ResponseEntity<ThemeCommentDetailDto> getComment(@PathVariable long id){
+        ThemeCommentDetailDto dto = themeCommentService.getComment(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/member")
+    public ResponseEntity<CommentListResDto> getCommentsByMember(CommentListReqDto reqDto){
+        CommentListResDto comments = themeCommentService.getCommentsByMember(reqDto);
+        comments.setAncestor(reqDto.getAncestor());
+        return ResponseEntity.ok(comments);
+    }
+
+    @PatchMapping("/{id}")
     public ResponseEntity<ThemeCommentResDto> updateComment(@PathVariable long id, @RequestBody ThemeCommentDto modifyReqDto){
         ThemeCommentResDto resDto =  themeCommentService.updateComment(id, modifyReqDto);
         resDto.setType("theme");
         return ResponseEntity.ok(resDto);
     }
 
-    @PatchMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id){
         long deleteId = themeCommentService.deleteComment(id);
         CommentResDto resDto = CommentResDto.resBuilder().id(deleteId).type("delete").build();

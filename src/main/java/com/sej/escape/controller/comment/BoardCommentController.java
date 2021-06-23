@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/comment/board")
+@RequestMapping("/api/comments/board")
 public class BoardCommentController {
 
     private final BoardCommentService boardCommentService;

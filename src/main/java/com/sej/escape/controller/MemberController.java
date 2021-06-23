@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
 @RequiredArgsConstructor
 @Slf4j
 public class MemberController {
@@ -21,7 +21,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public ResponseEntity<MemberRes> getMemberInfo(Authentication authentication){
+    public ResponseEntity<MemberRes> getMember(Authentication authentication){
         MemberRes payload = null;
         if(authentication == null) return ResponseEntity.ok(payload);
 
@@ -39,7 +39,7 @@ public class MemberController {
     }
 
     @PatchMapping
-    public ResponseEntity<MemberDto> updateMemberInfo(@RequestBody MemberDto memberDto){
+    public ResponseEntity<MemberDto> updateMember(@RequestBody MemberDto memberDto){
        MemberDto memberDtoUpdated = memberService.updateMember(memberDto);
        return ResponseEntity.ok(memberDtoUpdated);
     }

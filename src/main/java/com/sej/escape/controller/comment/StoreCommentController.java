@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/comment/store")
+@RequestMapping("/api/comments/store")
 public class StoreCommentController {
 
     private final StoreCommentService storeCommentService;
@@ -24,7 +24,7 @@ public class StoreCommentController {
         return ResponseEntity.ok(comments);
     }
 
-    @PostMapping("/new")
+    @PostMapping
     public ResponseEntity<StoreCommentDto> addComment(@RequestBody CommentModifyReqDto reqDto){
         StoreCommentDto comment = storeCommentService.addCommentAndRetDetail(reqDto);
         comment.setAncestorType("store");

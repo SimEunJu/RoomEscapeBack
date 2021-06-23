@@ -20,12 +20,12 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/theme")
+@RequestMapping("/api/themes")
 public class ThemeController {
 
     private final ThemeService themeService;
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ThemeDto> getTheme(@PathVariable long id) {
         ThemeDto themeDto = themeService.getTheme(id);
         return ResponseEntity.ok(themeDto);
@@ -38,7 +38,7 @@ public class ThemeController {
     }
 
     @GetMapping("/zim")
-    public ResponseEntity<PageResDto> getStoresByZim(StorePageReqDto storePageReqDto){
+    public ResponseEntity<PageResDto> getThemesByZim(StorePageReqDto storePageReqDto){
         PageResDto resDto = themeService.getStoresByZim(storePageReqDto);
         return ResponseEntity.ok(resDto);
     }
@@ -64,8 +64,8 @@ public class ThemeController {
         return ResponseEntity.ok(map);
     }
 
-    @GetMapping("/names/store")
-    public ResponseEntity<List<ThemeNameDto>> getThemeNamesByStore(@RequestParam long storeId){
+    @GetMapping("/stores/{storeId}/names")
+    public ResponseEntity<List<ThemeNameDto>> getThemeNamesByStore(@PathVariable long storeId){
         List<ThemeNameDto> names = themeService.getThemeNamesByStore(storeId);
         return ResponseEntity.ok(names);
     }

@@ -14,7 +14,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('USER')")
-@RequestMapping("/api/zim")
+@RequestMapping("/api/zims")
 public class ZimController {
 
     private final ZimService zimService;

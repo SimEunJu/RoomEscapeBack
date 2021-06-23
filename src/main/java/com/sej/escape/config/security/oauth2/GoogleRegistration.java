@@ -20,7 +20,7 @@ public class GoogleRegistration {
                 .clientId(ID)
                 .clientSecret(SECRET)
                 .scope(scopes)
-                .redirectUriTemplate("{baseUrl}/auth/oauth2/code/{registrationId}")
+                .redirectUriTemplate("{baseUrl}/api/auth/oauth2/code/{registrationId}")
                 .build();
     }
 }

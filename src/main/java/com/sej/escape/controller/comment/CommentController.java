@@ -21,7 +21,7 @@ import java.util.function.Function;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/comment")
+@RequestMapping("/api/comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -30,21 +30,21 @@ public class CommentController {
 
     private final long EMPTY_RAND_ID = 0;
 
-    @GetMapping("")
-    public ResponseEntity<CommentListResDto> getCommentList(@Valid CommentReqDto reqDto){
+    @GetMapping
+    public ResponseEntity<CommentListResDto> getComments(@Valid CommentReqDto reqDto){
         CommentListResDto commentList = commentService.getCommentList(reqDto);
         commentList.setAncestor(reqDto.getType().getAncestor());
         commentList.setHasRecomment(reqDto.getType().hasRecomment());
         return ResponseEntity.ok(commentList);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<CommentDto> getComment(@PathVariable long id){
         CommentDto commentDto = commentService.getComment(id);
         return ResponseEntity.ok(commentDto);
     }
 
-    @PostMapping("/new")
+    @PostMapping
     public ResponseEntity<CommentResDto> addComment(@RequestBody @Valid CommentModifyReqDto commentModifyReqDto){
         String type = commentModifyReqDto.getAncestor().getType();
         Function<CommentModifyReqDto, CommentResDto> addFunc = null;
@@ -76,7 +76,7 @@ public class CommentController {
                 .build();
     }
 
-    @PatchMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id, @RequestBody @Valid CommentModifyReqDto commentModifyReqDto){
         long deleteId = commentService.deleteComment(id);
         CommentResDto resDto = getResDto("delete", deleteId);
@@ -85,7 +85,7 @@ public class CommentController {
         return ResponseEntity.ok(resDto);
     }
 
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<CommentResDto> updateComment(@PathVariable long id, @RequestBody @Valid CommentModifyReqDto modifyReqDto){
         CommentResDto resDto =  commentService.updateComment(id, modifyReqDto);
         resDto.setAncestor(modifyReqDto.getAncestor());

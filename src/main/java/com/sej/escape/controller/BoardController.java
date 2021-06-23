@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/board")
+@RequestMapping("/api/boards")
 @RequiredArgsConstructor
 public class BoardController {
 
@@ -39,21 +39,21 @@ public class BoardController {
         }
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<PageResDto> getBoards(BoardReqDto pageReqDto){
         PageResDto pageResDto = boardService.getBoards(pageReqDto, getServiceByType(pageReqDto.getType()));
         pageResDto.setType(pageReqDto.getType().getTypeString());
         return ResponseEntity.ok(pageResDto);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<BoardDto> getBoard(@PathVariable long id){
         BoardDto boardDto = boardService.getBoard(id);
         return ResponseEntity.ok(boardDto);
     }
 
-    @PatchMapping("/delete/{id}")
-    public ResponseEntity<BoardResDto> deleteBoards(@PathVariable long id, @RequestBody BoardModifyReqDto reqDto){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BoardResDto> deleteBoard(@PathVariable long id, @RequestBody BoardModifyReqDto reqDto){
         int deleteCnt = boardService.deleteBoards(Arrays.asList(id));
         BoardResDto resDto = BoardResDto.builder()
                 .id(id)
@@ -62,7 +62,7 @@ public class BoardController {
         return ResponseEntity.ok(resDto);
     }
 
-    @PatchMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<BoardResDto> deleteBoards(@RequestBody BoardModifyReqDto reqDto){
         int deleteCnt = boardService.deleteBoards(reqDto.getIds());
         BoardResDto resDto = BoardResDto.builder()
@@ -72,13 +72,13 @@ public class BoardController {
         return ResponseEntity.ok(resDto);
     }
 
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<BoardDto> updateBoard(@RequestBody BoardDto boardDto){
         BoardDto boardDtoUp = boardService.updateBoard(boardDto);
         return ResponseEntity.ok(boardDtoUp);
     }
 
-    @PostMapping("/new")
+    @PostMapping("")
     public ResponseEntity<BoardResDto> addBoard(@RequestBody BoardDto boardDto, MultipartFile multipartFile) throws FileUploadException {
         BoardResDto boardResDto = boardService.addBoard(boardDto, getServiceByType(boardDto.getType()));
         return ResponseEntity.ok(boardResDto);

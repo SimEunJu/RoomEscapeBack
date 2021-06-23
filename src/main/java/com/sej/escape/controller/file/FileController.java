@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/file/")
+@RequestMapping("/api/files")
 @RequiredArgsConstructor
 @Log4j2
 public class FileController {
@@ -31,7 +31,7 @@ public class FileController {
     }
 
     @PostMapping(value="/cloud", consumes = { "multipart/form-data" })
-    public ResponseEntity<FileResDto> updateFileToCloud(@Valid FileReqDto reqDto) throws FileUploadException {
+    public ResponseEntity<FileResDto> uploadFileToCloud(@Valid FileReqDto reqDto) throws FileUploadException {
 
         FileReqDto fileReqDto = FileControllerUtils.getFileReqDto(reqDto);
         FileManageService fileManageService = fileManagerServiceProvider.get(FileManage.S3);
