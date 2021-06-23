@@ -34,14 +34,4 @@ public class MemberMapper {
         return memberDto;
     }
 
-    /*
-    public Member mapDtoToEntityForRef(long id){
-        return Member.builder().id(id).build();
-    }
-
-    public Member getMemberEntityForRef(){
-        MemberDto memberDto = authenticationUtil.getAuthUser();
-        return this.mapDtoToEntityForRef(memberDto.getId());
-    }
-    */
 }

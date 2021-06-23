@@ -11,5 +11,4 @@ import org.springframework.data.domain.Pageable;
 public interface IBoardService {
     PageResDto getBoards(BoardReqDto reqDto);
     Board addBoard(BoardDto dto);
-
 }

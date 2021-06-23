@@ -23,7 +23,6 @@ import java.util.Optional;
 public class StoreZimService implements IZimService{
 
     private final StoreZimRepository storeZimRepository;
-    private final ModelMapper modelMapper;
     private final AuthenticationUtil authenticationUtil;
 
     public Optional<StoreZim> getByReferIdAndMember(long referId, Member member){

@@ -7,8 +7,8 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.List;
 
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
 public enum CommentType {
     STORE("S", "CS",false),
     THEME(null, "CT",false),

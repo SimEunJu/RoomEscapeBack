@@ -43,12 +43,12 @@ public class ReqBoardService implements IBoardService{
         }
         Page<ReqBoard> boardPage = reqBoardRepository.findAll(builder, pageable);
         return new PageResDto<>(boardPage,
-                (ReqBoard board) -> mapper.mapBoardToDto(board, BoardDto.class) );
+                (ReqBoard board) -> mapper.mapEntityToDto(board, BoardDto.class) );
     }
 
     @Override
     public Board addBoard(BoardDto dto) {
-        ReqBoard board = mapper.map(dto, ReqBoard.class);
+        ReqBoard board = mapper.mapDtoToEntity(dto, ReqBoard.class);
         Member member = authenticationUtil.getAuthUserEntity();
         board.setMember(member);
         return reqBoardRepository.save(board);

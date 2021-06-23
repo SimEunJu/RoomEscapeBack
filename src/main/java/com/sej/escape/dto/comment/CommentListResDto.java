@@ -4,11 +4,11 @@ import lombok.*;
 
 import java.util.List;
 
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public class CommentListResDto {
 
     private String type;

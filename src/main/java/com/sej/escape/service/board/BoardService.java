@@ -28,7 +28,6 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final FileService fileService;
-    private final AuthenticationUtil authenticationUtil;
     private final BoardMapper mapper;
 
     public PageResDto<Board, BoardDto> getBoards(BoardReqDto pageReqDto, IBoardService boardService){
@@ -38,7 +37,7 @@ public class BoardService {
     public BoardDto getBoard(long id){
         Optional<Board> boardOpt = boardRepository.findByIdAndIsDeletedFalse(id);
         Board board = getBoardIfExist(boardOpt, id);
-        return mapper.mapBoardToDto(board, BoardDto.class);
+        return mapper.mapEntityToDto(board, BoardDto.class);
     }
 
     public int deleteBoards(List<Long> ids){
@@ -49,10 +48,12 @@ public class BoardService {
     public BoardDto updateBoard(BoardDto boardDto) {
         Optional<Board> boardOpt = boardRepository.findByIdAndIsDeletedFalse(boardDto.getId());
         Board board = getBoardIfExist(boardOpt, boardDto.getId());
+
         board.setContent(boardDto.getContent());
         board.setTitle(boardDto.getTitle());
+
         Board boardUp = boardRepository.save(board);
-        return mapper.mapBoardToDto(boardUp, BoardDto.class);
+        return mapper.mapEntityToDto(boardUp, BoardDto.class);
     }
 
     public BoardResDto addBoard(BoardDto boardDto, IBoardService boardService){
@@ -60,14 +61,17 @@ public class BoardService {
         Board board = boardService.addBoard(boardDto);
 
         if(boardDto.getUploadFiles().length > 0){
-            List<Long> ids = Arrays.stream(boardDto.getUploadFiles()).map(file -> file.getId()).collect(Collectors.toList());
+            List<Long> ids = Arrays.stream(boardDto.getUploadFiles())
+                    .map(file -> file.getId())
+                    .collect(Collectors.toList());
             fileService.updateReferIds(ids, board.getId());
         }
 
-        BoardResDto resDto = mapper.map(boardDto, BoardResDto.class);
-        resDto.setId(board.getId());
-        resDto.setRegDate(board.getRegDate());
+        BoardResDto resDto = mapper.mapEntityToDto(board, BoardResDto.class);
         resDto.setWriter(board.getMember().getNickname());
+        resDto.setRandomId(boardDto.getRandomId());
+        resDto.setType(boardDto.getType().toString());
+
         return resDto;
     }
 

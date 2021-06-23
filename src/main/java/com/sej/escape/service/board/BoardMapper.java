@@ -21,11 +21,10 @@ public class BoardMapper {
                 .addMapping(src -> src.getMember().getNickname(), BoardDto::setWriter);
     }
 
-    public <D> D mapBoardToDto(Board board, Class<D> dest){
-        return modelMapper.map(board, dest);
+    public <D, E> E mapDtoToEntity(D dto, Class<E> entity){
+        return modelMapper.map(dto, entity);
     }
-
-    public <D> D map(Object source, Class<D> destinationType){
-        return modelMapper.map(source, destinationType);
+    public <E, D> D mapEntityToDto(E entity, Class<D> dest){
+        return modelMapper.map(entity, dest);
     }
 }

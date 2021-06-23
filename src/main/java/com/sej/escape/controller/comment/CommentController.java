@@ -1,22 +1,15 @@
 package com.sej.escape.controller.comment;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.sej.escape.dto.comment.*;
-import com.sej.escape.entity.comment.Comment;
-import com.sej.escape.error.exception.validation.InvalidRequestParamter;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
 import com.sej.escape.service.comment.BoardCommentService;
 import com.sej.escape.service.comment.CommentService;
 import com.sej.escape.service.comment.StoreCommentService;
-import com.sej.escape.service.comment.ThemeCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 @RestController

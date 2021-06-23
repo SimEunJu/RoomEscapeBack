@@ -9,6 +9,5 @@ import com.sej.escape.entity.zim.Zim;
 import java.util.List;
 
 public interface IZimService {
-
     Zim toggleZim(ZimReqDto reqDto);
 }

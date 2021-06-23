@@ -1,5 +1,6 @@
 package com.sej.escape.dto.comment;
 
+import com.sej.escape.constants.CommentType;
 import com.sej.escape.dto.page.PageReqDto;
 import lombok.*;
 
@@ -17,7 +18,7 @@ public class CommentModifyReqDto {
     private boolean isGood;
     private boolean isHidden;
 
-    private String type;
+    private CommentType type;
 
     private CommentDto parComment;
     private Ancestor ancestor;

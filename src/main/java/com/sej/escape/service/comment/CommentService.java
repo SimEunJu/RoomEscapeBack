@@ -125,7 +125,6 @@ public class CommentService {
     public CommentResDto updateComment(long id, CommentModifyReqDto modifyReqDto){
         Comment comment = getCommentByIdIfExist(id);
         comment.setContent(modifyReqDto.getContent());
-
         comment.setStar(modifyReqDto.getStarRate());
         Comment commentUpdated = commentRepository.save(comment);
         return commentMapper.mapEntityToDto(commentUpdated, CommentResDto.class);

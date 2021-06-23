@@ -23,18 +23,17 @@ public class CommentMapper {
     public <D, E> E mapDtoToEntity(D dto, Class<E> entity){
         return modelMapper.map(dto, entity);
     }
+    public <E, D> D mapEntityToDto(E entity, Class<D> dest){
+        return modelMapper.map(entity, dest);
+    }
 
-    public <T, D> List<D> mapEntitesToDtos(List<T> entities, Class<D> dest){
+    public <E, D> List<D> mapEntitesToDtos(List<E> entities, Class<D> dest) {
         return entities.stream()
                 .map(comment -> modelMapper.map(comment, dest))
                 .collect(Collectors.toList());
     }
 
-    public <E, D> D mapEntityToDto(E entity, Class<D> dest){
-        return modelMapper.map(entity, dest);
-    }
-
-    private <T extends Comment> T mapReqDtoToComment(CommentModifyReqDto commentModifyReqDto, Class<T> entityCls)  {
+    private <E extends Comment> E mapReqDtoToComment(CommentModifyReqDto commentModifyReqDto, Class<E> entityCls)  {
 
         CommentDto parComment = commentModifyReqDto.getParComment();
         boolean hasParComment = parComment != null;
@@ -43,7 +42,7 @@ public class CommentMapper {
         int seq = hasParComment ? parComment.getSeq()+1 : 0;
         long parId = hasParComment ? parComment.getParId() : 0;
 
-        T entity = null;
+        E entity = null;
         try {
             entity = entityCls.newInstance();
 

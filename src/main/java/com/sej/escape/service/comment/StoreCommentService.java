@@ -29,7 +29,6 @@ public class StoreCommentService {
     private final ThemeCommentRepository themeCommentRepository;
     private final AuthenticationUtil authenticationUtil;
     private final CommentMapper commentMapper;
-    private final ModelMapper modelMapper;
 
     public CommentResDto addComment(CommentModifyReqDto reqDto){
         StoreComment storeComment = saveComment(reqDto);
@@ -86,7 +85,7 @@ public class StoreCommentService {
         StoreComment storeComment = (StoreComment) e[0];
         Store store = (Store) e[1];
 
-        StoreCommentDto dto = modelMapper.map(storeComment, StoreCommentDto.class);
+        StoreCommentDto dto = commentMapper.mapEntityToDto(storeComment, StoreCommentDto.class);
         dto.setName(store.getName());
         dto.setStoreId(store.getId());
 

@@ -15,6 +15,7 @@ public class BoardResDto {
     private long id;
     private List<Long> ids;
     private long randomId;
+    
     private String title;
     private String writer;
     private LocalDateTime regDate;
