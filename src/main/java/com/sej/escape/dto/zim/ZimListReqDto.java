@@ -1,6 +1,6 @@
 package com.sej.escape.dto.zim;
 
-import com.sej.escape.constants.ZimType;
+import com.sej.escape.constants.dto.ZimType;
 import com.sej.escape.dto.page.PageReqDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

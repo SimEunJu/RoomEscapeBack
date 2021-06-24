@@ -1,13 +1,10 @@
 package com.sej.escape.service.zim;
 
-import com.sej.escape.constants.ZimType;
+import com.sej.escape.constants.dto.ZimType;
 import com.sej.escape.dto.zim.ZimReqDto;
 import com.sej.escape.dto.zim.ZimResDto;
-import com.sej.escape.entity.zim.StoreZim;
 import com.sej.escape.entity.zim.Zim;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
-import com.sej.escape.repository.zim.ZimRepository;
-import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +25,7 @@ public class ZimService {
         ZimResDto resDto = ZimResDto.builder()
                 .id(zim.getId())
                 .referId(zim.getReferId())
-                .type(reqDto.getType().name().toLowerCase())
+                .type(reqDto.getType())
                 .isChecked(zim.isZim())
                 .build();
         return resDto;

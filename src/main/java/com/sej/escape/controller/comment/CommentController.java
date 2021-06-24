@@ -7,6 +7,7 @@ import com.sej.escape.service.comment.CommentService;
 import com.sej.escape.service.comment.StoreCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,6 +39,7 @@ public class CommentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CommentResDto> addComment(@RequestBody @Valid CommentModifyReqDto commentModifyReqDto){
         String type = commentModifyReqDto.getAncestor().getType();
         Function<CommentModifyReqDto, CommentResDto> addFunc = null;
@@ -70,7 +72,9 @@ public class CommentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id, @RequestBody @Valid CommentModifyReqDto commentModifyReqDto){
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id,
+                                                       @RequestBody @Valid CommentModifyReqDto commentModifyReqDto){
         long deleteId = commentService.deleteComment(id);
         CommentResDto resDto = getResDto("delete", deleteId);
         resDto.setType("delete");
@@ -79,7 +83,9 @@ public class CommentController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CommentResDto> updateComment(@PathVariable long id, @RequestBody @Valid CommentModifyReqDto modifyReqDto){
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CommentResDto> updateComment(@PathVariable long id,
+                                                       @RequestBody @Valid CommentModifyReqDto modifyReqDto){
         CommentResDto resDto =  commentService.updateComment(id, modifyReqDto);
         resDto.setAncestor(modifyReqDto.getAncestor());
         resDto.setType("update");
@@ -87,7 +93,9 @@ public class CommentController {
     }
 
     @PatchMapping("/hide/{id}")
-    public ResponseEntity<CommentResDto> toggleHideComment(@PathVariable long id, @RequestBody @Valid CommentModifyReqDto modifyReqDto){
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CommentResDto> toggleHideComment(@PathVariable long id,
+                                                           @RequestBody @Valid CommentModifyReqDto modifyReqDto){
 
         CommentResDto resDto = commentService.toggleHideComment(id, modifyReqDto.isHidden());
         resDto.setType("hide");

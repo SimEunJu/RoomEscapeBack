@@ -1,4 +1,4 @@
-package com.sej.escape.constants;
+package com.sej.escape.constants.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,4 +13,7 @@ public enum GoodType {
 
     // to: 내부 entity
     private String entityDiscriminatorValue;
+    public String getTypeString(){
+        return this.toString().toLowerCase();
+    }
 }

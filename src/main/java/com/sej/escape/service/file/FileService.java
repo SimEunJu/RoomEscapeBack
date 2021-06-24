@@ -1,14 +1,16 @@
 package com.sej.escape.service.file;
 
-import com.sej.escape.constants.FileType;
+import com.sej.escape.constants.dto.FileType;
 import com.sej.escape.dto.file.FileReqDto;
 import com.sej.escape.dto.file.FileResDto;
+import com.sej.escape.entity.Member;
 import com.sej.escape.entity.file.BoardFile;
 import com.sej.escape.entity.file.File;
 import com.sej.escape.entity.file.ThemeCommentFile;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
 import com.sej.escape.repository.file.FileRepository;
 import com.sej.escape.service.file.manage.FileManageService;
+import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.modelmapper.ModelMapper;
@@ -27,6 +29,7 @@ public class FileService {
     private final FileRepository<BoardFile> boardFileRepository;
     private final FileRepository<ThemeCommentFile> themeCommentFileRepository;
     private final ModelMapper modelMapper;
+    private final AuthenticationUtil authenticationUtil;
 
     private FileRepository<? extends File> getRepoByType(FileType type){
         switch (type){
@@ -48,6 +51,11 @@ public class FileService {
         return fileRepository.deleteFiles(ids);
     }
 
+    public int deleteFile(long id){
+        Member member = authenticationUtil.getAuthUserEntity();
+        return fileRepository.deleteFile(id, member);
+    }
+
     public int updateReferIds(List<Long> ids, long referId){
         return fileRepository.updateReferIds(referId, ids);
     }
@@ -59,6 +67,7 @@ public class FileService {
         Class<? extends File> entityCls = getEntityByType(reqDto.getType());
 
         File file = modelMapper.map(reqDto, entityCls);
+        file.setMember(authenticationUtil.getAuthUserEntity());
         file = (File) repo.save(file);
 
         return mapEntityToResDto(file, reqDto);

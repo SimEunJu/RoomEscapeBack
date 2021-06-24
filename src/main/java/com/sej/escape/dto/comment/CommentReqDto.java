@@ -1,6 +1,6 @@
 package com.sej.escape.dto.comment;
 
-import com.sej.escape.constants.CommentType;
+import com.sej.escape.constants.dto.CommentType;
 import com.sej.escape.dto.page.PageReqDto;
 import lombok.*;
 

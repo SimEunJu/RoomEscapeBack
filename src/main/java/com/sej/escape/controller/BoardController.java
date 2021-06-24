@@ -1,12 +1,10 @@
 package com.sej.escape.controller;
 
-import com.sej.escape.constants.BoardType;
-import com.sej.escape.dto.ModifyResDto;
+import com.sej.escape.constants.dto.BoardType;
 import com.sej.escape.dto.board.BoardDto;
 import com.sej.escape.dto.board.BoardModifyReqDto;
 import com.sej.escape.dto.board.BoardReqDto;
 import com.sej.escape.dto.board.BoardResDto;
-import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
 import com.sej.escape.service.board.BoardService;
@@ -16,11 +14,11 @@ import com.sej.escape.service.board.ReqBoardService;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
-import java.util.List;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/boards")
@@ -40,7 +38,7 @@ public class BoardController {
     }
 
     @GetMapping
-    public ResponseEntity<PageResDto> getBoards(BoardReqDto pageReqDto){
+    public ResponseEntity<PageResDto> getBoards(@Valid BoardReqDto pageReqDto){
         PageResDto pageResDto = boardService.getBoards(pageReqDto, getServiceByType(pageReqDto.getType()));
         pageResDto.setType(pageReqDto.getType().getTypeString());
         return ResponseEntity.ok(pageResDto);
@@ -53,8 +51,9 @@ public class BoardController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<BoardResDto> deleteBoard(@PathVariable long id, @RequestBody BoardModifyReqDto reqDto){
-        int deleteCnt = boardService.deleteBoards(Arrays.asList(id));
+        int deleteCnt = boardService.deleteBoard(id);
         BoardResDto resDto = BoardResDto.builder()
                 .id(id)
                 .type(reqDto.getType().getTypeString())
@@ -63,8 +62,9 @@ public class BoardController {
     }
 
     @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BoardResDto> deleteBoards(@RequestBody BoardModifyReqDto reqDto){
-        int deleteCnt = boardService.deleteBoards(reqDto.getIds());
+        boardService.deleteBoards(reqDto.getIds());
         BoardResDto resDto = BoardResDto.builder()
                 .ids(reqDto.getIds())
                 .type(reqDto.getType().getTypeString())
@@ -73,12 +73,14 @@ public class BoardController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<BoardDto> updateBoard(@RequestBody BoardDto boardDto){
         BoardDto boardDtoUp = boardService.updateBoard(boardDto);
         return ResponseEntity.ok(boardDtoUp);
     }
 
     @PostMapping("")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<BoardResDto> addBoard(@RequestBody BoardDto boardDto, MultipartFile multipartFile) throws FileUploadException {
         BoardResDto boardResDto = boardService.addBoard(boardDto, getServiceByType(boardDto.getType()));
         return ResponseEntity.ok(boardResDto);

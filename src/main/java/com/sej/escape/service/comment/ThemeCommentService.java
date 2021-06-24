@@ -8,6 +8,7 @@ import com.sej.escape.entity.Theme;
 import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.entity.file.ThemeCommentFile;
 import com.sej.escape.error.exception.NoSuchResourceException;
+import com.sej.escape.error.exception.security.UnAuthorizedException;
 import com.sej.escape.repository.comment.ThemeCommentRepository;
 import com.sej.escape.service.file.FileService;
 import com.sej.escape.utils.AuthenticationUtil;
@@ -122,8 +123,17 @@ public class ThemeCommentService {
         return resDto;
     }
 
+    private boolean hasAuthority(long id) {
+        if(authenticationUtil.isSameUser(id)) {
+            throw new UnAuthorizedException(String.format("user has no authority on resource id %l", id));
+        }
+        return true;
+    }
+
     public ThemeCommentResDto updateComment(long id, ThemeCommentDto modifyReqDto){
         ThemeComment comment = getCommentByIdIfExist(id);
+        hasAuthority(comment.getMember().getId());
+
         modelMapper.map(modifyReqDto, comment);
         comment.setHorror(modifyReqDto.isHorrorSet());
         comment.setActive(modifyReqDto.isActiveSet());
@@ -203,6 +213,8 @@ public class ThemeCommentService {
 
     public long deleteComment(long id){
         ThemeComment comment = getCommentByIdIfExist(id);
+        hasAuthority(comment.getMember().getId());
+
         comment.setDeleted(true);
         comment.setDeleteDate(LocalDateTime.now());
         themeCommentRepository.save(comment);
@@ -211,6 +223,8 @@ public class ThemeCommentService {
 
     public ThemeCommentResDto toggleHideComment(long id, boolean isHidden){
         ThemeComment comment = getCommentByIdIfExist(id);
+        hasAuthority(comment.getMember().getId());
+
         comment.setHidden(isHidden);
         comment = themeCommentRepository.save(comment);
 

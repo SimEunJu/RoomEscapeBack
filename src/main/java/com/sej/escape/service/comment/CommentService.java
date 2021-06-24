@@ -4,6 +4,7 @@ import com.sej.escape.dto.comment.*;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.error.exception.NoSuchResourceException;
+import com.sej.escape.error.exception.security.UnAuthorizedException;
 import com.sej.escape.repository.comment.CommentRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
@@ -114,8 +115,17 @@ public class CommentService {
                 .build();
     }
 
+    private boolean hasAuthority(long id) {
+        if(authenticationUtil.isSameUser(id)) {
+            throw new UnAuthorizedException(String.format("user has no authority on resource id %l", id));
+        }
+        return true;
+    }
+
     public long deleteComment(long id){
         Comment comment = getCommentByIdIfExist(id);
+        hasAuthority(comment.getMember().getId());
+
         comment.setDeleted(true);
         comment.setDeleteDate(LocalDateTime.now());
         commentRepository.save(comment);
@@ -124,6 +134,8 @@ public class CommentService {
 
     public CommentResDto updateComment(long id, CommentModifyReqDto modifyReqDto){
         Comment comment = getCommentByIdIfExist(id);
+        hasAuthority(comment.getMember().getId());
+
         comment.setContent(modifyReqDto.getContent());
         comment.setStar(modifyReqDto.getStarRate());
         Comment commentUpdated = commentRepository.save(comment);
@@ -132,6 +144,8 @@ public class CommentService {
 
     public CommentResDto toggleHideComment(long id, boolean isHidden){
         Comment comment = getCommentByIdIfExist(id);
+        hasAuthority(comment.getMember().getId());
+
         comment.setHidden(isHidden);
         comment = commentRepository.save(comment);
 

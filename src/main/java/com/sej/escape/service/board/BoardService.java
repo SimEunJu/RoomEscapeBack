@@ -9,13 +9,16 @@ import com.sej.escape.entity.board.Board;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.board.QBoard;
 import com.sej.escape.error.exception.NoSuchResourceException;
+import com.sej.escape.error.exception.security.UnAuthorizedException;
 import com.sej.escape.repository.board.BoardRepository;
 import com.sej.escape.service.file.FileService;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +32,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final FileService fileService;
     private final BoardMapper mapper;
+    private final AuthenticationUtil authenticationUtil;
 
     public PageResDto<Board, BoardDto> getBoards(BoardReqDto pageReqDto, IBoardService boardService){
         return boardService.getBoards(pageReqDto);
@@ -40,6 +44,24 @@ public class BoardService {
         return mapper.mapEntityToDto(board, BoardDto.class);
     }
 
+    private boolean hasAuthority(long id) {
+        if(authenticationUtil.isSameUser(id)) {
+            throw new UnAuthorizedException(String.format("user has no authority on resource id %l", id));
+        }
+        return true;
+    }
+
+    public int deleteBoard(long id){
+        Optional<Board> boardOpt = boardRepository.findByIdAndIsDeletedFalse(id);
+        Board board = getBoardIfExist(boardOpt, id);
+        hasAuthority(board.getMember().getId());
+
+        List<Long> ids = new ArrayList<>();
+        ids.add(id);
+        int deleteCnt = boardRepository.updateDeleteTAllByIdIn(ids);
+        return deleteCnt;
+    }
+
     public int deleteBoards(List<Long> ids){
         int deleteCnt = boardRepository.updateDeleteTAllByIdIn(ids);
         return deleteCnt;
@@ -48,6 +70,7 @@ public class BoardService {
     public BoardDto updateBoard(BoardDto boardDto) {
         Optional<Board> boardOpt = boardRepository.findByIdAndIsDeletedFalse(boardDto.getId());
         Board board = getBoardIfExist(boardOpt, boardDto.getId());
+        hasAuthority(board.getMember().getId());
 
         board.setContent(boardDto.getContent());
         board.setTitle(boardDto.getTitle());

@@ -10,6 +10,7 @@ import com.sej.escape.dto.theme.ThemePageReqDto;
 import com.sej.escape.service.theme.ThemeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,13 +39,14 @@ public class ThemeController {
     }
 
     @GetMapping("/zim")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PageResDto> getThemesByZim(StorePageReqDto storePageReqDto){
         PageResDto resDto = themeService.getStoresByZim(storePageReqDto);
         return ResponseEntity.ok(resDto);
     }
 
     @GetMapping("/by/{type}")
-    public ResponseEntity<Map<String, Object>> getThemesByType(@PathVariable String type, @RequestParam Map<String, String> params){
+    public ResponseEntity<Map<String, Object>> getThemesByType(@PathVariable String type){
         List<ThemeForListDto> themeForListDtos = null;
         PageReqDto pageReqDto = new PageReqDto();
         switch (type){
@@ -65,6 +67,7 @@ public class ThemeController {
     }
 
     @GetMapping("/stores/{storeId}/names")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<ThemeNameDto>> getThemeNamesByStore(@PathVariable long storeId){
         List<ThemeNameDto> names = themeService.getThemeNamesByStore(storeId);
         return ResponseEntity.ok(names);
@@ -72,6 +75,7 @@ public class ThemeController {
 
 
     @GetMapping("/names")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<ThemeForListDto>> getThemeNames(@RequestParam String keyword){
         List<ThemeForListDto> themes = themeService.getThemeNamesAndStore(keyword);
         return ResponseEntity.ok(themes);

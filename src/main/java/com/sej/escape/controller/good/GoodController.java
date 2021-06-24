@@ -21,18 +21,10 @@ import javax.validation.Valid;
 public class GoodController {
 
     private final GoodService goodService;
-    private final ModelMapper modelMapper;
 
     @PatchMapping("/toggle/{id}")
     public ResponseEntity<GoodResDto> toggleGood(@Valid @RequestBody GoodReqDto goodReqDto){
-        Long goodId = goodService.toggleGood(goodReqDto);
-        GoodResDto resDto = this.getResDto(goodId, goodReqDto);
+        GoodResDto resDto = goodService.toggleGood(goodReqDto);
         return ResponseEntity.ok(resDto);
-    }
-
-    private GoodResDto getResDto(long id, GoodReqDto reqDto){
-        GoodResDto resDto = modelMapper.map(reqDto, GoodResDto.class);
-        resDto.setId(id);
-        return resDto;
     }
 }

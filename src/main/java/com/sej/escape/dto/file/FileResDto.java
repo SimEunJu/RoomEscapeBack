@@ -1,11 +1,8 @@
 package com.sej.escape.dto.file;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sej.escape.constants.FileType;
+import com.sej.escape.constants.dto.FileType;
 import lombok.*;
-
-import java.util.Locale;
-import java.util.Objects;
 
 @Getter
 @Setter

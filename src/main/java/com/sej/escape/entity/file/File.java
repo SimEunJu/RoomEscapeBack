@@ -1,5 +1,6 @@
 package com.sej.escape.entity.file;
 
+import com.sej.escape.entity.Member;
 import com.sej.escape.entity.base.BaseWithDelete;
 import lombok.*;
 
@@ -21,6 +22,10 @@ public class File extends BaseWithDelete {
     protected Long id;
 
     protected Long referId;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
+    protected Member member;
 
     protected String originalName;
 

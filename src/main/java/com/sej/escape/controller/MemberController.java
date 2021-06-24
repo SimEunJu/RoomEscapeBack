@@ -6,6 +6,7 @@ import com.sej.escape.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,12 +40,14 @@ public class MemberController {
     }
 
     @PatchMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MemberDto> updateMember(@RequestBody MemberDto memberDto){
        MemberDto memberDtoUpdated = memberService.updateMember(memberDto);
        return ResponseEntity.ok(memberDtoUpdated);
     }
 
     @DeleteMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> withdrawalMember(){
         memberService.withdrawalMember();
         return ResponseEntity.ok(null);

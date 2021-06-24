@@ -3,16 +3,14 @@ package com.sej.escape.service.store;
 import com.google.common.base.Strings;
 import com.querydsl.core.util.ArrayUtils;
 import com.sej.escape.constants.AreaSection;
-import com.sej.escape.constants.ListOrder;
+import com.sej.escape.constants.dto.ListOrder;
 import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.store.StoreNameDto;
 import com.sej.escape.dto.store.StorePageReqDto;
 import com.sej.escape.dto.store.StoreZimListResDto;
-import com.sej.escape.dto.theme.ThemeNameDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
-import com.sej.escape.entity.Theme;
 import com.sej.escape.entity.zim.StoreZim;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.store.StoreRepository;
@@ -26,10 +24,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.swing.text.html.Option;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 

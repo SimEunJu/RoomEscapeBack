@@ -1,6 +1,6 @@
 package com.sej.escape.dto.file;
 
-import com.sej.escape.constants.FileType;
+import com.sej.escape.constants.dto.FileType;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -5,6 +5,7 @@ import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.service.comment.ThemeCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ public class ThemeCommentController {
     private final ThemeCommentService themeCommentService;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ThemeCommentResDto> addComment(@RequestBody ThemeCommentDto reqDto){
         ThemeCommentResDto commentDto = themeCommentService.addComment(reqDto);
         commentDto.setRandId(commentDto.getRandId());
@@ -63,6 +65,7 @@ public class ThemeCommentController {
     }
 
     @GetMapping("/member")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CommentListResDto> getCommentsByMember(CommentListReqDto reqDto){
         CommentListResDto comments = themeCommentService.getCommentsByMember(reqDto);
         comments.setAncestor(reqDto.getAncestor());
@@ -70,6 +73,7 @@ public class ThemeCommentController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ThemeCommentResDto> updateComment(@PathVariable long id, @RequestBody ThemeCommentDto modifyReqDto){
         ThemeCommentResDto resDto =  themeCommentService.updateComment(id, modifyReqDto);
         resDto.setType("theme");
@@ -77,6 +81,7 @@ public class ThemeCommentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CommentResDto> deleteComment(@PathVariable long id){
         long deleteId = themeCommentService.deleteComment(id);
         CommentResDto resDto = CommentResDto.resBuilder().id(deleteId).type("delete").build();
@@ -84,6 +89,7 @@ public class ThemeCommentController {
     }
 
     @PatchMapping("/hide/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ThemeCommentResDto> toggleHideComment(@PathVariable long id, @RequestBody @Valid CommentModifyReqDto modifyReqDto){
         ThemeCommentResDto resDto = themeCommentService.toggleHideComment(id, modifyReqDto.isHidden());
         resDto.setType("hide");

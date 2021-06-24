@@ -1,17 +1,15 @@
 package com.sej.escape.dto.zim;
 
-import com.sej.escape.constants.ZimType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
+import com.sej.escape.constants.dto.ZimType;
+import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
 public class ZimReqDto {
 
     private Long id;

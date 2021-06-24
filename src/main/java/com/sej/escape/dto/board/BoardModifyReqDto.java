@@ -1,6 +1,6 @@
 package com.sej.escape.dto.board;
 
-import com.sej.escape.constants.BoardType;
+import com.sej.escape.constants.dto.BoardType;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,14 +21,23 @@ import java.util.List;
 @RequestMapping("/api/files")
 @RequiredArgsConstructor
 @Log4j2
+@PreAuthorize("hasRole('USER')")
 public class FileController {
 
     private final FileManageServiceProvider fileManagerServiceProvider;
     private final FileService fileService;
 
     @DeleteMapping("/cloud")
-    public void deleteFiles(@RequestBody List<Long> ids){
+    public ResponseEntity<Void> deleteFiles(@RequestBody List<Long> ids){
         fileService.deleteFiles(ids);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/cloud/{id}")
+    public ResponseEntity<Void> deleteFile(@PathVariable long id){
+        int delCnt = fileService.deleteFile(id);
+        if(delCnt != 1) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value="/cloud", consumes = { "multipart/form-data" })

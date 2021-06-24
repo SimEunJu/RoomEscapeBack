@@ -15,6 +15,11 @@ public class AuthenticationUtil {
         return authentication.isAuthenticated() && authentication.getPrincipal() != "anonymousUser";
     }
 
+    public boolean isSameUser(long id){
+        if(getAuthUser().getId() == id) return true;
+        return false;
+    }
+
     public Authentication getAuthentication(){
         return SecurityContextHolder.getContext().getAuthentication();
     }

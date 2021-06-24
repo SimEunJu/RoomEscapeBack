@@ -3,7 +3,7 @@ package com.sej.escape.service.theme;
 import com.google.common.base.Strings;
 import com.querydsl.core.util.ArrayUtils;
 import com.sej.escape.constants.AreaSection;
-import com.sej.escape.constants.ListOrder;
+import com.sej.escape.constants.dto.ListOrder;
 
 import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.dto.store.StoreDto;

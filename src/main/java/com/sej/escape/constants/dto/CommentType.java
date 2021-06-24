@@ -1,4 +1,4 @@
-package com.sej.escape.constants;
+package com.sej.escape.constants.dto;
 
 import com.sej.escape.dto.comment.Ancestor;
 import lombok.AllArgsConstructor;

@@ -1,5 +1,6 @@
 package com.sej.escape.repository.file;
 
+import com.sej.escape.entity.Member;
 import com.sej.escape.entity.file.File;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,6 +20,10 @@ public interface FileRepository<T extends File>
     @Modifying
     @Query("update #{#entityName} f set f.isDeleted = true, f.deleteDate = CURRENT_TIMESTAMP where f.id in :ids")
     int deleteFiles(@Param("ids") List<Long> ids);
+
+    @Modifying
+    @Query("update #{#entityName} f set f.isDeleted = true, f.deleteDate = CURRENT_TIMESTAMP where f.id = :id and f.member = :member")
+    int deleteFile(@Param("id") long id, Member member);
 
     @Modifying
     @Query("update #{#entityName} f set f.isDeleted = true, f.deleteDate = CURRENT_TIMESTAMP where f.referId = :referId")

@@ -10,6 +10,7 @@ import com.sej.escape.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ public class StoreController {
     }
 
     @GetMapping("/zim")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PageResDto> getStoresByZim(StorePageReqDto storePageReqDto){
         PageResDto resDto = storeService.getStoresByZim(storePageReqDto);
         return ResponseEntity.ok(resDto);
@@ -42,12 +44,14 @@ public class StoreController {
     }
 
     @GetMapping("/theme/{themeId}/name")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<StoreNameDto> getStoreNameOfTheme(@PathVariable long themeId) {
         StoreNameDto nameDto = storeService.getStoreByTheme(themeId);
         return ResponseEntity.ok(nameDto);
     }
 
     @GetMapping("/names")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<StoreNameDto>> getStoreNames(@RequestParam String keyword){
         List<StoreNameDto> stores = storeService.getStoresByName(keyword);
         return ResponseEntity.ok(stores);

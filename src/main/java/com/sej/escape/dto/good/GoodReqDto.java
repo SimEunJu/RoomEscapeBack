@@ -1,11 +1,10 @@
 package com.sej.escape.dto.good;
 
-import com.sej.escape.constants.GoodType;
+import com.sej.escape.constants.dto.GoodType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Builder

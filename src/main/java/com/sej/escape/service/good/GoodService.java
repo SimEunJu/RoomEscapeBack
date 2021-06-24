@@ -1,7 +1,8 @@
 package com.sej.escape.service.good;
 
-import com.sej.escape.constants.GoodType;
+import com.sej.escape.constants.dto.GoodType;
 import com.sej.escape.dto.good.GoodReqDto;
+import com.sej.escape.dto.good.GoodResDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.good.*;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
@@ -9,6 +10,7 @@ import com.sej.escape.repository.good.GoodRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -27,6 +29,7 @@ public class GoodService {
     private final GoodRepository<ReqBoardCommentGood> reqBoardCommentGoodRepository;
 
     private final AuthenticationUtil authenticationUtil;
+    private final ModelMapper modelMapper;
 
     private GoodRepository<? extends Good> getRepoByType(GoodType type){
         switch (type){
@@ -53,7 +56,7 @@ public class GoodService {
     }
 
     @SneakyThrows
-    public long toggleGood(GoodReqDto reqDto) {
+    public GoodResDto toggleGood(GoodReqDto reqDto) {
         Member member = authenticationUtil.getAuthUserEntity();
         GoodRepository goodRepository = getRepoByType(reqDto.getType());
         Class<? extends Good> goodClass = getEntityByType(reqDto.getType());
@@ -71,6 +74,10 @@ public class GoodService {
 
         goodRepository.save(good);
 
-        return good.getId();
+        GoodResDto resDto = modelMapper.map(good, GoodResDto.class);
+        resDto.setIsChecked(good.isGood());
+        resDto.setType(reqDto.getType());
+
+        return resDto;
     }
 }

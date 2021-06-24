@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = {StoreZimController.class, ZimController.class})
+@RestControllerAdvice(assignableTypes = {ZimController.class})
 @Slf4j
 // TODO: resDto만 다르고 반복되는데 방법이 없을까...
 public class ZimExceptionController {
