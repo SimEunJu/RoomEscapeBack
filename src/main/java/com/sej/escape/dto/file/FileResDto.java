@@ -28,6 +28,6 @@ public class FileResDto {
     // TODO: mapping configure 설정
     public String getType(){
         if(type == null) return null;
-        return type.toString().toLowerCase();
+        return type.getTypeString();
     }
 }

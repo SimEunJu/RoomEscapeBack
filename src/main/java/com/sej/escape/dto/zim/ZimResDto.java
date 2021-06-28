@@ -14,8 +14,10 @@ public class ZimResDto {
     private Long id;
     private Long referId;
     private ZimType type;
+
     private Boolean isChecked;
     private Integer cnt;
+
     private boolean hasError;
     private ErrorRes error;
 

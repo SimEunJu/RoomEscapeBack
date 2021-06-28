@@ -36,8 +36,6 @@ public class CommentDto {
     protected boolean isHidden;
 
     // TODO: LocalDateTime json mapping 일괄 처리 되도록 설정 알아볼 것것
-    //@JsonDeserialize(using = LocalDateDeserializer.class)
-    //@JsonSerialize(using = LocalDateSerializer.class)
     protected LocalDateTime regDate;
     protected LocalDateTime updateDate;
     protected LocalDateTime deleteDate;

@@ -18,7 +18,6 @@ import javax.validation.constraints.Min;
 @ToString
 public class ThemePageReqDto extends PageReqDto {
 
-    // TODO: enum으로 관리
     //private String type;
     private String searchKeyword;
 

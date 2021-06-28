@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 public class MemberRes {
+
     private Long id;
     private String nickname;
     private String email;

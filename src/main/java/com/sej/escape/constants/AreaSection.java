@@ -28,7 +28,6 @@ public enum AreaSection{
     GUWOL("구월", 2, new AreaCode(2.15,2.18))
     ;
 
-    // TODO: 계층형을 표현하기 위한 최선의 방법인가
     static {
         NATIONWIDE.subSections = Arrays.asList(SEOUL, INCHEON, DAEJEON, DAEGU, BUSAN, GWANGJU, SEJONG, GYEONGGIDO, JEJU);
 
@@ -51,7 +50,7 @@ public enum AreaSection{
     @AllArgsConstructor
     @Getter
     public static class AreaCode{
-        // [ lower, upper ]
+        // [ lower, upper )
         private double lower;
         private double upper;
     }
