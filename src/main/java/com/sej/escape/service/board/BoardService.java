@@ -41,6 +41,7 @@ public class BoardService {
     public BoardDto getBoard(long id){
         Optional<Board> boardOpt = boardRepository.findByIdAndIsDeletedFalse(id);
         Board board = getBoardIfExist(boardOpt, id);
+        boardRepository.updateViewCnt(board);
         return mapper.mapEntityToDto(board, BoardDto.class);
     }
 
