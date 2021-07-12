@@ -2,12 +2,15 @@ package com.sej.escape.service.member;
 
 import com.sej.escape.dto.member.MemberDto;
 import com.sej.escape.dto.member.MemberReqDto;
+import com.sej.escape.dto.member.MemberUpdateReqDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.constants.SocialLogin;
 import com.sej.escape.repository.MemberRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,10 +44,14 @@ public class MemberService {
         return authenticationUtil.getAuthUser();
     }
 
-    public MemberDto updateMember(MemberDto memberDto){
+    public MemberDto updateMember(MemberUpdateReqDto reqDto) {
         Member member = authenticationUtil.getAuthUserEntity();
-        member.setNickname(memberDto.getNickname());
+        member.setNickname(reqDto.getNickname());
         member = memberRepository.save(member);
+
+        authenticationUtil.updateUser(member);
+
+        MemberDto memberDto = modelMapper.map(member, MemberDto.class);
         return memberDto;
     }
 

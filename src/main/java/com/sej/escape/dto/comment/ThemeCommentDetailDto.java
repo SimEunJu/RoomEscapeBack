@@ -20,6 +20,9 @@ public class ThemeCommentDetailDto {
     private Ancestor theme;
     private Ancestor store;
 
+    private String writer;
+
+    private LocalDateTime regDate;
     private int difficulty;
     private int flowerRoad;
     private boolean isEscape;

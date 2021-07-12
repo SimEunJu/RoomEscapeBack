@@ -18,7 +18,6 @@ public class MemberDto extends User implements OAuth2User {
     private long id;
     private String email;
     private SocialLogin socialLogin;
-    private String name;
     private String nickname;
 
     private Map<String, Object> oauthAttrs;
@@ -27,6 +26,11 @@ public class MemberDto extends User implements OAuth2User {
                      Collection<? extends GrantedAuthority> authorities){
         super(username, password, authorities);
         email = username;
+    }
+
+    // Returns the name of the authenticated Principal.?
+    public String getName(){
+        return this.email;
     }
 
     @Override

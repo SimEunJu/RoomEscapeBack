@@ -4,9 +4,12 @@ import com.sej.escape.dto.comment.*;
 import com.sej.escape.dto.file.FileResDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.entity.Member;
+import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
+import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.entity.file.ThemeCommentFile;
+import com.sej.escape.error.exception.AlreadyExistResourceException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.error.exception.security.UnAuthorizedException;
 import com.sej.escape.repository.comment.ThemeCommentRepository;
@@ -27,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +53,7 @@ public class ThemeCommentService {
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id ";
+        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id AND c.is_hidden = 0";
 
         String listQuery =  "SELECT c.*, m.nickname, m.member_id "+
                 ", (SELECT COUNT(*) FROM good WHERE gtype= :gtype AND refer_id = c.theme_comment_id AND is_good = 1) as good_cnt " +
@@ -104,7 +108,19 @@ public class ThemeCommentService {
                 .build();
     }
 
+    private void checkAlreadyExist(ThemeCommentDto commentDto){
+        Theme theme = Theme.builder().id(commentDto.getThemeId()).build();
+        Member member = authenticationUtil.getAuthUserEntity();
+        Optional<ThemeComment> themeCommentExist = themeCommentRepository.findByThemeAndMember(theme, member);
+        themeCommentExist.ifPresent((storeComment) -> {
+            throw new AlreadyExistResourceException(
+                    String.format("테마 아이디 [%d]에 대한 후기가 이미 존재합니다.", commentDto.getThemeId()));
+        });
+    }
+
     public ThemeCommentResDto addComment(ThemeCommentDto commentDto){
+        checkAlreadyExist(commentDto);
+
         ThemeComment comment = commentMapper.mapDtoToEntity(commentDto, ThemeComment.class);
         Member member = authenticationUtil.getAuthUserEntity();
         Theme theme = Theme.builder().id(commentDto.getThemeId()).build();
@@ -124,8 +140,8 @@ public class ThemeCommentService {
     }
 
     private boolean hasAuthority(long id) {
-        if(authenticationUtil.isSameUser(id)) {
-            throw new UnAuthorizedException(String.format("user has no authority on resource id %l", id));
+        if(!authenticationUtil.isSameUser(id)) {
+            throw new UnAuthorizedException(String.format("user has no authority on resource id %d", id));
         }
         return true;
     }
@@ -150,6 +166,7 @@ public class ThemeCommentService {
         ThemeCommentDetailDto detailDto = commentMapper.mapEntityToDto(themeComment, ThemeCommentDetailDto.class);
         detailDto.setTheme(commentMapper.mapDtoToEntity(themeComment.getTheme(), Ancestor.class));
         detailDto.setStore(commentMapper.mapDtoToEntity(themeComment.getTheme().getStore(), Ancestor.class));
+        detailDto.setWriter(themeComment.getMember().getNickname());
 
         if(themeCommentFile != null) {
             detailDto.setUploadFiles(
@@ -186,6 +203,7 @@ public class ThemeCommentService {
 
         Page<ThemeComment> commentPage = themeCommentRepository.findAllByMember(pageable, member);
         List<ThemeComment> themeComments = commentPage.getContent();
+
         return CommentListResDto.builder()
                 .total(commentPage.getTotalElements())
                 .comments(mapStoreCommentsToDtos(themeComments))

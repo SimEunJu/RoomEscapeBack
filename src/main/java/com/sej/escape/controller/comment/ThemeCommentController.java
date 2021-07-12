@@ -92,6 +92,7 @@ public class ThemeCommentController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ThemeCommentResDto> toggleHideComment(@PathVariable long id, @RequestBody @Valid CommentModifyReqDto modifyReqDto){
         ThemeCommentResDto resDto = themeCommentService.toggleHideComment(id, modifyReqDto.isHidden());
+        resDto.setAncestor(modifyReqDto.getAncestor());
         resDto.setType("hide");
         return ResponseEntity.ok(resDto);
     }

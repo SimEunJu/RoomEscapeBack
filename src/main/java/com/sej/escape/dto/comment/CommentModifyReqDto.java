@@ -21,4 +21,8 @@ public class CommentModifyReqDto {
 
     private CommentDto parComment;
     private Ancestor ancestor;
+
+    public void setIsHidden(boolean isHidden){
+        this.isHidden = isHidden;
+    }
 }

@@ -15,10 +15,13 @@ public class BoardDto {
     private long id;
     private long randomId;
 
-    private String title;
     private String writer;
+    private Long writerId;
+
+    private String title;
     private LocalDateTime regDate;
     private String content;
+    private int view;
 
     private FileResDto[] uploadFiles;
 

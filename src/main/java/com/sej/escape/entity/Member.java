@@ -38,8 +38,8 @@ public class Member extends Base {
     @Enumerated(EnumType.STRING)
     private Set<MemberRole> roles = new HashSet<>();
 
-    @Column(length = 100)
-    private String memberName;
+    //@Column(length = 100)
+    //private String memberName;
 
     @Column(length = 200)
     private String nickname;

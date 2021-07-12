@@ -22,7 +22,7 @@ public class StoreCommentDto {
 
     // comment
     private long id;
-    private LocalDate regDate;
+    private LocalDateTime regDate;
     private int star;
     @JsonProperty("isHidden")
     private boolean isHidden;

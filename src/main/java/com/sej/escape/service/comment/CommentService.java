@@ -2,18 +2,15 @@ package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.*;
 import com.sej.escape.entity.comment.Comment;
-import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.error.exception.security.UnAuthorizedException;
 import com.sej.escape.repository.comment.CommentRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -57,7 +54,7 @@ public class CommentService {
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :ctype "
+        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :ctype AND c.is_hidden = 0 "
                 +quweryWhereExcludeDeleteWhenHasRecomment;
 
         String listQuery =  "SELECT c.*, m.nickname, m.member_id "+
@@ -116,8 +113,8 @@ public class CommentService {
     }
 
     private boolean hasAuthority(long id) {
-        if(authenticationUtil.isSameUser(id)) {
-            throw new UnAuthorizedException(String.format("user has no authority on resource id %l", id));
+        if(!authenticationUtil.isSameUser(id)) {
+            throw new UnAuthorizedException(String.format("user has no authority on resource id %d", id));
         }
         return true;
     }

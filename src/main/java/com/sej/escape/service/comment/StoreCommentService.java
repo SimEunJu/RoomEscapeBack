@@ -6,6 +6,7 @@ import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.StoreComment;
+import com.sej.escape.error.exception.AlreadyExistResourceException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.comment.StoreCommentRepository;
 import com.sej.escape.repository.comment.ThemeCommentRepository;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +32,20 @@ public class StoreCommentService {
     private final AuthenticationUtil authenticationUtil;
     private final CommentMapper commentMapper;
 
+    private void checkAlreadyExist(CommentModifyReqDto reqDto){
+
+        Member member = authenticationUtil.getAuthUserEntity();
+        Optional<StoreComment> storeCommentExist = storeCommentRepository.findByMember(member);
+        storeCommentExist.ifPresent((storeComment) -> {
+            throw new AlreadyExistResourceException(
+                    String.format("가게 아이디 [%d]에 대한 후기가 이미 존재합니다.", reqDto.getAncestor().getId()));
+        });
+    }
+
     public CommentResDto addComment(CommentModifyReqDto reqDto){
+
+        checkAlreadyExist(reqDto);
+
         StoreComment storeComment = saveComment(reqDto);
         if(reqDto.getParComment() == null) {
             storeComment.setParId(storeComment.getId());
@@ -68,6 +83,7 @@ public class StoreCommentService {
 
         Page<Object[]> commentPage = storeCommentRepository.findAllByMember(pageable, member);
         List<Object[]> storeComments = commentPage.getContent();
+
         return CommentListResDto.builder()
                 .total(commentPage.getTotalElements())
                 .comments(mapStoreCommentsToDtos(storeComments))
@@ -89,7 +105,9 @@ public class StoreCommentService {
         dto.setName(store.getName());
         dto.setStoreId(store.getId());
 
-        Object[] themeCnt = (Object[]) themeCommentRepository.findThemeCntAndCommentCnt(store);
+        Member writer = storeComment.getMember();
+
+        Object[] themeCnt = (Object[]) themeCommentRepository.findThemeCntAndCommentCnt(store, writer);
         long themeTot = (long) themeCnt[0];
         long themeVisitedCnt = (long) themeCnt[1];
         dto.setThemeCnt((int) themeTot);

@@ -2,12 +2,14 @@ package com.sej.escape.controller;
 
 import com.sej.escape.dto.member.MemberDto;
 import com.sej.escape.dto.member.MemberRes;
+import com.sej.escape.dto.member.MemberUpdateReqDto;
 import com.sej.escape.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,8 +43,8 @@ public class MemberController {
 
     @PatchMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<MemberDto> updateMember(@RequestBody MemberDto memberDto){
-       MemberDto memberDtoUpdated = memberService.updateMember(memberDto);
+    public ResponseEntity<MemberDto> updateMember(@RequestBody MemberUpdateReqDto updateReqDto){
+       MemberDto memberDtoUpdated = memberService.updateMember(updateReqDto);
        return ResponseEntity.ok(memberDtoUpdated);
     }
 
@@ -50,6 +52,7 @@ public class MemberController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> withdrawalMember(){
         memberService.withdrawalMember();
+        SecurityContextHolder.clearContext();
         return ResponseEntity.ok(null);
     }
 }

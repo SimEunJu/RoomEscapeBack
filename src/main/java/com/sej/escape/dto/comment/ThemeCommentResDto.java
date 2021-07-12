@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class ThemeCommentResDto extends CommentDto{
 
     private String type;
+    private Ancestor ancestor;
 
     private long randId;
     private boolean hasError;

@@ -28,7 +28,6 @@ public class MemberMapper {
         MemberDto memberDto = new MemberDto(member.getEmail(), member.getPassword(), authorities);
         memberDto.setId(member.getId());
         memberDto.setSocialLogin(member.getSocialLogin());
-        memberDto.setName(member.getMemberName());
         memberDto.setNickname(member.getNickname());
 
         return memberDto;

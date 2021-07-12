@@ -42,7 +42,13 @@ public class BoardService {
         Optional<Board> boardOpt = boardRepository.findByIdAndIsDeletedFalse(id);
         Board board = getBoardIfExist(boardOpt, id);
         boardRepository.updateViewCnt(board);
-        return mapper.mapEntityToDto(board, BoardDto.class);
+        BoardDto boardDto = mapper.mapEntityToDto(board, BoardDto.class);
+
+        Member writer = board.getMember();
+        boardDto.setWriter(writer.getNickname());
+        boardDto.setWriterId(writer.getId());
+
+        return boardDto;
     }
 
     private boolean hasAuthority(long id) {
