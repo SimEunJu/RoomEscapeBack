@@ -1,15 +1,16 @@
 package com.sej.escape.dto.member;
 
-import com.sej.escape.entity.constants.MemberRole;
 import com.sej.escape.entity.constants.SocialLogin;
-import lombok.*;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -28,7 +29,7 @@ public class MemberDto extends User implements OAuth2User {
         email = username;
     }
 
-    // Returns the name of the authenticated Principal.?
+    // Returns the name of the authenticated Principal ?
     public String getName(){
         return this.email;
     }

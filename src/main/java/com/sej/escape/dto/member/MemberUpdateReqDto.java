@@ -1,5 +1,6 @@
 package com.sej.escape.dto.member;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 @Builder
@@ -8,5 +9,5 @@ import lombok.*;
 @Getter
 @Setter
 public class MemberUpdateReqDto {
-    private String nickname;
+    @ApiModelProperty("별명") private String nickname;
 }
