@@ -14,6 +14,6 @@ import java.util.Optional;
 public interface StoreZimRepository
         extends JpaRepository<StoreZim, Long>, QuerydslPredicateExecutor<StoreZim> {
 
-    public Optional<StoreZim> findByReferIdAndMember(long referId, Member member);
+    Optional<StoreZim> findByReferIdAndMember(long referId, Member member);
 
 }
