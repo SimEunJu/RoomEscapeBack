@@ -35,18 +35,17 @@ public enum AreaSection{
         INCHEON.subSections = Arrays.asList(BUPYEONG, GUWOL);
     }
 
-    AreaSection(String title, int depth, AreaCode areaCodeByPostcode){
+    AreaSection(String title, int depth, AreaCode areaCode){
         this.title = title;
         this.depth = depth;
-        this.areaCodeByPostcode = areaCodeByPostcode;
+        this.areaCode = areaCode;
     }
 
     private String title;
     private int depth;
-    private AreaCode areaCodeByPostcode;
+    private AreaCode areaCode;
     private List<AreaSection> subSections;
 
-    // public으로 설정하는게 맞을까
     @AllArgsConstructor
     @Getter
     public static class AreaCode{

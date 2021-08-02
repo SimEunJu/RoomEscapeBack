@@ -139,7 +139,7 @@ public class ThemeService {
             int len = areaSections.length;
             for (int i=0; i<len; i++) {
                 AreaSection areaSection = areaSections[i];
-                AreaSection.AreaCode areaCode = areaSection.getAreaCodeByPostcode();
+                AreaSection.AreaCode areaCode = areaSection.getAreaCode();
                 double lower = areaCode.getLower();
                 double upper = areaCode.getUpper();
                 queryWhere += " store.area_code between "+lower+" AND "+upper+"";

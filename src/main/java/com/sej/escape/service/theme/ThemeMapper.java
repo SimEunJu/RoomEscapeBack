@@ -1,6 +1,6 @@
 package com.sej.escape.service.theme;
 
-import com.sej.escape.constants.AreaSectionComponent;
+import com.sej.escape.utils.geolocation.AreaSectionUtil;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.theme.ThemeDto;
 import com.sej.escape.dto.theme.ThemeForListDto;
@@ -17,8 +17,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,7 +25,7 @@ public class ThemeMapper {
 
     private final AuthenticationUtil authenticationUtil;
     private final ModelMapper modelMapper;
-    private final AreaSectionComponent areaSectionComponent;
+    private final AreaSectionUtil areaSectionUtil;
 
     @PostConstruct
     public void postConstruct(){
@@ -36,7 +34,7 @@ public class ThemeMapper {
                 .addMappings(mapper -> {
                     mapper.map(Theme::getGenreByList, ThemeDto::setGenre);
                     mapper.map(Theme::getQuizTypeByList, ThemeDto::setQuizType);
-                    mapper.map(src -> areaSectionComponent.getTitleFromAreaCode(src.getStore().getAreaCode(), new ArrayList<>()),
+                    mapper.map(src -> areaSectionUtil.getTitleFromAreaCode(src.getStore().getAreaCode(), new ArrayList<>()),
                             (dest, v) -> dest.getStore().setArea( (List<String>) v));
                 });
     }

@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
@@ -14,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Builder
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Store extends BaseWithDelete {

@@ -1,5 +1,6 @@
 package com.sej.escape.dto.page;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,9 +11,9 @@ import org.springframework.data.domain.Sort;
 @AllArgsConstructor
 public class PageReqDto {
 
-    protected int page;
-    protected int size;
-    protected String searchKeyword;
+    @ApiModelProperty("페이지") protected int page;
+    @ApiModelProperty("페이지 크기") protected int size;
+    @ApiModelProperty("검색어") protected String searchKeyword;
 
     public PageReqDto(){
         this.page = 1;

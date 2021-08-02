@@ -1,5 +1,6 @@
 package com.sej.escape.dto.store;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 @Getter
@@ -9,6 +10,6 @@ import lombok.*;
 @Builder
 public class StoreNameDto {
 
-    protected long id;
-    protected String name;
+    @ApiModelProperty("아이디") protected long id;
+    @ApiModelProperty("가게명") protected String name;
 }
