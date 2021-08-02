@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
+import com.sej.escape.dto.file.FileDto;
 import com.sej.escape.dto.file.FileReqDto;
 import com.sej.escape.service.file.manage.FileManageService;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -56,29 +57,29 @@ public class S3FileManageService implements FileManageService {
     }
 
     @Override
-    public FileReqDto uploadFile(FileReqDto fileReqDto) throws FileUploadException {
+    public FileDto uploadFile(FileDto fileDto) throws FileUploadException {
         try {
-            fileReqDto.setRootPath(bucketName);
-            MultipartFile file = fileReqDto.getUploadFile();
+            fileDto.setRootPath(bucketName);
+            MultipartFile file = fileDto.getUploadFile();
 
-            String uploadPath = tempRootPath + "/" + fileReqDto.getSubPath();
-            String nameWithFullPath = uploadPath + "/" + fileReqDto.getName();
+            String uploadPath = tempRootPath + "/" + fileDto.getSubPath();
+            String nameWithFullPath = uploadPath + "/" + fileDto.getName();
             File fileTo = File.createTempFile(nameWithFullPath, ".tmp");
             file.transferTo(fileTo);
 
-            fileReqDto.setRootPath(getRootUrl());
+            fileDto.setRootPath(getRootUrl());
 
-            String uploadName = fileReqDto.getSubPath() + "/" + fileReqDto.getName();
+            String uploadName = fileDto.getSubPath() + "/" + fileDto.getName();
 
             ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType("image/"+fileReqDto.getContentType());
+            metadata.setContentType("image/"+fileDto.getContentType());
             Upload upload = transferManager.upload(bucketName, uploadName, fileTo);
             upload.waitForUploadResult();
 
         } catch (AmazonClientException | InterruptedException | IOException e) {
-            throw new FileUploadException(fileReqDto.toString(), e);
+            throw new FileUploadException(fileDto.toString(), e);
         }
-        return fileReqDto;
+        return fileDto;
     }
 
 }

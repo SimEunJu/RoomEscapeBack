@@ -1,5 +1,6 @@
 package com.sej.escape.controller.file;
 
+import com.sej.escape.dto.file.FileDto;
 import com.sej.escape.dto.file.FileReqDto;
 import lombok.experimental.UtilityClass;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,9 +14,10 @@ import java.util.UUID;
 @UtilityClass
 public class FileControllerUtils {
 
-    // TODO: 중복 제거
-    public FileReqDto getFileReqDto(FileReqDto reqDto){
+    public FileDto getFileReqDto(FileReqDto reqDto){
+
         MultipartFile uploadFile = reqDto.getUploadFile();
+
         String originalName = uploadFile.getOriginalFilename();
         String fileName = originalName.substring(originalName.lastIndexOf("\\")+1);
 
@@ -27,34 +29,16 @@ public class FileControllerUtils {
 
         String name = getRandomName();
 
-        reqDto.setContentType(contentType);
-        reqDto.setOriginalName(fileName);
-        reqDto.setName(name+"."+contentType);
-        reqDto.setSubPath(subPath);
+        FileDto fileDto = new FileDto();
+        fileDto.setUploadFile(uploadFile);
+        fileDto.setType(reqDto.getType());
 
-        return reqDto;
-    }
+        fileDto.setContentType(contentType);
+        fileDto.setOriginalName(fileName);
+        fileDto.setName(name+"."+contentType);
+        fileDto.setSubPath(subPath);
 
-    public FileReqDto getFileReqDto(MultipartFile uploadFile){
-        String originalName = uploadFile.getOriginalFilename();
-        String fileName = originalName.substring(originalName.lastIndexOf("\\")+1);
-
-        int contentTypeIdx = originalName.lastIndexOf(".");
-        String contentType = originalName.substring(contentTypeIdx+1, fileName.length());
-
-        String subPath = getSubPathByCurDate();
-        makeDirs(subPath);
-
-        String name = getRandomName();
-
-        FileReqDto fileReqDto = FileReqDto.builder()
-                .originalName(fileName)
-                .name(name+"."+contentType)
-                .subPath(subPath)
-                .uploadFile(uploadFile)
-                .build();
-
-        return fileReqDto;
+        return fileDto;
     }
 
     private String getSubPathByCurDate(){

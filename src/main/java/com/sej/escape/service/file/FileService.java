@@ -1,6 +1,7 @@
 package com.sej.escape.service.file;
 
 import com.sej.escape.constants.dto.FileType;
+import com.sej.escape.dto.file.FileDto;
 import com.sej.escape.dto.file.FileReqDto;
 import com.sej.escape.dto.file.FileResDto;
 import com.sej.escape.entity.Member;
@@ -60,23 +61,22 @@ public class FileService {
         return fileRepository.updateReferIds(referId, ids);
     }
 
-    public FileResDto saveFile(FileReqDto reqDto, FileManageService fileManageService) throws FileUploadException {
-        fileManageService.uploadFile(reqDto);
+    public FileResDto saveFile(FileDto fileDto, FileManageService fileManageService) throws FileUploadException {
+        fileManageService.uploadFile(fileDto);
 
-        FileRepository repo = getRepoByType(reqDto.getType());
-        Class<? extends File> entityCls = getEntityByType(reqDto.getType());
+        FileRepository repo = getRepoByType(fileDto.getType());
+        Class<? extends File> entityCls = getEntityByType(fileDto.getType());
 
-        File file = modelMapper.map(reqDto, entityCls);
+        File file = modelMapper.map(fileDto, entityCls);
         file.setMember(authenticationUtil.getAuthUserEntity());
         file = (File) repo.save(file);
 
-        return mapEntityToResDto(file, reqDto);
+        return mapEntityToResDto(file, fileDto);
     }
 
-    private FileResDto mapEntityToResDto(File file, FileReqDto reqDto){
+    private FileResDto mapEntityToResDto(File file, FileDto fileDto){
         FileResDto resDto = modelMapper.map(file, FileResDto.class);
-        resDto.setType(reqDto.getType());
-        resDto.setRandomId(reqDto.getRandomId());
+        resDto.setType(fileDto.getType());
         resDto.setId(file.getId());
         return resDto;
     }
