@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,9 +46,12 @@ public class AreaSectionUtil {
         return areas;
     }
 
-    public List<String> getTitleFromAreaCode(double areaCode, List<String> areas){
-
+    private List<String> getTitleFromAreaCode(double areaCode, List<String> areas){
         return getTitleFromAreaCode(areaSectionTree, areaCode, areas);
+    }
+
+    public List<String> getTitleFromAreaCode(double areaCode){
+        return getTitleFromAreaCode(areaCode, new ArrayList<>());
     }
 
     @Getter

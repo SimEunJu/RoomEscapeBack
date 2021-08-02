@@ -29,7 +29,7 @@ public class StoreMapper {
         this.modelMapper.createTypeMap(Store.class, StoreDto.class)
                 .addMappings(mapper -> {
                     mapper.map(src ->
-                                    areaSectionUtil.getTitleFromAreaCode(src.getAreaCode(), new ArrayList<>()),
+                                    areaSectionUtil.getTitleFromAreaCode(src.getAreaCode()),
                             StoreDto::setArea);
                 });
     }

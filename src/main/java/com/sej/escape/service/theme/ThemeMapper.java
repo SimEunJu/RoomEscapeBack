@@ -34,7 +34,7 @@ public class ThemeMapper {
                 .addMappings(mapper -> {
                     mapper.map(Theme::getGenreByList, ThemeDto::setGenre);
                     mapper.map(Theme::getQuizTypeByList, ThemeDto::setQuizType);
-                    mapper.map(src -> areaSectionUtil.getTitleFromAreaCode(src.getStore().getAreaCode(), new ArrayList<>()),
+                    mapper.map(src -> areaSectionUtil.getTitleFromAreaCode(src.getStore().getAreaCode()),
                             (dest, v) -> dest.getStore().setArea( (List<String>) v));
                 });
     }
@@ -73,9 +73,10 @@ public class ThemeMapper {
         String fileSubPath = (String) row[3];
         themeDto.setImgUrl(fileRootPath+"/"+fileSubPath);
 
-        int zimCnt = row[5] != null ? ((BigInteger) row[5]).intValue() : 0;
         boolean isMemberCheckZim = row[6] != null && ((BigInteger)row[6]).intValue() > 0;
         themeDto.setZimChecked(isMemberCheckZim);
+
+        int zimCnt = row[5] != null ? ((BigInteger) row[5]).intValue() : 0;
         if(authenticationUtil.isAuthenticated()){
             zimCnt = isMemberCheckZim ? zimCnt - 1 : zimCnt;
         }
