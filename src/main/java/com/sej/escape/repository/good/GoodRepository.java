@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface GoodRepository<T extends Good>
         extends JpaRepository<T, Long>, QuerydslPredicateExecutor<T> {
 
-    public Optional<T> findByReferIdAndMember(long referId, Member member);
+    Optional<T> findByReferIdAndMember(long referId, Member member);
 }
