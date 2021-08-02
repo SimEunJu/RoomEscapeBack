@@ -17,9 +17,11 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestControllerAdvice
 @Slf4j
+@ApiIgnore
 public class ExceptionController {
 
     // @Valid 실패 시

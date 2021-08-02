@@ -2,6 +2,8 @@ package com.sej.escape.dto.board;
 
 import com.sej.escape.constants.dto.BoardType;
 import com.sej.escape.dto.page.PageReqDto;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.*;
 
 @Getter
@@ -10,5 +12,6 @@ import lombok.*;
 @NoArgsConstructor
 public class BoardReqDto extends PageReqDto {
 
-    @NonNull private BoardType type;
+    @NonNull
+    @ApiModelProperty("게시판 종류") private BoardType type;
 }
