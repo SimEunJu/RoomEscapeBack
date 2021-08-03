@@ -44,11 +44,11 @@ public class ThemeService {
     private final ThemeMapper mapper;
 
     public List<ThemeNameDto> getThemesByName(String keyword){
-        Pageable pageable = PageRequest.of(1, 20);
+        Pageable pageable = PageRequest.of(0, 10);
 
-        Page<Theme> themes = themeRepository.findAllByIsDeletedFalseAndNameContaining(keyword, pageable);
+        List<Theme> themes = themeRepository.findAllByAndNameContainsAndIsDeletedFalse(keyword, pageable);
         return mapper.mapEntitiesToDtos(
-                themes.getContent(),
+                themes,
                 ThemeNameDto.class,
                 (Theme theme, ThemeNameDto dto) -> {
                     dto.setStore(new StoreNameDto(theme.getStore().getId(), theme.getStore().getName()));
@@ -148,7 +148,7 @@ public class ThemeService {
 
         AreaSection[] areaSections = themePageReqDto.getAreaSection();
         if(!ArrayUtils.isEmpty(areaSections)){
-            queryWhere += " AND";
+            queryWhere += " AND (";
 
             int len = areaSections.length;
             for (AreaSection areaSection : areaSections) {
@@ -159,7 +159,7 @@ public class ThemeService {
                 queryWhere += " store.area_code between "+lower+" AND "+upper+" OR";
             }
 
-            queryWhere = queryWhere.substring(0, queryWhere.length()-2);
+            queryWhere = queryWhere.substring(0, queryWhere.length() - 2) + ")";
         }
 
         ListOrder order = themePageReqDto.getOrder();
@@ -193,7 +193,7 @@ public class ThemeService {
         String queryStr = getThemesQuery(querySelectIsZimChk, queryWhere, queryOrder);
 
         List<Object[]> results = em.createNativeQuery(queryStr, "themeResultMap")
-                .setFirstResult(themePageReqDto.getPage())
+                .setFirstResult(themePageReqDto.getLimitStart())
                 .setMaxResults(themePageReqDto.getSize())
                 .getResultList();
 
@@ -207,13 +207,13 @@ public class ThemeService {
         BigInteger totalCnt = (BigInteger) em.createNativeQuery(countQueryStr)
                 .getSingleResult();
 
-        boolean hasNext = totalCnt.intValue() > themePageReqDto.getPage() * themePageReqDto.getSize();
+        boolean hasNext = totalCnt.intValue() > themePageReqDto.getTotal();
 
         PageResDto pageResDto = new PageResDto<Store, StoreDto>();
         pageResDto.setTargetList(themeForListDtos);
         pageResDto.setTotal(totalCnt.intValue());
         pageResDto.setSize(themePageReqDto.getSize());
-        pageResDto.setPage(themePageReqDto.getPage());
+        pageResDto.setPage(themePageReqDto.getNextPage());
         pageResDto.setHasNext(hasNext);
 
         return pageResDto;

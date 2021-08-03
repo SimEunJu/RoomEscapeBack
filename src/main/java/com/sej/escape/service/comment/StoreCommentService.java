@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NonUniqueResultException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,12 +33,22 @@ public class StoreCommentService {
     private void checkAlreadyExist(CommentModifyReqDto reqDto){
 
         Member member = authenticationUtil.getAuthUserEntity();
-        Optional<StoreComment> storeCommentExist = storeCommentRepository.findByMember(member);
 
-        storeCommentExist.ifPresent((storeComment) -> {
-            throw new AlreadyExistResourceException(
-                    String.format("가게 아이디 [%d]에 대한 후기가 이미 존재합니다.", reqDto.getAncestor().getId()));
-        });
+        Optional<StoreComment> storeCommentExist = null;
+        try{
+            storeCommentExist = storeCommentRepository.findByMemberAndIsDeletedFalse(member);
+
+        }catch (NonUniqueResultException e){
+            throwAlreadyExistException(reqDto.getAncestor().getId());
+        }
+        storeCommentExist.ifPresent(
+                (StoreComment comment) -> throwAlreadyExistException(reqDto.getAncestor().getId())
+        );
+    }
+
+    private void throwAlreadyExistException(long storeId){
+        throw new AlreadyExistResourceException(
+                String.format("가게 아이디 [%d]에 대한 후기가 이미 존재합니다.", storeId));
     }
 
     public CommentResDto addComment(CommentModifyReqDto reqDto){

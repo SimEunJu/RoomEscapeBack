@@ -31,5 +31,5 @@ public interface ThemeRepository
     Page<Object[]> findAllByZim(@Param("member") Member member, Pageable pageable);
 
     @EntityGraph(attributePaths = {"store"}, type = EntityGraph.EntityGraphType.LOAD)
-    Page<Theme> findAllByIsDeletedFalseAndNameContaining(String name, Pageable pageable);
+    List<Theme> findAllByAndNameContainsAndIsDeletedFalse(String name, Pageable pageable);
 }

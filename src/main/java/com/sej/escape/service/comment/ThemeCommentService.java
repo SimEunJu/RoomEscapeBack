@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -51,7 +52,7 @@ public class ThemeCommentService {
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id AND c.is_hidden = 0";
+        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id AND c.is_hidden = 0 ";
 
         String listQuery =  "SELECT c.*, m.nickname, m.member_id "+
                 ", (SELECT COUNT(*) FROM good WHERE gtype= :gtype AND refer_id = c.theme_comment_id AND is_good = 1) as good_cnt " +
@@ -111,11 +112,20 @@ public class ThemeCommentService {
     private void checkAlreadyExist(ThemeCommentDto commentDto){
         Theme theme = Theme.builder().id(commentDto.getThemeId()).build();
         Member member = authenticationUtil.getAuthUserEntity();
-        Optional<ThemeComment> themeCommentExist = themeCommentRepository.findByThemeAndMember(theme, member);
-        themeCommentExist.ifPresent((storeComment) -> {
-            throw new AlreadyExistResourceException(
-                    String.format("테마 아이디 [%d]에 대한 후기가 이미 존재합니다.", commentDto.getThemeId()));
-        });
+
+        Optional<ThemeComment> themeCommentExist = null;
+        try{
+            themeCommentExist = themeCommentRepository.findByThemeAndMember(theme, member);
+        }catch (NonUniqueResultException e){
+            throwAlreadyExistException(commentDto.getThemeId());
+        }
+
+        themeCommentExist.ifPresent((storeComment) -> throwAlreadyExistException(commentDto.getThemeId()));
+    }
+
+    private void throwAlreadyExistException(long themeId){
+        throw new AlreadyExistResourceException(
+                String.format("테마 아이디 [%d]에 대한 후기가 이미 존재합니다.", themeId));
     }
 
     public ThemeCommentResDto addComment(ThemeCommentDto commentDto){

@@ -40,9 +40,9 @@ public class StoreService {
     private final StoreMapper mapper;
 
     public List<StoreNameDto> getStoresByName(String keyword){
-        Pageable pageable = PageRequest.of(1, 20);
-        Page<Store> stores = storeRepository.findAllByNameContainingAndDeletedIsFalse(keyword, pageable);
-        return mapper.mapStoresToDtos(stores.getContent(), StoreNameDto.class);
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Store> stores = storeRepository.findAllByNameContainsAndIsDeletedIsFalse(keyword, pageable);
+        return mapper.mapStoresToDtos(stores, StoreNameDto.class);
     }
 
     public StoreDto getStore(long id){
@@ -118,7 +118,7 @@ public class StoreService {
 
         AreaSection[] areaSections = storePageReqDto.getAreaSection();
         if(!ArrayUtils.isEmpty(areaSections)){
-            queryWhere += " AND";
+            queryWhere += " AND (";
             
             for (AreaSection areaSection : areaSections) {
                 AreaSection.AreaCode areaCode = areaSection.getAreaCode();
@@ -127,7 +127,7 @@ public class StoreService {
                 queryWhere += " store.area_code between "+lower+" AND "+upper+" OR";
             }
             
-            queryWhere = queryWhere.substring(0, queryWhere.length() - 2);
+            queryWhere = queryWhere.substring(0, queryWhere.length() - 2) + ")";
         }
 
         ListOrder order = storePageReqDto.getOrder();
@@ -161,7 +161,7 @@ public class StoreService {
         String queryStr = getStoresQuery(querySelectIsZimChk, queryWhere, queryOrder);
 
         List<Object[]> results = em.createNativeQuery(queryStr, "storeResultMap")
-                .setFirstResult(storePageReqDto.getPage())
+                .setFirstResult(storePageReqDto.getLimitStart())
                 .setMaxResults(storePageReqDto.getSize())
                 .getResultList();
 
@@ -175,13 +175,13 @@ public class StoreService {
         BigInteger totalCnt = (BigInteger) em.createNativeQuery(countQueryStr)
                 .getSingleResult();
 
-        boolean hasNext = totalCnt.intValue() > storePageReqDto.getPage() * storePageReqDto.getSize();
+        boolean hasNext = totalCnt.intValue() > storePageReqDto.getTotal();
 
         PageResDto pageResDto = new PageResDto<Store, StoreDto>();
         pageResDto.setTargetList(storeDtos);
         pageResDto.setTotal(totalCnt.intValue());
         pageResDto.setSize(storePageReqDto.getSize());
-        pageResDto.setPage(storePageReqDto.getPage());
+        pageResDto.setPage(storePageReqDto.getNextPage());
         pageResDto.setHasNext(hasNext);
 
         return pageResDto;

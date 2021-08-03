@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface StoreRepository
         extends JpaRepository<Store, Long>, QuerydslPredicateExecutor<Store> {
 
-    Page<Store> findAllByNameContainingAndDeletedIsFalse(String name, Pageable pageable);
+    List<Store> findAllByNameContainsAndIsDeletedIsFalse(String name, Pageable pageable);
 
     // TODO: 연관관계 테이블을 따로 설정하지 않으니 매번 query에 명시해야 해서 불편
     @Query("select s, sz from Store s inner join StoreZim sz on sz.referId = s.id and sz.isZim = true and sz.member = :member and s.isDeleted = false")

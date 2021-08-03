@@ -28,9 +28,15 @@ public class PageReqDto {
         this.page = page;
     }
 
-    public int getPage(){
-        return this.page - 1;
-    }
+    public int getPage(){ return this.page - 1; }
+
+    public int getNextPage() { return this.page; }
+
+    public int getTotal() { return this.page * this.size; }
+
+    public int getLimitStart() { return this.getPage() * this.size; }
+
+    public int getLimitEnd() { return this.getLimitStart() + this.size; }
 
     public Pageable getPageable(Sort sort){
         return PageRequest.of(page-1, size, sort);
