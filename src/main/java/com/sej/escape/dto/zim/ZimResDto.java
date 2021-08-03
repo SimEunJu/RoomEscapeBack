@@ -19,8 +19,8 @@ public class ZimResDto {
     @ApiModelProperty("활성화 여부") private Boolean isChecked;
 
     //private Integer cnt;
-    //private boolean hasError;
-    //private ErrorRes error;
+    private boolean hasError;
+    private ErrorRes error;
 
     @ApiModelProperty("종류")
     public String getType() {

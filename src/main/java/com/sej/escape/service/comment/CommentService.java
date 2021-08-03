@@ -96,6 +96,7 @@ public class CommentService {
 
             boolean isGoodChk = row[4] != null && ((BigInteger) row[4]).intValue() > 0;
             commentDto.setGoodChecked(isGoodChk);
+
             if(authenticationUtil.isAuthenticated()){
                 goodCnt = isGoodChk ? goodCnt - 1 : goodCnt;
             }
@@ -104,12 +105,14 @@ public class CommentService {
             return commentDto;
         }).collect(Collectors.toList());
 
-        return CommentListResDto.builder().comments(commentDtos)
-                .page(page)
-                .size(size)
-                .total(total)
-                .hasNext(hasNext)
-                .build();
+        CommentListResDto resDto = new CommentListResDto();
+        resDto.setTargetList(commentDtos);
+        resDto.setPage(page);
+        resDto.setSize(size);
+        resDto.setTotal(total);
+        resDto.setHasNext(hasNext);
+
+        return resDto;
     }
 
     private boolean hasAuthority(long id) {
@@ -130,13 +133,16 @@ public class CommentService {
     }
 
     public CommentResDto updateComment(long id, CommentModifyReqDto modifyReqDto){
+
         Comment comment = getCommentByIdIfExist(id);
+
         hasAuthority(comment.getMember().getId());
 
         comment.setContent(modifyReqDto.getContent());
         comment.setStar(modifyReqDto.getStarRate());
-        Comment commentUpdated = commentRepository.save(comment);
-        return commentMapper.mapEntityToDto(commentUpdated, CommentResDto.class);
+        comment = commentRepository.save(comment);
+
+        return commentMapper.mapEntityToDto(comment, CommentResDto.class);
     }
 
     public CommentResDto toggleHideComment(long id, boolean isHidden){

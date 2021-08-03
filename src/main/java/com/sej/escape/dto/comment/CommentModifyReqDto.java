@@ -1,6 +1,7 @@
 package com.sej.escape.dto.comment;
 
 import com.sej.escape.constants.dto.CommentType;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 @Getter
@@ -10,17 +11,19 @@ import lombok.*;
 @AllArgsConstructor
 public class CommentModifyReqDto {
 
-    private String content;
-    private double starRate;
-    private long id;
-    private long randId;
-    private boolean isGood;
-    private boolean isHidden;
+    @ApiModelProperty("아이디") private long id;
+    @ApiModelProperty("댓글 등록 시 사용되는 랜덤 아이디") private long randId;
 
-    private CommentType type;
+    @ApiModelProperty("내용") private String content;
+    @ApiModelProperty("별점") private double starRate;
 
-    private CommentDto parComment;
-    private Ancestor ancestor;
+    @ApiModelProperty("좋아요 여부") private boolean isGood;
+    @ApiModelProperty("숨김 여부") private boolean isHidden;
+
+    @ApiModelProperty("종류") private CommentType type;
+
+    @ApiModelProperty("부모 댓글") private CommentDto parComment;
+    @ApiModelProperty("댓글 사용하는 도메인") private Ancestor ancestor;
 
     public void setIsHidden(boolean isHidden){
         this.isHidden = isHidden;

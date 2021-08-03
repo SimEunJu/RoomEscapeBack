@@ -1,12 +1,11 @@
 package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.*;
+import com.sej.escape.dto.comment.theme.*;
 import com.sej.escape.dto.file.FileResDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.entity.Member;
-import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
-import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.entity.file.ThemeCommentFile;
 import com.sej.escape.error.exception.AlreadyExistResourceException;
@@ -30,7 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -100,12 +98,14 @@ public class ThemeCommentService {
             return commentDto;
         }).collect(Collectors.toList());
 
-        return CommentListResDto.builder().comments(commentDtos)
-                .page(page)
-                .size(size)
-                .total(total)
-                .hasNext(hasNext)
-                .build();
+        CommentListResDto resDto = new CommentListResDto();
+        resDto.setTargetList(commentDtos);
+        resDto.setPage(page);
+        resDto.setSize(size);
+        resDto.setTotal(total);
+        resDto.setHasNext(hasNext);
+
+        return resDto;
     }
 
     private void checkAlreadyExist(ThemeCommentDto commentDto){
@@ -124,6 +124,7 @@ public class ThemeCommentService {
         ThemeComment comment = commentMapper.mapDtoToEntity(commentDto, ThemeComment.class);
         Member member = authenticationUtil.getAuthUserEntity();
         Theme theme = Theme.builder().id(commentDto.getThemeId()).build();
+
         comment.setMember(member);
         comment.setTheme(theme);
         comment.setActive(commentDto.isActiveSet());
@@ -204,13 +205,11 @@ public class ThemeCommentService {
         Page<ThemeComment> commentPage = themeCommentRepository.findAllByMember(pageable, member);
         List<ThemeComment> themeComments = commentPage.getContent();
 
-        return CommentListResDto.builder()
-                .total(commentPage.getTotalElements())
-                .comments(mapStoreCommentsToDtos(themeComments))
-                .size(commentPage.getSize())
-                .hasNext(commentPage.hasNext())
-                .page(reqDto.getPage())
-                .build();
+        CommentListResDto resDto = new CommentListResDto();
+        resDto.setPageResult(commentPage);
+        resDto.setTargetList(mapStoreCommentsToDtos(themeComments));
+
+        return resDto;
     }
 
     private List<ThemeCommentForListByMemberDto> mapStoreCommentsToDtos(List<ThemeComment> entitis){

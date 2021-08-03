@@ -1,5 +1,6 @@
 package com.sej.escape.dto.comment;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.util.List;
@@ -11,9 +12,9 @@ import java.util.List;
 @Builder
 public class Ancestor {
 
-    private String name;
-    private String type;
-    private List<String> subTypes;
-    private long id;
+    @ApiModelProperty("아이디") private long id;
+    @ApiModelProperty("") private String name;
 
+    @ApiModelProperty("종류") private String type;
+    @ApiModelProperty("하위 종류") private List<String> subTypes;
 }
