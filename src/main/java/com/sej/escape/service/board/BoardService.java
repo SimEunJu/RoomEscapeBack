@@ -51,8 +51,8 @@ public class BoardService {
     }
 
     private boolean hasAuthority(long id) {
-        if(authenticationUtil.isSameUser(id)) {
-            throw new UnAuthorizedException(String.format("user has no authority on resource id %l", id));
+        if(!authenticationUtil.isSameUser(id)) {
+            throw new UnAuthorizedException(String.format("user has no authority on resource id %d", id));
         }
         return true;
     }
