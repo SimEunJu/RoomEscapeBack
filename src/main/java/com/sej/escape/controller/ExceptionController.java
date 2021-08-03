@@ -2,6 +2,7 @@ package com.sej.escape.controller;
 
 import com.sej.escape.error.ErrorCode;
 import com.sej.escape.error.ErrorRes;
+import com.sej.escape.error.exception.AlreadyExistResourceException;
 import com.sej.escape.error.exception.BusinessException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
@@ -88,6 +89,14 @@ public class ExceptionController {
         ErrorRes response = new ErrorRes(ErrorCode.AUTHENTICATION_REQUIRED);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(AlreadyExistResourceException.class)
+    public ResponseEntity<ErrorRes> handleNoSuchResourceException(AlreadyExistResourceException e){
+        log.error("NoSuchResourceException", e);
+        ErrorRes response = new ErrorRes(ErrorCode.RESOURCE_ALREADY_EXIST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(NoSuchResourceException.class)
     public ResponseEntity<ErrorRes> handleNoSuchResourceException(NoSuchResourceException e){
