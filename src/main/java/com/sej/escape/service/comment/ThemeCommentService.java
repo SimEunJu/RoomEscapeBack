@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -152,7 +153,7 @@ public class ThemeCommentService {
 
     private boolean hasAuthority(long id) {
         if(!authenticationUtil.isSameUser(id)) {
-            throw new UnAuthorizedException(String.format("user has no authority on resource id %d", id));
+            throw new AccessDeniedException(String.format("user has no authority on resource id %d", id));
         }
         return true;
     }

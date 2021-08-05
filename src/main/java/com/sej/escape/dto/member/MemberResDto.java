@@ -7,6 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class MemberResDto {
 
     @ApiModelProperty("아이디") private Long id;

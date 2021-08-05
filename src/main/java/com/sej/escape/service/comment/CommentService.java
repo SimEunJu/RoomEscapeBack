@@ -8,6 +8,7 @@ import com.sej.escape.repository.comment.CommentRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -78,9 +79,7 @@ public class CommentService {
                 .getSingleResult();
 
         int total = totalCount.intValue();
-        int page = commentReqDto.getPage();
-        int size = commentReqDto.getSize();
-        boolean hasNext = total > page * size;
+        boolean hasNext = total > commentReqDto.getTotal();
 
         List<CommentDto> commentDtos = results.stream().map(row -> {
             Comment comment = (Comment) row[0];
@@ -107,8 +106,8 @@ public class CommentService {
 
         CommentListResDto resDto = new CommentListResDto();
         resDto.setTargetList(commentDtos);
-        resDto.setPage(page);
-        resDto.setSize(size);
+        resDto.setPage(commentReqDto.getNextPage());
+        resDto.setSize(commentReqDto.getSize());
         resDto.setTotal(total);
         resDto.setHasNext(hasNext);
 
@@ -117,7 +116,7 @@ public class CommentService {
 
     private boolean hasAuthority(long id) {
         if(!authenticationUtil.isSameUser(id)) {
-            throw new UnAuthorizedException(String.format("user has no authority on resource id %d", id));
+            throw new AccessDeniedException(String.format("user has no authority on resource id %d", id));
         }
         return true;
     }

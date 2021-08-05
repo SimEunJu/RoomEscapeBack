@@ -12,6 +12,7 @@ import com.sej.escape.repository.board.BoardRepository;
 import com.sej.escape.service.file.FileService;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -52,7 +53,7 @@ public class BoardService {
 
     private boolean hasAuthority(long id) {
         if(!authenticationUtil.isSameUser(id)) {
-            throw new UnAuthorizedException(String.format("user has no authority on resource id %d", id));
+            throw new AccessDeniedException(String.format("user has no authority on resource id %d", id));
         }
         return true;
     }

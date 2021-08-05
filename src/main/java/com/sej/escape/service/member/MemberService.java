@@ -56,7 +56,9 @@ public class MemberService {
     }
 
     public MemberResDto updateMember(MemberUpdateReqDto reqDto) {
-        Member member = authenticationUtil.getAuthUserEntity();
+
+        Member member = memberRepository.getOne(authenticationUtil.getAuthUser().getId());
+
         member.setNickname(reqDto.getNickname());
         member = memberRepository.save(member);
 

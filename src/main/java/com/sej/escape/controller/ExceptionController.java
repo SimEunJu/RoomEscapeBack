@@ -86,7 +86,7 @@ public class ExceptionController {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorRes> handleAccessDeniedException(AccessDeniedException e){
         log.error("AccessDeniedException", e);
-        ErrorRes response = new ErrorRes(ErrorCode.AUTHENTICATION_REQUIRED);
+        ErrorRes response = new ErrorRes(ErrorCode.ACCESS_DENIED);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
