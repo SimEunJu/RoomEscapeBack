@@ -53,7 +53,7 @@ public class ThemeCommentService {
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id AND c.is_hidden = 0 ";
+        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id AND c.is_hidden = 0 AND c.is_deleted = 0 ";
 
         String listQuery =  "SELECT c.*, m.nickname, m.member_id "+
                 ", (SELECT COUNT(*) FROM good WHERE gtype= :gtype AND refer_id = c.theme_comment_id AND is_good = 1) as good_cnt " +
@@ -74,9 +74,7 @@ public class ThemeCommentService {
                 .getSingleResult();
 
         int total = totalCount.intValue();
-        int page = commentReqDto.getPage();
-        int size = commentReqDto.getSize();
-        boolean hasNext = total > page * size;
+        boolean hasNext = total > commentReqDto.getTotal();
 
         List<ThemeCommentForListDto> commentDtos = results.stream().map(row -> {
             ThemeComment comment = (ThemeComment) row[0];
@@ -102,8 +100,8 @@ public class ThemeCommentService {
 
         CommentListResDto resDto = new CommentListResDto();
         resDto.setTargetList(commentDtos);
-        resDto.setPage(page);
-        resDto.setSize(size);
+        resDto.setPage(commentReqDto.getNextPage());
+        resDto.setSize(commentReqDto.getSize());
         resDto.setTotal(total);
         resDto.setHasNext(hasNext);
 

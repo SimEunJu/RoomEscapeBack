@@ -35,7 +35,7 @@ public class ThemeCommentController {
     public ResponseEntity<ThemeCommentResDto> addComment(@RequestBody ThemeCommentDto reqDto){
         ThemeCommentResDto commentDto = themeCommentService.addComment(reqDto);
 
-        commentDto.setRandId(commentDto.getRandId());
+        commentDto.setRandId(reqDto.getRandId());
 
         return ResponseEntity.ok(commentDto);
     }
@@ -98,12 +98,13 @@ public class ThemeCommentController {
         return ResponseEntity.ok(resDto);
     }
 
-    @ApiOperation("테마 후기 수정")
+    @ApiOperation("테마 후기 삭제")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CommentResDto> deleteComment(@ApiParam("아이디") @PathVariable long id){
+    public ResponseEntity<ThemeCommentResDto> deleteComment(@ApiParam("아이디") @PathVariable long id){
         long deleteId = themeCommentService.deleteComment(id);
-        CommentResDto resDto = CommentResDto.resBuilder().id(deleteId).type("delete").build();
+
+        ThemeCommentResDto resDto = ThemeCommentResDto.builder().type("delete").id(id).build();
         return ResponseEntity.ok(resDto);
     }
 

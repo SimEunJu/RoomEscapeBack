@@ -18,6 +18,7 @@ import java.util.List;
 public class ThemeCommentDto {
 
     @ApiModelProperty("아이디") private long id;
+    @ApiModelProperty("후기 생성 시 사용되는 랜덤 아이디") private long randId;
     @ApiModelProperty("테마 아이디") private long themeId;
 
     @ApiModelProperty("난이도") private int difficulty;
