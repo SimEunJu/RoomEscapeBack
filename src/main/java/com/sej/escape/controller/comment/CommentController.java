@@ -65,7 +65,7 @@ public class CommentController {
 
         CommentResDto commentResDto = commentService.addComment(commentModifyReqDto, addFunc);
         commentResDto.setRandId(commentModifyReqDto.getRandId());
-        commentResDto.setType("add");
+        commentResDto.setActionType("add");
         commentResDto.setAncestor(commentModifyReqDto.getAncestor());
 
         return ResponseEntity.ok(commentResDto);
@@ -95,7 +95,7 @@ public class CommentController {
         CommentResDto resDto = commentService.updateComment(id, modifyReqDto);
 
         resDto.setAncestor(modifyReqDto.getAncestor());
-        resDto.setType("update");
+        resDto.setActionType("update");
 
         return ResponseEntity.ok(resDto);
     }
@@ -108,7 +108,7 @@ public class CommentController {
 
         CommentResDto resDto = commentService.toggleHideComment(id, modifyReqDto.isHidden());
 
-        resDto.setType("hide");
+        resDto.setActionType("hide");
         resDto.setAncestor(modifyReqDto.getAncestor());
 
         return ResponseEntity.ok(resDto);

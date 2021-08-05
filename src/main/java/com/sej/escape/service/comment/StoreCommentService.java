@@ -68,9 +68,13 @@ public class StoreCommentService {
             storeComment.setParId(parComment.getParId());
         }
 
-        storeCommentRepository.save(storeComment);
+        storeComment = storeCommentRepository.save(storeComment);
 
-        return commentMapper.mapEntityToDto(storeComment, CommentResDto.class);
+        CommentResDto resDto = commentMapper.mapEntityToDto(storeComment, CommentResDto.class);
+        resDto.setWriter(storeComment.getMember().getNickname());
+        resDto.setWriterId(storeComment.getMember().getId());
+
+        return resDto;
     }
 
     private StoreComment saveComment(CommentModifyReqDto commentModifyReqDto){

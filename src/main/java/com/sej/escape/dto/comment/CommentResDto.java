@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommentResDto extends CommentDto{
 
-    private String type;
+    private String actionType;
     private Ancestor ancestor;
 
     private long randId;
@@ -21,7 +21,7 @@ public class CommentResDto extends CommentDto{
     @Builder(builderMethodName = "resBuilder")
     public CommentResDto(long id, String content, String writer, long writerId, long parId, int depth, int seq, int good, boolean isGoodChecked, boolean isDeleted, double star, boolean isHidden, LocalDateTime regDate, LocalDateTime updateDate, LocalDateTime deleteDate, String type, Ancestor ancestor, long randId, boolean hasError, ErrorRes error) {
         super(id, content, writer, writerId, parId, depth, seq, good, isGoodChecked, isDeleted, star, isHidden, regDate, updateDate, deleteDate);
-        this.type = type;
+        this.actionType = type;
         this.ancestor = ancestor;
         this.randId = randId;
         this.hasError = hasError;

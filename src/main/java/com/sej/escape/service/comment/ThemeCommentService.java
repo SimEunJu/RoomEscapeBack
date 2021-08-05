@@ -148,6 +148,7 @@ public class ThemeCommentService {
         }
 
         ThemeCommentResDto resDto = commentMapper.mapEntityToDto(comment, ThemeCommentResDto.class);
+
         return resDto;
     }
 
