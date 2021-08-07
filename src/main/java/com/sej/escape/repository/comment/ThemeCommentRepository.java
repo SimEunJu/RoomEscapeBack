@@ -37,6 +37,6 @@ public interface ThemeCommentRepository
     @Query("select tc, tcf from ThemeComment tc left outer join ThemeCommentFile tcf on tc.id = tcf.referId and tcf.isDeleted = false where tc.id = :commentId")
     Optional<Object> findDetailById(@Param("commentId") long commentId);
 
-    Optional<ThemeComment> findByThemeAndMember(Theme theme, Member member);
+    Optional<ThemeComment> findByThemeAndMemberAndIsDeletedFalse(Theme theme, Member member);
 
 }

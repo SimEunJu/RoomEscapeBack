@@ -114,7 +114,7 @@ public class ThemeCommentService {
 
         Optional<ThemeComment> themeCommentExist = null;
         try{
-            themeCommentExist = themeCommentRepository.findByThemeAndMember(theme, member);
+            themeCommentExist = themeCommentRepository.findByThemeAndMemberAndIsDeletedFalse(theme, member);
         }catch (NonUniqueResultException e){
             throwAlreadyExistException(commentDto.getThemeId());
         }
@@ -140,7 +140,7 @@ public class ThemeCommentService {
         comment.setHorror(commentDto.isHorrorSet());
         comment = themeCommentRepository.save(comment);
 
-        if(commentDto.getUploadFiles().length > 0){
+        if(commentDto.getUploadFiles() != null && commentDto.getUploadFiles().length > 0){
             List<Long> ids = Arrays.stream(commentDto.getUploadFiles()).map(file -> file.getId()).collect(Collectors.toList());
             fileService.updateReferIds(ids, comment.getId());
         }

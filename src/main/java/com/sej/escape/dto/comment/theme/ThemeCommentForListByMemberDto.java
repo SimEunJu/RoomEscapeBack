@@ -25,6 +25,7 @@ public class ThemeCommentForListByMemberDto {
 
     @JsonProperty(value="isHidden")
     @ApiModelProperty("숨김 여부") protected boolean isHidden;
+
     @ApiModelProperty("작성자명")
     protected String writer;
 
