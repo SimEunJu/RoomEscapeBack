@@ -28,8 +28,8 @@ public class PageResDto<En, Dto> {
 
     public void setPageResult(Page<En> result) {
         this.total = result.getTotalPages();
-        //this.page = result.getNumber() + 1;
-        this.page = result.getNumber();
+        this.page = result.getNumber() + 1;
+        //this.page = result.getNumber();
         this.size = result.getSize();
         this.hasNext = result.hasNext();
     }

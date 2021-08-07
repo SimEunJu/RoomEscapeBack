@@ -35,7 +35,6 @@ public class StoreCommentController {
     public ResponseEntity<StoreCommentDto> addComment(@RequestBody CommentModifyReqDto reqDto){
         StoreCommentDto comment = storeCommentService.addCommentAndRetDetail(reqDto);
 
-        //comment.setAncestorType("store");
         comment.setAncestor(reqDto.getAncestor());
         comment.setRandId(reqDto.getRandId());
 

@@ -36,7 +36,7 @@ public class StoreCommentService {
 
         Optional<StoreComment> storeCommentExist = null;
         try{
-            storeCommentExist = storeCommentRepository.findByMemberAndIsDeletedFalse(member);
+            storeCommentExist = storeCommentRepository.findByReferIdAndMemberAndIsDeletedFalse(reqDto.getAncestor().getId(), member);
 
         }catch (NonUniqueResultException e){
             throwAlreadyExistException(reqDto.getAncestor().getId());
@@ -85,6 +85,9 @@ public class StoreCommentService {
     }
 
     public StoreCommentDto addCommentAndRetDetail(CommentModifyReqDto commentModifyReqDto){
+
+        checkAlreadyExist(commentModifyReqDto);
+
         StoreComment storeComment = saveComment(commentModifyReqDto);
 
         Member member = authenticationUtil.getAuthUserEntity();

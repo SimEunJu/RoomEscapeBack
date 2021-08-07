@@ -21,7 +21,7 @@ public interface StoreCommentRepository
         extends JpaRepository<StoreComment, Long>, QuerydslPredicateExecutor<StoreComment> {
 
 
-    Optional<StoreComment> findByMemberAndIsDeletedFalse(Member member);
+    Optional<StoreComment> findByReferIdAndMemberAndIsDeletedFalse(long referId, Member member);
 
     @Query("select sc, s from StoreComment sc inner join Store s on sc.referId = s.id where sc.isDeleted = false and sc.member = :member")
     Page<Object[]> findAllByMember(Pageable pageable, @Param("member") Member member);
