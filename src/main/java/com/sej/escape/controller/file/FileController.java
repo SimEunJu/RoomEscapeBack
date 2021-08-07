@@ -1,14 +1,13 @@
 package com.sej.escape.controller.file;
 
-import com.sej.escape.dto.file.FileDto;
-import com.sej.escape.dto.file.FileReqDto;
-import com.sej.escape.dto.file.FileResDto;
+import com.sej.escape.dto.file.*;
 import com.sej.escape.service.file.*;
 import com.sej.escape.service.file.manage.FileManage;
 import com.sej.escape.service.file.manage.FileManageService;
 import com.sej.escape.service.file.manage.FileManageServiceProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +43,15 @@ public class FileController {
     public ResponseEntity<Void> deleteFile(@PathVariable long id){
         fileService.deleteFile(id);
         return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation("이미지 url로 파일 삭제")
+    @DeleteMapping("/cloud/url")
+    public ResponseEntity<Void> deleteFileByUrl(@Valid @RequestBody FileDeleteByUrlDto urlDto){
+        FileUrlDto fileUrlDto = FileControllerUtils.parseUrl(urlDto.getUrl());
+        fileService.deleteFile(fileUrlDto);
+        return ResponseEntity
+                .ok().build();
     }
 
     @ApiOperation("파일 업로드")

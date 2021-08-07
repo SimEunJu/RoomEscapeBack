@@ -71,6 +71,7 @@ public class StoreCommentService {
         storeComment = storeCommentRepository.save(storeComment);
 
         CommentResDto resDto = commentMapper.mapEntityToDto(storeComment, CommentResDto.class);
+
         resDto.setWriter(storeComment.getMember().getNickname());
         resDto.setWriterId(storeComment.getMember().getId());
 

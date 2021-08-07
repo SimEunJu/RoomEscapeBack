@@ -1,13 +1,17 @@
 package com.sej.escape.service.file;
 
+import com.querydsl.core.BooleanBuilder;
 import com.sej.escape.constants.dto.FileType;
 import com.sej.escape.dto.file.FileDto;
 import com.sej.escape.dto.file.FileReqDto;
 import com.sej.escape.dto.file.FileResDto;
+import com.sej.escape.dto.file.FileUrlDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.file.BoardFile;
 import com.sej.escape.entity.file.File;
+import com.sej.escape.entity.file.QFile;
 import com.sej.escape.entity.file.ThemeCommentFile;
+import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
 import com.sej.escape.repository.file.FileRepository;
 import com.sej.escape.service.file.manage.FileManageService;
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -55,6 +60,18 @@ public class FileService {
     public int deleteFile(long id){
         Member member = authenticationUtil.getAuthUserEntity();
         return fileRepository.deleteFile(id, member);
+    }
+
+    public int deleteFile(FileUrlDto fileUrlDto){
+        Member member = authenticationUtil.getAuthUserEntity();
+        QFile qFile = QFile.file;
+        BooleanBuilder builder = new BooleanBuilder(qFile.member.eq(member));
+        builder.and(qFile.subPath.eq(fileUrlDto.getSubPath()));
+        builder.and(qFile.name.eq(fileUrlDto.getName()));
+        File file = fileRepository.findOne(builder).orElseThrow(() ->
+                new NoSuchResourceException(String.format("%s 파일은 존재하지 않습니다.",
+                        fileUrlDto.getSubPath()+fileUrlDto.getName())));
+        return fileRepository.deleteFile(file.getId(), member);
     }
 
     public int updateReferIds(List<Long> ids, long referId){

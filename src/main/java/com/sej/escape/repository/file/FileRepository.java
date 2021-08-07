@@ -1,5 +1,6 @@
 package com.sej.escape.repository.file;
 
+import com.querydsl.core.types.Predicate;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.file.File;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +10,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FileRepository<T extends File>
         extends JpaRepository<T, Long>, QuerydslPredicateExecutor<T> {

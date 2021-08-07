@@ -71,6 +71,11 @@ public class CommentController {
         return ResponseEntity.ok(commentResDto);
     }
 
+    private boolean hasRecomment(String type){
+        if("board".equals(type)) return true;
+        return false;
+    }
+
     @ApiOperation("댓글 삭제")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
@@ -80,7 +85,8 @@ public class CommentController {
 
         CommentResDto resDto = CommentResDto.resBuilder()
                 .id(id)
-                .type("delete")
+                .actionType("delete")
+                .hasRecomment(hasRecomment(reqDto.getAncestor().getType()))
                 .ancestor(reqDto.getAncestor())
                 .build();
 
