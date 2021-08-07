@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.querydsl.core.util.ArrayUtils;
 import com.sej.escape.constants.AreaSection;
 import com.sej.escape.constants.dto.ListOrder;
+import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.store.StoreNameDto;
@@ -39,8 +40,8 @@ public class StoreService {
     private final StoreMapper mapper;
 
     public List<StoreNameDto> getStoresByName(String keyword){
-        Pageable pageable = PageRequest.of(1, 20);
-        List<Store> stores = storeRepository.findAllByIsDeletedFalseAndNameContaining(keyword);
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Store> stores = storeRepository.findAllByNameContainsAndIsDeletedIsFalse(keyword, pageable);
         return mapper.mapStoresToDtos(stores, StoreNameDto.class);
     }
 
@@ -81,13 +82,13 @@ public class StoreService {
         return mapper.mapStoreToDto(store, StoreNameDto.class);
     }
 
-    public PageResDto getStoresByZim(StorePageReqDto reqDto){
+    public PageResDto getStoresByZim(PageReqDto reqDto){
         Member member = authenticationUtil.getAuthUserEntity();
 
         Sort sort = Sort.by(Sort.Direction.DESC, "updateDate");
         Pageable pageable = reqDto.getPageable(sort);
 
-        Page<Object[]> storesPage = storeRepository.findallByZim(member, pageable);
+        Page<Object[]> storesPage = storeRepository.findAllByZim(member, pageable);
         PageResDto resDto = new PageResDto(storesPage,
                 (objects) -> {
                     Object[] storeZim = (Object[]) objects;
@@ -104,7 +105,7 @@ public class StoreService {
         return resDto;
     }
 
-    // TODO: 서비스 계층에서 쿼리 생성하는 게 맞나... ->  repositoryImpl로 이동
+    // TODO: 서비스 계층에서 쿼리 생성하는 게 맞나... ->  repositoryImpl 만들어서 이동...?
     public PageResDto getStores(StorePageReqDto storePageReqDto){
 
         String queryWhere = "";
@@ -117,17 +118,16 @@ public class StoreService {
 
         AreaSection[] areaSections = storePageReqDto.getAreaSection();
         if(!ArrayUtils.isEmpty(areaSections)){
-            queryWhere += " AND";
-
-            int len = areaSections.length;
-            for (int i=0; i<len; i++) {
-                AreaSection areaSection = areaSections[i];
-                AreaSection.AreaCode areaCode = areaSection.getAreaCodeByPostcode();
+            queryWhere += " AND (";
+            
+            for (AreaSection areaSection : areaSections) {
+                AreaSection.AreaCode areaCode = areaSection.getAreaCode();
                 double lower = areaCode.getLower();
                 double upper = areaCode.getUpper();
-                queryWhere += " store.area_code between "+lower+" AND "+upper+"";
-                if(i < len-1) queryWhere += " OR";
+                queryWhere += " store.area_code between "+lower+" AND "+upper+" OR";
             }
+            
+            queryWhere = queryWhere.substring(0, queryWhere.length() - 2) + ")";
         }
 
         ListOrder order = storePageReqDto.getOrder();
@@ -161,7 +161,7 @@ public class StoreService {
         String queryStr = getStoresQuery(querySelectIsZimChk, queryWhere, queryOrder);
 
         List<Object[]> results = em.createNativeQuery(queryStr, "storeResultMap")
-                .setFirstResult(storePageReqDto.getPage())
+                .setFirstResult(storePageReqDto.getLimitStart())
                 .setMaxResults(storePageReqDto.getSize())
                 .getResultList();
 
@@ -175,13 +175,13 @@ public class StoreService {
         BigInteger totalCnt = (BigInteger) em.createNativeQuery(countQueryStr)
                 .getSingleResult();
 
-        boolean hasNext = totalCnt.intValue() > storePageReqDto.getPage() * storePageReqDto.getSize();
+        boolean hasNext = totalCnt.intValue() > storePageReqDto.getTotal();
 
         PageResDto pageResDto = new PageResDto<Store, StoreDto>();
         pageResDto.setTargetList(storeDtos);
         pageResDto.setTotal(totalCnt.intValue());
         pageResDto.setSize(storePageReqDto.getSize());
-        pageResDto.setPage(storePageReqDto.getPage());
+        pageResDto.setPage(storePageReqDto.getNextPage());
         pageResDto.setHasNext(hasNext);
 
         return pageResDto;

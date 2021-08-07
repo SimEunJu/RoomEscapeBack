@@ -2,7 +2,7 @@ package com.sej.escape.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sej.escape.dto.member.MemberDto;
-import com.sej.escape.dto.member.MemberRes;
+import com.sej.escape.dto.member.MemberResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -31,7 +31,7 @@ public class OauthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         // role 1개만 가정
         List<String> roles = memberDto.getAuthorities().stream().map(auth -> auth.getAuthority().substring(5)).collect(Collectors.toList());
 
-        MemberRes payload = MemberRes.builder()
+        MemberResDto payload = MemberResDto.builder()
                 .id(memberDto.getId())
                 .nickname(memberDto.getNickname())
                 .email(memberDto.getEmail())

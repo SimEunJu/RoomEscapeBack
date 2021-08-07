@@ -22,7 +22,7 @@ public class Comment extends BaseWithDelete {
     @Column(name = "comment_id")
     protected Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id", nullable = false)
     protected Member member;
 

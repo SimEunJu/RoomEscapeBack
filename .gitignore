@@ -37,3 +37,5 @@ out/
 .vscode/
 /src/main/resources/application-credentials.properties
 /src/main/resources/application-security.properties
+/src/main/resources/application-dev.properties
+/src/main/resources/application-prod.properties

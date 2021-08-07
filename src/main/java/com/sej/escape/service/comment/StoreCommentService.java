@@ -1,24 +1,24 @@
 package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.*;
-import com.sej.escape.dto.page.PageReqDto;
+import com.sej.escape.dto.comment.store.StoreCommentDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
-import com.sej.escape.entity.comment.Comment;
 import com.sej.escape.entity.comment.StoreComment;
+import com.sej.escape.error.exception.AlreadyExistResourceException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.comment.StoreCommentRepository;
 import com.sej.escape.repository.comment.ThemeCommentRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
+import javax.persistence.NonUniqueResultException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,10 +30,35 @@ public class StoreCommentService {
     private final AuthenticationUtil authenticationUtil;
     private final CommentMapper commentMapper;
 
+    private void checkAlreadyExist(CommentModifyReqDto reqDto){
+
+        Member member = authenticationUtil.getAuthUserEntity();
+
+        Optional<StoreComment> storeCommentExist = null;
+        try{
+            storeCommentExist = storeCommentRepository.findByReferIdAndMemberAndIsDeletedFalse(reqDto.getAncestor().getId(), member);
+
+        }catch (NonUniqueResultException e){
+            throwAlreadyExistException(reqDto.getAncestor().getId());
+        }
+        storeCommentExist.ifPresent(
+                (StoreComment comment) -> throwAlreadyExistException(reqDto.getAncestor().getId())
+        );
+    }
+
+    private void throwAlreadyExistException(long storeId){
+        throw new AlreadyExistResourceException(
+                String.format("가게 아이디 [%d]에 대한 후기가 이미 존재합니다.", storeId));
+    }
+
     public CommentResDto addComment(CommentModifyReqDto reqDto){
+
+        checkAlreadyExist(reqDto);
+
         StoreComment storeComment = saveComment(reqDto);
         if(reqDto.getParComment() == null) {
             storeComment.setParId(storeComment.getId());
+
         }else{
             StoreComment parComment = storeCommentRepository.findById(reqDto.getParComment().getId())
                     .orElseThrow(
@@ -42,21 +67,35 @@ public class StoreCommentService {
                     );
             storeComment.setParId(parComment.getParId());
         }
-        storeCommentRepository.save(storeComment);
-        return commentMapper.mapEntityToDto(storeComment, CommentResDto.class);
+
+        storeComment = storeCommentRepository.save(storeComment);
+
+        CommentResDto resDto = commentMapper.mapEntityToDto(storeComment, CommentResDto.class);
+
+        resDto.setWriter(storeComment.getMember().getNickname());
+        resDto.setWriterId(storeComment.getMember().getId());
+
+        return resDto;
     }
 
     private StoreComment saveComment(CommentModifyReqDto commentModifyReqDto){
         StoreComment storeComment = commentMapper.mapReqDtoToEntity(commentModifyReqDto, StoreComment.class);
+
         return storeCommentRepository.save(storeComment);
     }
 
     public StoreCommentDto addCommentAndRetDetail(CommentModifyReqDto commentModifyReqDto){
+
+        checkAlreadyExist(commentModifyReqDto);
+
         StoreComment storeComment = saveComment(commentModifyReqDto);
 
         Member member = authenticationUtil.getAuthUserEntity();
+
         Object[] comment = (Object[]) storeCommentRepository.findByIdAndMember(member, storeComment.getId());
+
         StoreCommentDto commentDto = mapStoreCommentToDto(comment);
+
         return commentDto;
     }
 
@@ -68,13 +107,12 @@ public class StoreCommentService {
 
         Page<Object[]> commentPage = storeCommentRepository.findAllByMember(pageable, member);
         List<Object[]> storeComments = commentPage.getContent();
-        return CommentListResDto.builder()
-                .total(commentPage.getTotalElements())
-                .comments(mapStoreCommentsToDtos(storeComments))
-                .size(commentPage.getSize())
-                .hasNext(commentPage.hasNext())
-                .page(reqDto.getPage())
-                .build();
+
+        CommentListResDto resDto = new CommentListResDto();
+        resDto.setPageResult(commentPage);
+        resDto.setTargetList(mapStoreCommentsToDtos(storeComments));
+
+        return resDto;
     }
 
     private List<StoreCommentDto> mapStoreCommentsToDtos(List<Object[]> entitis){
@@ -89,11 +127,15 @@ public class StoreCommentService {
         dto.setName(store.getName());
         dto.setStoreId(store.getId());
 
-        Object[] themeCnt = (Object[]) themeCommentRepository.findThemeCntAndCommentCnt(store);
+        Member writer = storeComment.getMember();
+
+        Object[] themeCnt = (Object[]) themeCommentRepository.findThemeCntAndCommentCnt(store, writer);
+
         long themeTot = (long) themeCnt[0];
         long themeVisitedCnt = (long) themeCnt[1];
         dto.setThemeCnt((int) themeTot);
         dto.setVisitThemeCnt((int) themeVisitedCnt);
+
         return dto;
     }
 }

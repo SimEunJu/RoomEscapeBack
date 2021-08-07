@@ -24,6 +24,7 @@ public class BoardCommentService {
     public CommentResDto addComment(CommentModifyReqDto reqDto) {
         String type = reqDto.getAncestor().getSubTypes().get(0);
         BoardCommentRepository repository = getRepositoryByType(type);
+
         Comment comment = commentMapper.mapReqDtoToEntity(reqDto, getEntity(type));
         comment = (Comment) repository.save(comment);
 
@@ -37,9 +38,15 @@ public class BoardCommentService {
                     );
             comment.setParId(parComment.getParId());
         }
-        repository.save(comment);
 
-        return commentMapper.mapEntityToDto(comment, CommentResDto.class);
+        comment = (Comment) repository.save(comment);
+
+        CommentResDto resDto = commentMapper.mapEntityToDto(comment, CommentResDto.class);
+        resDto.setWriter(comment.getMember().getNickname());
+        resDto.setWriterId(comment.getMember().getId());
+        resDto.setHasRecomment(true);
+
+        return resDto;
     }
 
     private Class<? extends Comment> getEntity(String type){

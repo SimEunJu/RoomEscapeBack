@@ -10,17 +10,17 @@ import org.springframework.stereotype.Component;
 public class FileManageServiceProvider {
 
     private final LocalFileManageService local;
-    private final S3FileManageService s3;
+    private final S3FileManageService cloud;
 
     public FileManageService get(FileManage fileManage){
         switch (fileManage){
-            case S3: return s3;
+            case CLOUD: return cloud;
             case LOCAL: return local;
             default: throw new UnsupportedOperationException();
         }
     }
 
     public FileManageService getDefault(){
-        return s3;
+        return cloud;
     }
 }

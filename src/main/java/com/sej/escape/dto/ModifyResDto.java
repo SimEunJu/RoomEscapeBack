@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ModifyResDto {
+
     private long reqCnt;
     private long modifyCnt;
     private boolean isAllModified;

@@ -1,12 +1,14 @@
 package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.*;
+import com.sej.escape.dto.comment.theme.*;
 import com.sej.escape.dto.file.FileResDto;
 import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Theme;
 import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.entity.file.ThemeCommentFile;
+import com.sej.escape.error.exception.AlreadyExistResourceException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.error.exception.security.UnAuthorizedException;
 import com.sej.escape.repository.comment.ThemeCommentRepository;
@@ -18,9 +20,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -49,7 +53,7 @@ public class ThemeCommentService {
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id ";
+        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id AND c.is_hidden = 0 AND c.is_deleted = 0 ";
 
         String listQuery =  "SELECT c.*, m.nickname, m.member_id "+
                 ", (SELECT COUNT(*) FROM good WHERE gtype= :gtype AND refer_id = c.theme_comment_id AND is_good = 1) as good_cnt " +
@@ -70,9 +74,7 @@ public class ThemeCommentService {
                 .getSingleResult();
 
         int total = totalCount.intValue();
-        int page = commentReqDto.getPage();
-        int size = commentReqDto.getSize();
-        boolean hasNext = total > page * size;
+        boolean hasNext = total > commentReqDto.getTotal();
 
         List<ThemeCommentForListDto> commentDtos = results.stream().map(row -> {
             ThemeComment comment = (ThemeComment) row[0];
@@ -96,36 +98,61 @@ public class ThemeCommentService {
             return commentDto;
         }).collect(Collectors.toList());
 
-        return CommentListResDto.builder().comments(commentDtos)
-                .page(page)
-                .size(size)
-                .total(total)
-                .hasNext(hasNext)
-                .build();
+        CommentListResDto resDto = new CommentListResDto();
+        resDto.setTargetList(commentDtos);
+        resDto.setPage(commentReqDto.getNextPage());
+        resDto.setSize(commentReqDto.getSize());
+        resDto.setTotal(total);
+        resDto.setHasNext(hasNext);
+
+        return resDto;
+    }
+
+    private void checkAlreadyExist(ThemeCommentDto commentDto){
+        Theme theme = Theme.builder().id(commentDto.getThemeId()).build();
+        Member member = authenticationUtil.getAuthUserEntity();
+
+        Optional<ThemeComment> themeCommentExist = null;
+        try{
+            themeCommentExist = themeCommentRepository.findByThemeAndMemberAndIsDeletedFalse(theme, member);
+        }catch (NonUniqueResultException e){
+            throwAlreadyExistException(commentDto.getThemeId());
+        }
+
+        themeCommentExist.ifPresent((storeComment) -> throwAlreadyExistException(commentDto.getThemeId()));
+    }
+
+    private void throwAlreadyExistException(long themeId){
+        throw new AlreadyExistResourceException(
+                String.format("테마 아이디 [%d]에 대한 후기가 이미 존재합니다.", themeId));
     }
 
     public ThemeCommentResDto addComment(ThemeCommentDto commentDto){
+        checkAlreadyExist(commentDto);
+
         ThemeComment comment = commentMapper.mapDtoToEntity(commentDto, ThemeComment.class);
         Member member = authenticationUtil.getAuthUserEntity();
         Theme theme = Theme.builder().id(commentDto.getThemeId()).build();
+
         comment.setMember(member);
         comment.setTheme(theme);
         comment.setActive(commentDto.isActiveSet());
         comment.setHorror(commentDto.isHorrorSet());
         comment = themeCommentRepository.save(comment);
 
-        if(commentDto.getUploadFiles().length > 0){
+        if(commentDto.getUploadFiles() != null && commentDto.getUploadFiles().length > 0){
             List<Long> ids = Arrays.stream(commentDto.getUploadFiles()).map(file -> file.getId()).collect(Collectors.toList());
             fileService.updateReferIds(ids, comment.getId());
         }
 
         ThemeCommentResDto resDto = commentMapper.mapEntityToDto(comment, ThemeCommentResDto.class);
+
         return resDto;
     }
 
     private boolean hasAuthority(long id) {
-        if(authenticationUtil.isSameUser(id)) {
-            throw new UnAuthorizedException(String.format("user has no authority on resource id %l", id));
+        if(!authenticationUtil.isSameUser(id)) {
+            throw new AccessDeniedException(String.format("user has no authority on resource id %d", id));
         }
         return true;
     }
@@ -150,6 +177,7 @@ public class ThemeCommentService {
         ThemeCommentDetailDto detailDto = commentMapper.mapEntityToDto(themeComment, ThemeCommentDetailDto.class);
         detailDto.setTheme(commentMapper.mapDtoToEntity(themeComment.getTheme(), Ancestor.class));
         detailDto.setStore(commentMapper.mapDtoToEntity(themeComment.getTheme().getStore(), Ancestor.class));
+        detailDto.setWriter(themeComment.getMember().getNickname());
 
         if(themeCommentFile != null) {
             detailDto.setUploadFiles(
@@ -186,13 +214,12 @@ public class ThemeCommentService {
 
         Page<ThemeComment> commentPage = themeCommentRepository.findAllByMember(pageable, member);
         List<ThemeComment> themeComments = commentPage.getContent();
-        return CommentListResDto.builder()
-                .total(commentPage.getTotalElements())
-                .comments(mapStoreCommentsToDtos(themeComments))
-                .size(commentPage.getSize())
-                .hasNext(commentPage.hasNext())
-                .page(reqDto.getPage())
-                .build();
+
+        CommentListResDto resDto = new CommentListResDto();
+        resDto.setPageResult(commentPage);
+        resDto.setTargetList(mapStoreCommentsToDtos(themeComments));
+
+        return resDto;
     }
 
     private List<ThemeCommentForListByMemberDto> mapStoreCommentsToDtos(List<ThemeComment> entitis){

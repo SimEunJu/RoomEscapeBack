@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.apache.tomcat.jni.Local;
 
@@ -17,29 +18,32 @@ import java.time.LocalDateTime;
 @Builder
 public class CommentDto {
 
-    protected long id;
-    protected String content;
+    @ApiModelProperty("아이디") protected long id;
+    @ApiModelProperty("내용") protected String content;
 
-    protected String writer;
-    protected long writerId;
+    @ApiModelProperty("작성자명") protected String writer;
+    @ApiModelProperty("작성자 아이디") protected long writerId;
 
-    protected long parId;
-    protected int depth;
-    protected int seq;
-    protected int good;
+    @ApiModelProperty("부모 댓글 아이디") protected long parId;
+
+    @ApiModelProperty("깊이") protected int depth;
+    @ApiModelProperty("순서") protected int seq;
+
+    @ApiModelProperty("좋아요 수") protected int good;
     @JsonProperty("isGoodChecked")
-    protected boolean isGoodChecked;
-    @JsonProperty("isDeleted")
-    protected boolean isDeleted;
-    protected double star;
-    @JsonProperty("isHidden")
-    protected boolean isHidden;
+    @ApiModelProperty("로그인 사용자의 좋아요 여부") protected boolean isGoodChecked;
 
-    // TODO: LocalDateTime json mapping 일괄 처리 되도록 설정 알아볼 것것
-    //@JsonDeserialize(using = LocalDateDeserializer.class)
-    //@JsonSerialize(using = LocalDateSerializer.class)
-    protected LocalDateTime regDate;
-    protected LocalDateTime updateDate;
+    @JsonProperty("isDeleted")
+    @ApiModelProperty("삭제 여부") protected boolean isDeleted;
+
+    @ApiModelProperty("별점") protected double star;
+
+    @JsonProperty("isHidden")
+    @ApiModelProperty("숨김 여부") protected boolean isHidden;
+
+    @ApiModelProperty("등록날짜") protected LocalDateTime regDate;
+    @ApiModelProperty("수정날짜") protected LocalDateTime updateDate;
+
     protected LocalDateTime deleteDate;
 
 }

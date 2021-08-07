@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface ThemeZimRepository
         extends JpaRepository<ThemeZim, Long>, QuerydslPredicateExecutor<ThemeZim> {
 
-    public Optional<ThemeZim> findByReferIdAndMember(long referId, Member member);
+    Optional<ThemeZim> findByReferIdAndMember(long referId, Member member);
 }

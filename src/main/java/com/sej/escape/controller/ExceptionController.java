@@ -2,6 +2,7 @@ package com.sej.escape.controller;
 
 import com.sej.escape.error.ErrorCode;
 import com.sej.escape.error.ErrorRes;
+import com.sej.escape.error.exception.AlreadyExistResourceException;
 import com.sej.escape.error.exception.BusinessException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.error.exception.validation.UnDefinedConstantException;
@@ -17,9 +18,11 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestControllerAdvice
 @Slf4j
+@ApiIgnore
 public class ExceptionController {
 
     // @Valid 실패 시
@@ -83,9 +86,17 @@ public class ExceptionController {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorRes> handleAccessDeniedException(AccessDeniedException e){
         log.error("AccessDeniedException", e);
-        ErrorRes response = new ErrorRes(ErrorCode.AUTHENTICATION_REQUIRED);
+        ErrorRes response = new ErrorRes(ErrorCode.ACCESS_DENIED);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(AlreadyExistResourceException.class)
+    public ResponseEntity<ErrorRes> handleNoSuchResourceException(AlreadyExistResourceException e){
+        log.error("NoSuchResourceException", e);
+        ErrorRes response = new ErrorRes(ErrorCode.RESOURCE_ALREADY_EXIST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(NoSuchResourceException.class)
     public ResponseEntity<ErrorRes> handleNoSuchResourceException(NoSuchResourceException e){

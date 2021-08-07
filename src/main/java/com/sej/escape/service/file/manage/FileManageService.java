@@ -1,5 +1,6 @@
 package com.sej.escape.service.file.manage;
 
+import com.sej.escape.dto.file.FileDto;
 import com.sej.escape.dto.file.FileReqDto;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 
@@ -12,6 +13,6 @@ import java.util.UUID;
 
 public interface FileManageService {
 
-    FileReqDto uploadFile(FileReqDto fileReqDto) throws FileUploadException;
+    FileDto uploadFile(FileDto fileDto) throws FileUploadException;
 
 }

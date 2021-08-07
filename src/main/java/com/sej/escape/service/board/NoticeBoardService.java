@@ -39,7 +39,13 @@ public class NoticeBoardService implements IBoardService{
         }
         Page<NoticeBoard> boardPage = noticeBoardRepository.findAll(builder, pageable);
         return new PageResDto<>(boardPage,
-                (NoticeBoard board) -> mapper.mapEntityToDto(board, BoardDto.class) );
+                (NoticeBoard board) -> {
+                    BoardDto boardDto = mapper.mapEntityToDto(board, BoardDto.class);
+                    Member writer = board.getMember();
+                    boardDto.setWriter(writer.getNickname());
+                    boardDto.setWriterId(writer.getId());
+                    return boardDto;
+        });
     }
 
 

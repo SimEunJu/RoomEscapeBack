@@ -5,6 +5,7 @@ import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -27,7 +28,8 @@ public interface ThemeRepository
     List<Theme> findAllByIsDeletedFalseAndStoreEqualsAndIdIsNot(Store store, long selfId);
 
     @Query("select t, tz, s from Theme t inner join ThemeZim tz on tz.referId = t.id and tz.isZim = true and tz.member = :member inner join Store s on t.store = s where t.isDeleted = false")
-    Page<Object[]> findallByZim(@Param("member") Member memer, Pageable pageable);
+    Page<Object[]> findAllByZim(@Param("member") Member member, Pageable pageable);
 
-    List<Theme> findAllByIsDeletedFalseAndNameContaining(String name);
+    @EntityGraph(attributePaths = {"store"}, type = EntityGraph.EntityGraphType.LOAD)
+    List<Theme> findAllByAndNameContainsAndIsDeletedFalse(String name, Pageable pageable);
 }

@@ -28,7 +28,7 @@ public class ThemeComment extends BaseWithDelete {
     @JoinColumn(name="theme_id", nullable = false)
     private Theme theme;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 

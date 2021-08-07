@@ -1,4 +1,4 @@
-package com.sej.escape.dto.comment;
+package com.sej.escape.dto.comment.theme;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

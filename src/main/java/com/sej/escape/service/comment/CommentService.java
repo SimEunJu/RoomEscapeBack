@@ -2,18 +2,16 @@ package com.sej.escape.service.comment;
 
 import com.sej.escape.dto.comment.*;
 import com.sej.escape.entity.comment.Comment;
-import com.sej.escape.entity.comment.StoreComment;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.error.exception.security.UnAuthorizedException;
 import com.sej.escape.repository.comment.CommentRepository;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -57,7 +55,7 @@ public class CommentService {
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :ctype "
+        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :ctype AND c.is_hidden = 0 "
                 +quweryWhereExcludeDeleteWhenHasRecomment;
 
         String listQuery =  "SELECT c.*, m.nickname, m.member_id "+
@@ -81,9 +79,7 @@ public class CommentService {
                 .getSingleResult();
 
         int total = totalCount.intValue();
-        int page = commentReqDto.getPage();
-        int size = commentReqDto.getSize();
-        boolean hasNext = total > page * size;
+        boolean hasNext = total > commentReqDto.getTotal();
 
         List<CommentDto> commentDtos = results.stream().map(row -> {
             Comment comment = (Comment) row[0];
@@ -99,6 +95,7 @@ public class CommentService {
 
             boolean isGoodChk = row[4] != null && ((BigInteger) row[4]).intValue() > 0;
             commentDto.setGoodChecked(isGoodChk);
+
             if(authenticationUtil.isAuthenticated()){
                 goodCnt = isGoodChk ? goodCnt - 1 : goodCnt;
             }
@@ -107,17 +104,19 @@ public class CommentService {
             return commentDto;
         }).collect(Collectors.toList());
 
-        return CommentListResDto.builder().comments(commentDtos)
-                .page(page)
-                .size(size)
-                .total(total)
-                .hasNext(hasNext)
-                .build();
+        CommentListResDto resDto = new CommentListResDto();
+        resDto.setTargetList(commentDtos);
+        resDto.setPage(commentReqDto.getNextPage());
+        resDto.setSize(commentReqDto.getSize());
+        resDto.setTotal(total);
+        resDto.setHasNext(hasNext);
+
+        return resDto;
     }
 
     private boolean hasAuthority(long id) {
-        if(authenticationUtil.isSameUser(id)) {
-            throw new UnAuthorizedException(String.format("user has no authority on resource id %l", id));
+        if(!authenticationUtil.isSameUser(id)) {
+            throw new AccessDeniedException(String.format("user has no authority on resource id %d", id));
         }
         return true;
     }
@@ -133,13 +132,16 @@ public class CommentService {
     }
 
     public CommentResDto updateComment(long id, CommentModifyReqDto modifyReqDto){
+
         Comment comment = getCommentByIdIfExist(id);
+
         hasAuthority(comment.getMember().getId());
 
         comment.setContent(modifyReqDto.getContent());
         comment.setStar(modifyReqDto.getStarRate());
-        Comment commentUpdated = commentRepository.save(comment);
-        return commentMapper.mapEntityToDto(commentUpdated, CommentResDto.class);
+        comment = commentRepository.save(comment);
+
+        return commentMapper.mapEntityToDto(comment, CommentResDto.class);
     }
 
     public CommentResDto toggleHideComment(long id, boolean isHidden){

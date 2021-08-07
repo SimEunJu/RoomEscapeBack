@@ -65,6 +65,7 @@ public class GoodService {
         Good good = null;
         if(goodOpt.isPresent()){
             good = goodOpt.get();
+
         }else{
             good = goodClass.getDeclaredConstructor().newInstance();
             good.setReferId(reqDto.getReferId());

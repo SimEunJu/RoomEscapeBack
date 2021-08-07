@@ -32,11 +32,9 @@ public enum CommentType {
     private String goodEntityDiscVal;
 
     // 대댓글 여부
-    private boolean hasRecomment;
+    private final boolean hasRecomment;
     public boolean hasRecomment() {
         return hasRecomment;
     }
-    public void setRecomment(boolean hasRecomment) {
-        this.hasRecomment = hasRecomment;
-    }
+
 }

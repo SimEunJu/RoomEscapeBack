@@ -1,5 +1,6 @@
 package com.sej.escape.dto.page;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,17 +18,18 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class PageResDto<En, Dto> {
 
-    private List<Dto> targetList;
+    @ApiModelProperty("리스트") private List<Dto> targetList;
     private String type;
 
-    private int total;
-    private int page;
-    private int size;
-    private boolean hasNext;
+    @ApiModelProperty("페이지") private int page;
+    @ApiModelProperty("페이지 크기") private int size;
+    @ApiModelProperty("총 페이지 수") private int total;
+    @ApiModelProperty("다음 페이지 존재 여부") private boolean hasNext;
 
-    private void setPageResult(Page<En> result) {
+    public void setPageResult(Page<En> result) {
         this.total = result.getTotalPages();
         this.page = result.getNumber() + 1;
+        //this.page = result.getNumber();
         this.size = result.getSize();
         this.hasNext = result.hasNext();
     }

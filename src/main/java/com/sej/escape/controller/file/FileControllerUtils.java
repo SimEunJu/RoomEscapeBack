@@ -1,6 +1,8 @@
 package com.sej.escape.controller.file;
 
+import com.sej.escape.dto.file.FileDto;
 import com.sej.escape.dto.file.FileReqDto;
+import com.sej.escape.dto.file.FileUrlDto;
 import lombok.experimental.UtilityClass;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,34 +10,26 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.UUID;
 
 @UtilityClass
 public class FileControllerUtils {
 
-    // TODO: 중복 제거
-    public FileReqDto getFileReqDto(FileReqDto reqDto){
-        MultipartFile uploadFile = reqDto.getUploadFile();
-        String originalName = uploadFile.getOriginalFilename();
-        String fileName = originalName.substring(originalName.lastIndexOf("\\")+1);
-
-        int contentTypeIdx = originalName.lastIndexOf(".");
-        String contentType = originalName.substring(contentTypeIdx+1, fileName.length());
-
-        String subPath = getSubPathByCurDate();
-        makeDirs(subPath);
-
-        String name = getRandomName();
-
-        reqDto.setContentType(contentType);
-        reqDto.setOriginalName(fileName);
-        reqDto.setName(name+"."+contentType);
-        reqDto.setSubPath(subPath);
-
-        return reqDto;
+    public FileUrlDto parseUrl(String url){
+        //"https://escaperoomsej.s3.ap-northeast-2.amazonaws.com/2021/08/06/4-14-10-1525_23cb09eb-ba6e-4d61-b531-daf8b5fa6253.jpg"
+        String[] parsed = url.split("/");
+        //[3,6)
+        String subPath = String.join("/", Arrays.copyOfRange(parsed, 3, 6));
+        //6
+        String name = parsed[6];
+        return FileUrlDto.builder().name(name).subPath(subPath).build();
     }
 
-    public FileReqDto getFileReqDto(MultipartFile uploadFile){
+    public FileDto getFileReqDto(FileReqDto reqDto){
+
+        MultipartFile uploadFile = reqDto.getUploadFile();
+
         String originalName = uploadFile.getOriginalFilename();
         String fileName = originalName.substring(originalName.lastIndexOf("\\")+1);
 
@@ -47,14 +41,16 @@ public class FileControllerUtils {
 
         String name = getRandomName();
 
-        FileReqDto fileReqDto = FileReqDto.builder()
-                .originalName(fileName)
-                .name(name+"."+contentType)
-                .subPath(subPath)
-                .uploadFile(uploadFile)
-                .build();
+        FileDto fileDto = new FileDto();
+        fileDto.setUploadFile(uploadFile);
+        fileDto.setType(reqDto.getType());
 
-        return fileReqDto;
+        fileDto.setContentType(contentType);
+        fileDto.setOriginalName(fileName);
+        fileDto.setName(name+"."+contentType);
+        fileDto.setSubPath(subPath);
+
+        return fileDto;
     }
 
     private String getSubPathByCurDate(){

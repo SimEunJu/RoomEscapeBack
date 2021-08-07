@@ -14,7 +14,11 @@ public interface BoardRepository
 
     @Modifying
     @Query("update Board b set b.isDeleted = true, b.deleteDate = current_timestamp where b.id in :ids")
-    int updateDeleteTAllByIdIn(List<Long> ids);
+    int updateDeleteAllByIdIn(List<Long> ids);
+
+    @Modifying
+    @Query("update Board b set b.view = b.view+1 where b = :board")
+    int updateViewCnt(Board board);
 
     Optional<Board> findByIdAndIsDeletedFalse(long id);
 }

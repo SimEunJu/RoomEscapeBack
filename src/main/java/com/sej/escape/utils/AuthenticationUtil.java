@@ -37,4 +37,9 @@ public class AuthenticationUtil {
                 .email(memberDto.getEmail())
                 .build();
     }
+
+    public void updateUser(Member member){
+        MemberDto memberDto = this.getAuthUser();
+        memberDto.setNickname(member.getNickname());
+    }
 }
