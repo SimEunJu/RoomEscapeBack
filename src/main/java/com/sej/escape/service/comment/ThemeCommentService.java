@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
+import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -127,6 +128,11 @@ public class ThemeCommentService {
                 String.format("테마 아이디 [%d]에 대한 후기가 이미 존재합니다.", themeId));
     }
 
+    private void uploadFiles(FileResDto[] files, long referId){
+        List<Long> ids = Arrays.stream(files).map(file -> file.getId()).collect(Collectors.toList());
+        fileService.updateReferIds(ids, referId);
+    }
+
     public ThemeCommentResDto addComment(ThemeCommentDto commentDto){
         checkAlreadyExist(commentDto);
 
@@ -136,13 +142,10 @@ public class ThemeCommentService {
 
         comment.setMember(member);
         comment.setTheme(theme);
-        comment.setActive(commentDto.isActiveSet());
-        comment.setHorror(commentDto.isHorrorSet());
         comment = themeCommentRepository.save(comment);
 
         if(commentDto.getUploadFiles() != null && commentDto.getUploadFiles().length > 0){
-            List<Long> ids = Arrays.stream(commentDto.getUploadFiles()).map(file -> file.getId()).collect(Collectors.toList());
-            fileService.updateReferIds(ids, comment.getId());
+            uploadFiles(commentDto.getUploadFiles(), comment.getId());
         }
 
         ThemeCommentResDto resDto = commentMapper.mapEntityToDto(comment, ThemeCommentResDto.class);
@@ -157,14 +160,19 @@ public class ThemeCommentService {
         return true;
     }
 
+    @Transactional
     public ThemeCommentResDto updateComment(long id, ThemeCommentDto modifyReqDto){
         ThemeComment comment = getCommentByIdIfExist(id);
         hasAuthority(comment.getMember().getId());
 
         modelMapper.map(modifyReqDto, comment);
-        comment.setHorror(modifyReqDto.isHorrorSet());
-        comment.setActive(modifyReqDto.isActiveSet());
+
         ThemeComment commentUpdated = themeCommentRepository.save(comment);
+
+        if(modifyReqDto.getUploadFiles() != null && modifyReqDto.getUploadFiles().length > 0){
+            uploadFiles(modifyReqDto.getUploadFiles(), comment.getId());
+        }
+
         return commentMapper.mapEntityToDto(commentUpdated, ThemeCommentResDto.class);
     }
 

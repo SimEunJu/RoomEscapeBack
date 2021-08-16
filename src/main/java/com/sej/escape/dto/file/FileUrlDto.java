@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class FileUrlDto {
+    private String rootPath;
     private String subPath;
     private String name;
 }

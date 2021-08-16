@@ -38,7 +38,7 @@ public class File extends BaseWithDelete {
     protected Integer seq;
 
     public String getFileUrl(){
-        return rootPath + "/" + subPath;
+        return rootPath + "/" + subPath + "/" + name;
     }
 
 }

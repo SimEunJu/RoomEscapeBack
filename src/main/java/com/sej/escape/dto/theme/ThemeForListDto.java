@@ -1,11 +1,13 @@
 package com.sej.escape.dto.theme;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sej.escape.dto.store.StoreAreaDto;
 import com.sej.escape.dto.store.StoreDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.annotation.security.DenyAll;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,5 +27,7 @@ public class ThemeForListDto {
     @ApiModelProperty("찜 갯수") protected int zim;
     @ApiModelProperty("소개글") protected String introduce;
 
-    @ApiModelProperty("가게") protected StoreDto store;
+    @ApiModelProperty("지역(계층화)") private List<String> area;
+
+    @ApiModelProperty("가게") protected StoreAreaDto store;
 }

@@ -7,7 +7,6 @@ import com.sej.escape.dto.page.PageResDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.board.Board;
 import com.sej.escape.error.exception.NoSuchResourceException;
-import com.sej.escape.error.exception.security.UnAuthorizedException;
 import com.sej.escape.repository.board.BoardRepository;
 import com.sej.escape.service.file.FileService;
 import com.sej.escape.utils.AuthenticationUtil;
@@ -16,7 +15,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

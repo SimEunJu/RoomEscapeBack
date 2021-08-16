@@ -14,10 +14,12 @@ import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
+import com.sej.escape.entity.file.ThemeFile;
 import com.sej.escape.entity.zim.ThemeZim;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.ThemeRepository;
 import com.sej.escape.utils.AuthenticationUtil;
+import com.sej.escape.utils.geolocation.AreaSectionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +34,7 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,6 +43,7 @@ public class ThemeService {
 
     private final ThemeRepository themeRepository;
     private final AuthenticationUtil authenticationUtil;
+    private final AreaSectionUtil areaSectionUtil;
     private final EntityManager em;
     private final ThemeMapper mapper;
 
@@ -76,9 +80,18 @@ public class ThemeService {
         }
 
         ThemeDto themeDto = mapper.mapThemeRowToDto(result, ThemeDto.class);
+
         long storeId = themeDto.getStore().getId();
-        List<Theme> themes = getThemesUnderSameStoreNotContainSelf(storeId, id);
-        List<ThemeForListDto> relatedThemes = mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
+        List<Object[]> themeAndFiles = getThemesUnderSameStoreNotContainSelf(storeId, id);
+        List<ThemeForListDto> relatedThemes = themeAndFiles.stream().map(themeAndFile -> {
+            Theme theme = (Theme) themeAndFile[0];
+            ThemeFile file = (ThemeFile) themeAndFile[1];
+
+            ThemeForListDto themeForListDto = mapper.mapEntityToDto(theme, ThemeForListDto.class);
+            themeForListDto.setImgUrl(file.getFileUrl());
+
+            return themeForListDto;
+        }).collect(Collectors.toList());
 
         themeDto.setRelated(relatedThemes);
         return themeDto;
@@ -100,9 +113,11 @@ public class ThemeService {
         return themeRepository.findAllByIsDeletedFalseAndStoreEquals(store);
     }
 
-    private List<Theme> getThemesUnderSameStoreNotContainSelf(long storeId, long selfId){
+    private List<Object[]> getThemesUnderSameStoreNotContainSelf(long storeId, long selfId){
         Store store = Store.builder().id(storeId).build();
-        return themeRepository.findAllByIsDeletedFalseAndStoreEqualsAndIdIsNot(store, selfId);
+        List<Object[]> themeAndFiles = themeRepository.findAllByIsDeletedFalseAndStoreEqualsAndIdIsNot(store, selfId);
+        // TODO: 연관관계 매핑에 대해 좀 더 생각해보고 엔티티 설정할 것 -> refer_id
+        return themeAndFiles;
     }
 
     private NoSuchResourceException throwNoSuchResourceException(long id){
@@ -232,7 +247,9 @@ public class ThemeService {
     }
 
     private String getThemeQuery(String querySelectIsZimChk, String queryWhere){
-        String queryStr = "SELECT theme.*, store.*, file.root_path, file.sub_path,  " +
+        String queryStr = "SELECT theme.*, " +
+                "store.name as store_name, store.area_code, store.addr, store.detail_addr, " +
+                "file.root_path, file.sub_path, file.name as file_name, " +
                 "(SELECT AVG(star) FROM theme_comment WHERE theme_id = theme.theme_id and theme_comment.is_deleted = 0) as star_avg, " +
                 "(SELECT COUNT(*) FROM zim WHERE ztype='T' AND refer_id = theme.theme_id AND is_zim = 1) as zim_cnt " +
                 querySelectIsZimChk +

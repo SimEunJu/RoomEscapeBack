@@ -200,7 +200,7 @@ public class StoreService {
     }
 
     private String getStoreQuery(String querySelectIsZimChk, String queryWhere){
-        String queryStr = "SELECT store.*, file.root_path, file.sub_path,  " +
+        String queryStr = "SELECT store.*, file.root_path, file.sub_path, file.name as file_name, " +
                 "(SELECT AVG(star) FROM comment WHERE ctype='S' AND refer_id = store.store_id and comment.is_deleted = 0) as star_avg, " +
                 "(SELECT COUNT(*) FROM zim WHERE ztype='S' AND refer_id = store.store_id AND is_zim = 1) as zim_cnt " +
                 querySelectIsZimChk +

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.entity.constants.Genre;
 import com.sej.escape.entity.constants.QuizType;
+import com.sej.escape.utils.RangeClosed;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -18,7 +19,7 @@ public class ThemeDto extends ThemeForListDto{
 
     @ApiModelProperty("테마 페이지 url") private String link;
     @ApiModelProperty("소요 시간") private int minutes;
-    @ApiModelProperty("인원 수") private int personnel;
+    @ApiModelProperty("인원 수") private RangeClosed personnel;
     @ApiModelProperty("난이도") private int difficulty;
     @ApiModelProperty("장르") private List<Genre> genre;
     @ApiModelProperty("문제 유형") private List<QuizType> quizType;

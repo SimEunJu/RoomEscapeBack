@@ -1,5 +1,8 @@
 package com.sej.escape.service.theme;
 
+import com.sej.escape.dto.file.FileUrlDto;
+import com.sej.escape.dto.store.StoreAreaDto;
+import com.sej.escape.entity.file.File;
 import com.sej.escape.utils.geolocation.AreaSectionUtil;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.theme.ThemeDto;
@@ -8,7 +11,9 @@ import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
 import com.sej.escape.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -30,13 +35,21 @@ public class ThemeMapper {
     @PostConstruct
     public void postConstruct(){
 
-        this.modelMapper.createTypeMap(Theme.class, ThemeDto.class)
-                .addMappings(mapper -> {
-                    mapper.map(Theme::getGenreByList, ThemeDto::setGenre);
-                    mapper.map(Theme::getQuizTypeByList, ThemeDto::setQuizType);
-                    mapper.map(src -> areaSectionUtil.getTitleFromAreaCode(src.getStore().getAreaCode()),
-                            (dest, v) -> dest.getStore().setArea( (List<String>) v));
-                });
+        this.modelMapper.addMappings(new PropertyMap<Theme, ThemeDto>() {
+            @Override
+            protected void configure() {
+                skip(destination.getStore());
+                map().setGenre(source.getGenreByList());
+                map().setQuizType(source.getQuizTypeByList());
+            }
+        });
+        this.modelMapper.addMappings(new PropertyMap<Theme, ThemeForListDto>() {
+            @Override
+            protected void configure() {
+                skip(destination.getStore());
+            }
+        });
+
     }
 
     public <D> D mapEntityToDto(Theme theme, Class<D> dest){
@@ -62,21 +75,24 @@ public class ThemeMapper {
 
         T themeDto = modelMapper.map(theme, dtoCls);
 
-        Store store = (Store) row[1];
-        StoreDto storeDto = modelMapper.map(store, StoreDto.class);
-        themeDto.setStore(storeDto);
+        StoreAreaDto storeAreaDto = (StoreAreaDto) row[4];
+        themeDto.setStore(storeAreaDto);
 
-        double starAvg = row[4] != null ? ((BigDecimal) row[4]).doubleValue() : 0.0;
+        List<String> areaHierarchy = areaSectionUtil.getTitleFromAreaCode(storeAreaDto.getAreaCode());
+        themeDto.setArea(areaHierarchy);
+
+        double starAvg = row[1] != null ? ((BigInteger) row[1]).doubleValue() : 0.0;
         themeDto.setStar(starAvg);
 
-        String fileRootPath = (String) row[2];
-        String fileSubPath = (String) row[3];
-        themeDto.setImgUrl(fileRootPath+"/"+fileSubPath);
+        FileUrlDto file = (FileUrlDto) row[5];
+        if(file.getRootPath() != null){
+            themeDto.setImgUrl(file.getRootPath()+"/"+file.getSubPath()+"/"+file.getName());
+        }
 
-        boolean isMemberCheckZim = row[6] != null && ((BigInteger)row[6]).intValue() > 0;
+        boolean isMemberCheckZim = row[3] != null && ((BigInteger)row[3]).intValue() > 0;
         themeDto.setZimChecked(isMemberCheckZim);
 
-        int zimCnt = row[5] != null ? ((BigInteger) row[5]).intValue() : 0;
+        int zimCnt = row[2] != null ? ((BigInteger) row[2]).intValue() : 0;
         if(authenticationUtil.isAuthenticated()){
             zimCnt = isMemberCheckZim ? zimCnt - 1 : zimCnt;
         }

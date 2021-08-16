@@ -30,6 +30,7 @@ public class AreaSectionUtil {
     }
 
     private List<String> getTitleFromAreaCode(List<AreaSectionNode> tree, double areaCode, List<String> areas){
+        if (tree == null) return areas;
 
         for (AreaSectionNode item : tree) {
             AreaSection areaSection = AreaSection.valueOf(item.getName());

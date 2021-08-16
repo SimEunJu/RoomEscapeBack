@@ -56,17 +56,4 @@ public class ThemeCommentDto {
         this.visitDate = LocalDateTime.of(visitDate, LocalTime.MIDNIGHT);
     }
 
-    // req -> entity 관계에서만 사용
-    @JsonIgnore
-    public boolean isHorrorSet(){
-        if(etc == null) return false;
-        return etc.contains("horror");
-    }
-
-    // req -> entity 관계에서만 사용
-    @JsonIgnore
-    public boolean isActiveSet(){
-        if(etc == null) return false;
-        return etc.contains("active");
-    }
 }

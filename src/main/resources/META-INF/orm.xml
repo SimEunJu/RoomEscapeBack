@@ -56,9 +56,19 @@
 
     <sql-result-set-mapping name="themeResultMap">
         <entity-result entity-class="com.sej.escape.entity.Theme" />
-        <entity-result entity-class="com.sej.escape.entity.Store" />
-        <column-result name="root_path"/>
-        <column-result name="sub_path"/>
+        <constructor-result target-class="com.sej.escape.dto.store.StoreAreaDto">
+            <column name="store_id" class="java.lang.Long"/>
+            <column name="store_name" class="java.lang.String"/>
+            <column name="area_code" class="java.lang.Double"/>
+            <column name="addr" class="java.lang.String"/>
+            <column name="detail_addr" class="java.lang.String"/>
+        </constructor-result>
+        <constructor-result target-class="com.sej.escape.dto.file.FileUrlDto">
+            <column name="root_path" />
+            <column name="sub_path" />
+            <column name="file_name" />
+        </constructor-result>
+
         <column-result name="star_avg"/>
         <column-result name="zim_cnt"/>
         <column-result name="is_zim_chk"/>
@@ -66,8 +76,12 @@
 
     <sql-result-set-mapping name="storeResultMap">
         <entity-result entity-class="com.sej.escape.entity.Store" />
-        <column-result name="root_path"/>
-        <column-result name="sub_path"/>
+        <constructor-result target-class="com.sej.escape.dto.file.FileUrlDto">
+            <column name="root_path"/>
+            <column name="sub_path" />
+            <column name="file_name" />
+        </constructor-result>
+
         <column-result name="star_avg"/>
         <column-result name="zim_cnt"/>
         <column-result name="is_zim_chk"/>

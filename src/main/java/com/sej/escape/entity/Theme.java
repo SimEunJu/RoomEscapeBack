@@ -4,7 +4,10 @@ import com.sej.escape.entity.base.BaseWithDelete;
 import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.entity.constants.Genre;
 import com.sej.escape.entity.constants.QuizType;
+import com.sej.escape.entity.file.ThemeFile;
+import com.sej.escape.utils.RangeClosed;
 import lombok.*;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -33,8 +36,8 @@ public class Theme extends BaseWithDelete {
     private Store store;
 
     @Builder.Default
-    @OneToMany(mappedBy = "theme")
-    private List<ThemeComment> comments = new ArrayList<>();
+    @Transient
+    private List<ThemeFile> files = new ArrayList<>();
 
     @Column(length = 2000)
     private String name;
@@ -45,8 +48,21 @@ public class Theme extends BaseWithDelete {
     @Column(columnDefinition = "smallint unsigned")
     private Integer minutes;
 
-    @Column(columnDefinition = "tinyint unsigned")
-    private Integer personnel;
+    @Transient
+    private RangeClosed<Integer> personnel;
+
+    @Access(value=AccessType.PROPERTY)
+    @Column(length = 100)
+    public String getPersonnel() {
+        if(this.personnel == null) return null;
+        return mapListToStr(personnel.getByList());
+    };
+
+    @Access(value=AccessType.PROPERTY)
+    public void setPersonnel(String personnel){
+        if(!StringUtils.hasText(personnel)) return;
+        this.personnel = new RangeClosed<Integer>(mapStrToList(personnel, Integer::valueOf));
+    }
 
     @Column(columnDefinition = "tinyint unsigned")
     @Min(1)
@@ -61,11 +77,11 @@ public class Theme extends BaseWithDelete {
 
     @Access(value=AccessType.PROPERTY)
     @Column(columnDefinition = "text")
-    public String getGenre() { return mapEnumsToStr(this.genre); };
+    public String getGenre() { return mapListToStr(this.genre); };
 
     @Access(value=AccessType.PROPERTY)
     public void setGenre(String genre){
-        this.genre = mapStrToEnums(genre, Genre::valueOf);
+        this.genre = mapStrToList(genre, Genre::valueOf);
     }
 
     public List<Genre> getGenreByList() {
@@ -77,24 +93,27 @@ public class Theme extends BaseWithDelete {
 
     @Column(columnDefinition = "text")
     @Access(value=AccessType.PROPERTY)
-    public String getQuizType() { return mapEnumsToStr(this.quizType); };
+    public String getQuizType() { return mapListToStr(this.quizType); };
 
     @Access(value=AccessType.PROPERTY)
     public void setQuizType(String quizType){
-        this.quizType = mapStrToEnums(quizType, QuizType::valueOf);
+        this.quizType = mapStrToList(quizType, QuizType::valueOf);
     }
 
     public List<QuizType> getQuizTypeByList() {
         return this.quizType;
     }
 
-    private <T extends Enum> String mapEnumsToStr(List<T> enums){
-        return enums.stream()
+    private <T> String mapListToStr(List<T> values){
+        if(values == null) return null;
+        return values.stream()
                 .map(T::toString)
                 .collect(Collectors.joining(","));
     }
 
-    private <T> List<T> mapStrToEnums(String enumStr, Function<String, T> mapFunc){
+
+    private <T> List<T> mapStrToList(String enumStr, Function<String, T> mapFunc){
+        if(!StringUtils.hasText(enumStr)) return null;
         return Arrays.stream(enumStr.split(","))
                 .map(mapFunc)
                 .collect(Collectors.toList());
