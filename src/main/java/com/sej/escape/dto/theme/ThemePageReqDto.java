@@ -28,7 +28,7 @@ public class ThemePageReqDto extends PageReqDto {
 
     @ApiModelProperty("장르") private Genre[] genre;
 
-    @Min(1)
+    @Min(0)
     @Max(5)
     @ApiModelProperty("난이도") private int difficulty;
 }

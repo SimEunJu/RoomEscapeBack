@@ -6,6 +6,7 @@ import com.sej.escape.constants.AreaSection;
 import com.sej.escape.constants.dto.ListOrder;
 
 import com.sej.escape.dto.page.PageResDto;
+import com.sej.escape.dto.store.StoreAreaDto;
 import com.sej.escape.dto.store.StoreDto;
 import com.sej.escape.dto.store.StoreNameDto;
 import com.sej.escape.dto.store.StorePageReqDto;
@@ -14,6 +15,7 @@ import com.sej.escape.dto.page.PageReqDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.Theme;
+import com.sej.escape.entity.constants.Genre;
 import com.sej.escape.entity.file.ThemeFile;
 import com.sej.escape.entity.zim.ThemeZim;
 import com.sej.escape.error.exception.NoSuchResourceException;
@@ -33,6 +35,7 @@ import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -177,6 +180,13 @@ public class ThemeService {
             queryWhere = queryWhere.substring(0, queryWhere.length() - 2) + ")";
         }
 
+        queryWhere += " AND theme.difficulty >= "+themePageReqDto.getDifficulty();
+
+        if(themePageReqDto.getGenre().length != 0){
+            String genreReg =  Arrays.stream(themePageReqDto.getGenre()).map(Genre::toString).collect(Collectors.joining("|"));
+                 queryWhere += " AND theme.genre REGEXP '"+genreReg+"'";
+        }
+
         ListOrder order = themePageReqDto.getOrder();
         if(order != null){
             switch (order){
@@ -236,12 +246,12 @@ public class ThemeService {
 
     private String getThemesQuery(String querySelectIsZimChk, String queryWhere, String queryOrder){
         return getThemeQuery(querySelectIsZimChk, queryWhere) +
-                "ORDER BY"+queryOrder;
+                " ORDER BY"+queryOrder;
     }
 
     private String getThemesCountQuery(String queryWhere){
         String queryStr = "SELECT count(theme.theme_id) " +
-                "FROM theme WHERE theme.is_deleted = 0 " +
+                " FROM theme WHERE theme.is_deleted = 0 " +
                 queryWhere;
         return queryStr;
     }
@@ -253,16 +263,20 @@ public class ThemeService {
                 "(SELECT AVG(star) FROM theme_comment WHERE theme_id = theme.theme_id and theme_comment.is_deleted = 0) as star_avg, " +
                 "(SELECT COUNT(*) FROM zim WHERE ztype='T' AND refer_id = theme.theme_id AND is_zim = 1) as zim_cnt " +
                 querySelectIsZimChk +
-                "FROM theme INNER JOIN store ON theme.store_id = store.store_id " +
-                "LEFT OUTER JOIN file ON file.ftype = 'T' AND file.refer_id = theme.theme_id " +
-                "WHERE theme.is_deleted = 0 "+queryWhere;
+                " FROM theme INNER JOIN store ON theme.store_id = store.store_id " +
+                " LEFT OUTER JOIN file ON file.ftype = 'T' AND file.refer_id = theme.theme_id " +
+                " WHERE theme.is_deleted = 0 "+queryWhere;
         return queryStr;
     }
 
     public List<ThemeForListDto> getTopThemes(){
 
         List<Theme> themes = themeRepository.findTopThemes();
-        List<ThemeForListDto> themeForListDtos = mapper.mapEntitiesToDtos(themes, ThemeForListDto.class);
+        List<ThemeForListDto> themeForListDtos = mapper.mapEntitiesToDtos(themes, ThemeForListDto.class, (src, dest) -> {
+            // TODO: 동적으로 어떤 필드를 매핑 여부 결정할 수 있는지 확인
+            dest.setStore(mapper.mapEntityToDto(src.getStore(), StoreAreaDto.class));
+            return dest;
+        });
 
         return themeForListDtos;
     }
@@ -276,7 +290,11 @@ public class ThemeService {
 
         Page<Theme> themes = themeRepository.findLatestThemes(pageable, aMonthAgo);
 
-        List<ThemeForListDto> themeForListDtos = mapper.mapEntitiesToDtos(themes.getContent(), ThemeForListDto.class);
+        List<ThemeForListDto> themeForListDtos = mapper.mapEntitiesToDtos(themes.getContent(), ThemeForListDto.class, (src, dest) -> {
+            // TODO: 동적으로 어떤 필드를 매핑 여부 결정할 수 있는지 확인
+            dest.setStore(mapper.mapEntityToDto(src.getStore(), StoreAreaDto.class));
+            return dest;
+        });
         return themeForListDtos;
     }
 

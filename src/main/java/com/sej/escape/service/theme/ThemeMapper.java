@@ -56,6 +56,10 @@ public class ThemeMapper {
         return modelMapper.map(theme, dest);
     }
 
+    public <T, D> D mapEntityToDto(T src, Class<D> dest){
+        return modelMapper.map(src, dest);
+    }
+
     public <D> List<D> mapEntitiesToDtos(List<Theme> entities, Class<D> dest){
         return entities.stream()
                 .map(entity -> mapEntityToDto(entity, dest))

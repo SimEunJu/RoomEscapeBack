@@ -35,9 +35,11 @@ public class Theme extends BaseWithDelete {
     @JoinColumn(nullable = false, name="store_id")
     private Store store;
 
+    /*
     @Builder.Default
     @Transient
     private List<ThemeFile> files = new ArrayList<>();
+    */
 
     @Column(length = 2000)
     private String name;
