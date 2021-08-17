@@ -1,6 +1,7 @@
 package com.sej.escape.entity;
 
 import com.sej.escape.entity.comment.StoreComment;
+import com.sej.escape.entity.file.StoreFile;
 import com.sej.escape.entity.geolocation.Address;
 import com.sej.escape.entity.base.BaseWithDelete;
 import lombok.AllArgsConstructor;

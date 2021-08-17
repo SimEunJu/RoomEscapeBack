@@ -31,4 +31,7 @@ public class Zim extends Base {
 
     protected Long referId;
 
+    @Column(name = "ztype", insertable = false, updatable = false)
+    private String ztype;
+
 }

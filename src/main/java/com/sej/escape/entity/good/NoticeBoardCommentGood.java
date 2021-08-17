@@ -11,8 +11,9 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @DiscriminatorValue("CBN")
 public class NoticeBoardCommentGood extends Good{
+
     @Builder(builderMethodName = "noticeBoardCommentBuilder")
-    public NoticeBoardCommentGood(Long id, Member member, boolean isGood, Long referId) {
-        super(id, member, isGood, referId);
+    public NoticeBoardCommentGood(Long id, Member member, boolean isGood, Long referId, String gtype) {
+        super(id, member, isGood, referId, gtype);
     }
 }

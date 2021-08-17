@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 public class BoardFile extends File{
 
     @Builder(builderMethodName = "boardBuilder")
-    public BoardFile(Long id, Long referId, Member member, String originalName, String name, String rootPath, String subPath, Integer seq) {
-        super(id, referId, member, originalName, name, rootPath, subPath, seq);
+    public BoardFile(Long id, Long referId, String ftype, Member member, String originalName, String name, String rootPath, String subPath, Integer seq) {
+        super(id, referId, ftype, member, originalName, name, rootPath, subPath, seq);
     }
 }

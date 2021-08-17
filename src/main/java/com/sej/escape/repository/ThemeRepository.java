@@ -28,10 +28,11 @@ public interface ThemeRepository
 
     List<Theme> findAllByIsDeletedFalseAndStoreEquals(Store store);
 
-    @Query("select t, f from Theme t join ThemeFile f on t.id = f.referId and f.isDeleted = false where t.store = :store and t.id <> :selfId and t.isDeleted = false")
+    @Query("select t, f from Theme t join ThemeFile f on f.ftype = 'T' and t.id = f.referId and f.isDeleted = false where t.store = :store and t.id <> :selfId and t.isDeleted = false")
     List<Object[]> findAllByIsDeletedFalseAndStoreEqualsAndIdIsNot(Store store, long selfId);
 
-    @Query("select t, tz, s from Theme t inner join ThemeZim tz on tz.referId = t.id and tz.isZim = true and tz.member = :member inner join Store s on t.store = s where t.isDeleted = false")
+    // TODO: ThemeFile 조인 시 ftype 조건이 생성되지 않음 -> 임시방편: DiscriminatorColumn 직접 사용
+    @Query("select t, tz, s, f from Theme t inner join ThemeZim tz on tz.ztype = 'T' and tz.referId = t.id and tz.isZim = true and tz.member = :member inner join Store s on t.store = s left join ThemeFile f on f.ftype = 'T' and f.referId = t.id and f.isDeleted = false where t.isDeleted = false")
     Page<Object[]> findAllByZim(@Param("member") Member member, Pageable pageable);
 
     @EntityGraph(attributePaths = {"store"}, type = EntityGraph.EntityGraphType.LOAD)

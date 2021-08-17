@@ -23,6 +23,9 @@ public class File extends BaseWithDelete {
 
     protected Long referId;
 
+    @Column(name = "ftype", insertable = false, updatable = false)
+    private String ftype;
+
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     protected Member member;

@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 public class StoreZim extends Zim{
 
     @Builder(builderMethodName = "storeBuilder")
-    public StoreZim(Long id, Member member, boolean isZim, Long referId) {
-        super(id, member, isZim, referId);
+    public StoreZim(Long id, Member member, boolean isZim, Long referId, String ztype) {
+        super(id, member, isZim, referId, ztype);
     }
 }

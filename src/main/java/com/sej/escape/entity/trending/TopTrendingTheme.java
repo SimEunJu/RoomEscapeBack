@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class TopTrendingTheme extends TopTrending{
 
     @Builder(builderMethodName = "themeBuilder")
-    public TopTrendingTheme(Long id, Long referId, LocalDateTime regDate, boolean isActive) {
-        super(id, referId, regDate, isActive);
+    public TopTrendingTheme(Long id, Long referId, String ttype, LocalDateTime regDate, boolean isActive) {
+        super(id, referId, ttype, regDate, isActive);
     }
 }

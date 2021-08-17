@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 public class ThemeZim extends Zim{
 
     @Builder(builderMethodName = "themeBuilder")
-    public ThemeZim(Long id, Member member, boolean isZim, Long referId) {
-        super(id, member, isZim, referId);
+    public ThemeZim(Long id, Member member, boolean isZim, Long referId, String ztype) {
+        super(id, member, isZim, referId, ztype);
     }
 }

@@ -30,4 +30,7 @@ public class Good extends Base {
 
     protected Long referId;
 
+    @Column(name = "gtype", insertable = false, updatable = false)
+    private String gtype;
+
 }

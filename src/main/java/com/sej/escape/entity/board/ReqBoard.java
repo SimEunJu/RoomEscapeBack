@@ -16,7 +16,7 @@ import java.util.List;
 public class ReqBoard extends Board{
 
     @Builder(builderMethodName = "reqBuilder")
-    public ReqBoard(Long id, Member member, List<NoticeBoardComment> comments, String title, String content, int good, int report, int view) {
-        super(id, member, comments, title, content, good, report, view);
+    public ReqBoard(Long id, Member member, String btype, List<NoticeBoardComment> comments, String title, String content, int good, int report, int view) {
+        super(id, member, btype, comments, title, content, good, report, view);
     }
 }

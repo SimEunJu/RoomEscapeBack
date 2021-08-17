@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 public class StoreFile extends File{
 
     @Builder(builderMethodName = "storeBuilder")
-    public StoreFile(Long id, Long referId, Member member, String originalName, String name, String rootPath, String subPath, Integer seq) {
-        super(id, referId, member, originalName, name, rootPath, subPath, seq);
+    public StoreFile(Long id, Long referId, String ftype, Member member, String originalName, String name, String rootPath, String subPath, Integer seq) {
+        super(id, referId, ftype, member, originalName, name, rootPath, subPath, seq);
     }
 }

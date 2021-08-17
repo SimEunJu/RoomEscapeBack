@@ -14,7 +14,7 @@ import javax.persistence.Entity;
 public class ThemeGood extends Good {
 
     @Builder(builderMethodName = "themeBuilder")
-    public ThemeGood(Long id, Member member, boolean isGood, Long referId) {
-        super(id, member, isGood, referId);
+    public ThemeGood(Long id, Member member, boolean isGood, Long referId, String gtype) {
+        super(id, member, isGood, referId, gtype);
     }
 }

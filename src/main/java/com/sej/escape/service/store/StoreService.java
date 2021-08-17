@@ -12,6 +12,7 @@ import com.sej.escape.dto.store.StorePageReqDto;
 import com.sej.escape.dto.store.StoreZimListResDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
+import com.sej.escape.entity.file.StoreFile;
 import com.sej.escape.entity.zim.StoreZim;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.store.StoreRepository;
@@ -91,14 +92,18 @@ public class StoreService {
         Page<Object[]> storesPage = storeRepository.findAllByZim(member, pageable);
         PageResDto resDto = new PageResDto(storesPage,
                 (objects) -> {
+
                     Object[] storeZim = (Object[]) objects;
                     Store store = (Store) storeZim[0];
                     StoreZim zim = (StoreZim) storeZim[1];
+                    StoreFile file = (StoreFile) storeZim[2];
+
                     StoreZimListResDto storeZimListResDto = StoreZimListResDto.builder()
                             .id(store.getId())
                             .zimId(zim.getId())
                             .name(store.getName())
                             .isZimChecked(true)
+                            .imgUrl(file.getFileUrl())
                             .build();
                     return storeZimListResDto;
         });

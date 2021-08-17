@@ -28,6 +28,9 @@ public class Board extends BaseWithDelete {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Column(name = "btype", insertable = false, updatable = false)
+    private String btype;
+
     @Builder.Default
     @Transient
     private List<NoticeBoardComment> comments = new ArrayList<>();

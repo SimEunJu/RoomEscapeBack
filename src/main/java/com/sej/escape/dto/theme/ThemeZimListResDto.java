@@ -1,6 +1,7 @@
 package com.sej.escape.dto.theme;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sej.escape.dto.store.StoreAreaDto;
 import com.sej.escape.dto.store.StoreDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -21,5 +22,5 @@ public class ThemeZimListResDto {
     @JsonProperty("isZimChecked")
     @ApiModelProperty("로그인 사용자 찜 여부") private boolean isZimChecked;
 
-    @ApiModelProperty("가게명") private String storeName;
+    @ApiModelProperty("가게") protected StoreAreaDto store;
 }

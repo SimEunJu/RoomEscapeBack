@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 public class ThemeFile extends File{
 
     @Builder(builderMethodName = "themeBuilder")
-    public ThemeFile(Long id, Long referId, Member member, String originalName, String name, String rootPath, String subPath, Integer seq) {
-        super(id, referId, member, originalName, name, rootPath, subPath, seq);
+    public ThemeFile(Long id, Long referId, String ftype, Member member, String originalName, String name, String rootPath, String subPath, Integer seq) {
+        super(id, referId, ftype, member, originalName, name, rootPath, subPath, seq);
     }
 }

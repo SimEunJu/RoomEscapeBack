@@ -11,8 +11,9 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @DiscriminatorValue("CT")
 public class ThemeCommentGood extends Good{
+
     @Builder(builderMethodName = "themeCommentBuilder")
-    public ThemeCommentGood(Long id, Member member, boolean isGood, Long referId) {
-        super(id, member, isGood, referId);
+    public ThemeCommentGood(Long id, Member member, boolean isGood, Long referId, String gtype) {
+        super(id, member, isGood, referId, gtype);
     }
 }

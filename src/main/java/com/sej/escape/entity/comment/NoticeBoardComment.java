@@ -15,7 +15,7 @@ import javax.persistence.Entity;
 public class NoticeBoardComment extends Comment{
 
     @Builder(builderMethodName = "noticeBoardBuilder")
-    public NoticeBoardComment(Long id, Member member, Long referId, String content, int good, double star, int depth, int seq, Long parId, boolean isHidden) {
-        super(id, member, referId, content, good, star, depth, seq, parId, isHidden);
+    public NoticeBoardComment(Long id, Member member, String ctype, Long referId, String content, int good, double star, int depth, int seq, Long parId, boolean isHidden) {
+        super(id, member, ctype, referId, content, good, star, depth, seq, parId, isHidden);
     }
 }

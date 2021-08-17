@@ -26,6 +26,9 @@ public class Comment extends BaseWithDelete {
     @JoinColumn(name = "member_id", nullable = false)
     protected Member member;
 
+    @Column(name = "ctype", insertable = false, updatable = false)
+    private String ctype;
+
     protected Long referId;
 
     @Column(columnDefinition = "text")

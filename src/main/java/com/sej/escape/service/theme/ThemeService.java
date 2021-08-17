@@ -142,13 +142,15 @@ public class ThemeService {
                     Theme theme = (Theme) themeZim[0];
                     ThemeZim zim = (ThemeZim) themeZim[1];
                     Store store = (Store) themeZim[2];
+                    ThemeFile file = (ThemeFile) themeZim[3];
 
                     ThemeZimListResDto themeZimListResDto = ThemeZimListResDto.builder()
                             .id(theme.getId())
                             .zimId(zim.getId())
                             .name(theme.getName())
                             .isZimChecked(true)
-                            .storeName(store.getName())
+                            .store(mapper.mapEntityToDto(store, StoreAreaDto.class))
+                            .imgUrl(file.getFileUrl())
                             .build();
                     return themeZimListResDto;
                 });

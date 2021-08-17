@@ -26,6 +26,9 @@ public class TopTrending {
 
     private Long referId;
 
+    @Column(name = "ttype", insertable = false, updatable = false)
+    private String ttype;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime regDate;
