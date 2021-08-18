@@ -5,6 +5,7 @@ import com.sej.escape.dto.comment.store.StoreCommentDto;
 import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Store;
 import com.sej.escape.entity.comment.StoreComment;
+import com.sej.escape.entity.file.StoreFile;
 import com.sej.escape.error.exception.AlreadyExistResourceException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.repository.comment.StoreCommentRepository;
@@ -135,6 +136,11 @@ public class StoreCommentService {
         long themeVisitedCnt = (long) themeCnt[1];
         dto.setThemeCnt((int) themeTot);
         dto.setVisitThemeCnt((int) themeVisitedCnt);
+
+        StoreFile file = (StoreFile) e[2];
+        if(file != null){
+            dto.setImgUrl(file.getFileUrl());
+        }
 
         return dto;
     }

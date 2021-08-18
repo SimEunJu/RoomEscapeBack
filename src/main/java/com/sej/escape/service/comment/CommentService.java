@@ -51,18 +51,18 @@ public class CommentService {
         // 대댓글이 달릴 수 있는 comment의 경우 삭제된 댓글을 배제하지 않고 가져온다.
         String quweryWhereExcludeDeleteWhenHasRecomment = "";
         if(!commentReqDto.getType().hasRecomment()){
-            quweryWhereExcludeDeleteWhenHasRecomment = "AND c.is_deleted = 0 ";
+            quweryWhereExcludeDeleteWhenHasRecomment = " AND c.is_deleted = 0 ";
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :ctype AND c.is_hidden = 0 "
+        String queryFromAndWhere = "FROM comment c INNER JOIN member m ON m.member_id = c.member_id WHERE c.ctype = :ctype AND c.is_hidden = 0 AND c.refer_id = " + commentReqDto.getReferId()
                 +quweryWhereExcludeDeleteWhenHasRecomment;
 
         String listQuery =  "SELECT c.*, m.nickname, m.member_id "+
                             ", (SELECT COUNT(*) FROM good WHERE gtype= :gtype AND refer_id = c.comment_id AND is_good = 1) as good_cnt " +
                             querySelectIsGoodChk +
                             queryFromAndWhere +
-                            "ORDER BY par_id DESC, seq ASC, comment_id desc";
+                            " ORDER BY par_id DESC, seq ASC, comment_id desc";
 
         PageRequest pageRequest = commentReqDto.getPageable();
         List<Object[]> results = em.createNativeQuery(listQuery, "commentResultMap")

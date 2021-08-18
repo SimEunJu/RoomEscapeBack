@@ -57,7 +57,7 @@ public class StoreMapper {
         StoreDto storeDto = modelMapper.map(store, StoreDto.class);
         storeDto.setArea(areaSectionUtil.getTitleFromAreaCode(store.getAreaCode()));
 
-        double starAvg = row[1] != null ? ((BigInteger) row[1]).doubleValue() : 0.0;
+        double starAvg = row[1] != null ? ((BigDecimal) row[1]).doubleValue() : 0.0;
         storeDto.setStar(starAvg);
 
         FileUrlDto file = (FileUrlDto) row[4];

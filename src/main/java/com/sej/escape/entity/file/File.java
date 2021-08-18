@@ -41,6 +41,7 @@ public class File extends BaseWithDelete {
     protected Integer seq;
 
     public String getFileUrl(){
+        if(rootPath == null) return null;
         return rootPath + "/" + subPath + "/" + name;
     }
 

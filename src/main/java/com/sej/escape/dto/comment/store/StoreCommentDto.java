@@ -34,4 +34,6 @@ public class StoreCommentDto {
     // theme
     @ApiModelProperty("하위의 테마 갯수") private int themeCnt;
     @ApiModelProperty("로그인한 사용하자 방문한 하위 테마 갯수") private int visitThemeCnt;
+
+    @ApiModelProperty("이미지 url") private String imgUrl;
 }

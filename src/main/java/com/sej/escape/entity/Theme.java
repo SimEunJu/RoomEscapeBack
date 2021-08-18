@@ -69,7 +69,7 @@ public class Theme extends BaseWithDelete {
     @Column(columnDefinition = "tinyint unsigned")
     @Min(1)
     @Max(5)
-    private Integer difficulty;
+    private int difficulty;
 
     @Column(columnDefinition = "text")
     private String introduce;

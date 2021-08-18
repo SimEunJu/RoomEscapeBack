@@ -23,11 +23,11 @@ public class PageResDto<En, Dto> {
 
     @ApiModelProperty("페이지") private int page;
     @ApiModelProperty("페이지 크기") private int size;
-    @ApiModelProperty("총 페이지 수") private int total;
+    @ApiModelProperty("총 갯수") private long total;
     @ApiModelProperty("다음 페이지 존재 여부") private boolean hasNext;
 
     public void setPageResult(Page<En> result) {
-        this.total = result.getTotalPages();
+        this.total = result.getTotalElements();
         this.page = result.getNumber() + 1;
         //this.page = result.getNumber();
         this.size = result.getSize();

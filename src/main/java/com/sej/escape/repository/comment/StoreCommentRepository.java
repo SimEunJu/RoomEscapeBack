@@ -23,7 +23,7 @@ public interface StoreCommentRepository
 
     Optional<StoreComment> findByReferIdAndMemberAndIsDeletedFalse(long referId, Member member);
 
-    @Query("select sc, s from StoreComment sc inner join Store s on sc.referId = s.id where sc.isDeleted = false and sc.member = :member")
+    @Query("select sc, s, sf from StoreComment sc inner join Store s on sc.referId = s.id left join StoreFile sf on sf.ftype = 'S' and sf.referId = s.id and sf.isDeleted = false where sc.isDeleted = false and sc.member = :member")
     Page<Object[]> findAllByMember(Pageable pageable, @Param("member") Member member);
 
     @Query("select sc, s from StoreComment sc inner join Store s on sc.referId = s.id where sc.isDeleted = false and sc.member = :member and sc.id = :commentId")

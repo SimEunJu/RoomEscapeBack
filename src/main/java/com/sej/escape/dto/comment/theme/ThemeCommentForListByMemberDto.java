@@ -16,7 +16,7 @@ public class ThemeCommentForListByMemberDto {
     @ApiModelProperty("아이디") protected long id;
     @ApiModelProperty("테마 아이디") protected long themeId;
 
-    @ApiModelProperty("") protected String name;
+    @ApiModelProperty("테마명") protected String name;
     @ApiModelProperty("방문날짜") protected LocalDateTime visitDate;
     @ApiModelProperty("등록날짜") protected LocalDateTime regDate;
     @ApiModelProperty("별점") protected int star;
@@ -28,5 +28,7 @@ public class ThemeCommentForListByMemberDto {
 
     @ApiModelProperty("작성자명")
     protected String writer;
+
+    @ApiModelProperty("이미지 url") private String imgUrl;
 
 }

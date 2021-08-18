@@ -8,6 +8,7 @@ import com.sej.escape.entity.Member;
 import com.sej.escape.entity.Theme;
 import com.sej.escape.entity.comment.ThemeComment;
 import com.sej.escape.entity.file.ThemeCommentFile;
+import com.sej.escape.entity.file.ThemeFile;
 import com.sej.escape.error.exception.AlreadyExistResourceException;
 import com.sej.escape.error.exception.NoSuchResourceException;
 import com.sej.escape.error.exception.security.UnAuthorizedException;
@@ -44,6 +45,7 @@ public class ThemeCommentService {
     private final CommentMapper commentMapper;
     private final EntityManager em;
 
+    // TODO: 불필요한 쿼리 실행하는지 여부 확인 후 처리
     public CommentListResDto getCommentList(CommentReqDto commentReqDto) {
 
         // 로그인한 경우 유저가 해당 comment를 좋아요 했는지 여부 확인한다.
@@ -54,13 +56,13 @@ public class ThemeCommentService {
         }
 
         // from, where절
-        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id AND c.is_hidden = 0 AND c.is_deleted = 0 ";
+        String queryFromAndWhere = "FROM theme_comment c INNER JOIN member m ON m.member_id = c.member_id AND c.is_hidden = 0 AND c.is_deleted = 0 WHERE c.theme_id = "+commentReqDto.getReferId();
 
         String listQuery =  "SELECT c.*, m.nickname, m.member_id "+
                 ", (SELECT COUNT(*) FROM good WHERE gtype= :gtype AND refer_id = c.theme_comment_id AND is_good = 1) as good_cnt " +
                 querySelectIsGoodChk +
                 queryFromAndWhere +
-                "ORDER BY c.theme_comment_id desc";
+                " ORDER BY c.theme_comment_id desc";
 
         PageRequest pageRequest = commentReqDto.getPageable();
         List<Object[]> results = em.createNativeQuery(listQuery, "themeCommentResultMap")
@@ -220,32 +222,50 @@ public class ThemeCommentService {
         Pageable pageable = reqDto.getPageable(sort);
         Member member = authenticationUtil.getAuthUserEntity();
 
-        Page<ThemeComment> commentPage = themeCommentRepository.findAllByMember(pageable, member);
-        List<ThemeComment> themeComments = commentPage.getContent();
+        Page<Object[]> commentPage = themeCommentRepository.findAllByMember(pageable, member);
+        List<Object[]> themeComments = commentPage.getContent();
 
         CommentListResDto resDto = new CommentListResDto();
         resDto.setPageResult(commentPage);
-        resDto.setTargetList(mapStoreCommentsToDtos(themeComments));
+        resDto.setTargetList(mapThemeCommentsToDtosWithImg(themeComments));
 
         return resDto;
     }
+    private List<ThemeCommentForListByMemberDto> mapThemeCommentsToDtosWithImg(List<Object[]> entitis) {
+        return entitis.stream().map(object -> {
 
-    private List<ThemeCommentForListByMemberDto> mapStoreCommentsToDtos(List<ThemeComment> entitis){
-        return entitis.stream().map(themeComment -> {
+            ThemeComment themeComment = (ThemeComment) object[0];
+            ThemeCommentForListByMemberDto dto = mapThemeCommentToDto(themeComment);
 
-            Theme theme = themeComment.getTheme();
-
-            ThemeCommentForListByMemberDto dto = commentMapper.mapEntityToDto(themeComment, ThemeCommentForListByMemberDto.class);
-            dto.setName(theme.getName());
-            dto.setThemeId(theme.getId());
-
-            Member member = themeComment.getMember();
-            dto.setWriter(member.getNickname());
+            ThemeFile themeFile = (ThemeFile) object[1];
+            if(themeFile != null) {
+                dto.setImgUrl(themeFile.getFileUrl());
+            }
 
             return dto;
+
         }).collect(Collectors.toList());
     }
+    private List<ThemeCommentForListByMemberDto> mapThemeCommentsToDtos(List<ThemeComment> entitis){
+        return entitis.stream().map(themeComment -> {
 
+            ThemeCommentForListByMemberDto dto = mapThemeCommentToDto(themeComment);
+            return dto;
+
+        }).collect(Collectors.toList());
+    }
+    private ThemeCommentForListByMemberDto mapThemeCommentToDto(ThemeComment themeComment){
+        Theme theme = themeComment.getTheme();
+
+        ThemeCommentForListByMemberDto dto = commentMapper.mapEntityToDto(themeComment, ThemeCommentForListByMemberDto.class);
+        dto.setName(theme.getName());
+        dto.setThemeId(theme.getId());
+
+        Member member = themeComment.getMember();
+        dto.setWriter(member.getNickname());
+
+        return dto;
+    }
     public long deleteComment(long id){
         ThemeComment comment = getCommentByIdIfExist(id);
         hasAuthority(comment.getMember().getId());
@@ -270,7 +290,7 @@ public class ThemeCommentService {
     public List<ThemeCommentForListByMemberDto> readTopComments(){
 
         List<ThemeComment> comments = themeCommentRepository.findTopComments();
-        List<ThemeCommentForListByMemberDto> commentDtos = mapStoreCommentsToDtos(comments);
+        List<ThemeCommentForListByMemberDto> commentDtos = mapThemeCommentsToDtos(comments);
 
         return commentDtos;
     }
@@ -281,7 +301,7 @@ public class ThemeCommentService {
 
         Page<ThemeComment> comments = themeCommentRepository.findLatestComments(pageable);
 
-        List<ThemeCommentForListByMemberDto> commentDtos = mapStoreCommentsToDtos(comments.getContent());
+        List<ThemeCommentForListByMemberDto> commentDtos = mapThemeCommentsToDtos(comments.getContent());
 
         return commentDtos;
     }
